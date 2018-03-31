@@ -1,64 +1,64 @@
 <!DOCTYPE html>
 <html>
 
-	<head>
-		<meta charset="utf-8">
-		<title>可视化数据分析平台</title>
-		<link href="{{url_for('.static', filename='index.css')}}" rel="stylesheet" type="text/css">
-		<!--<link href="{{url_for('static', filename='bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css">-->
-	</head>
-	<body>
-		<div class="root">
-			<div class="main-scope">
-				<div class="function-view noselect">
-					<div class="group-title" style="order:0;">基本操作</div>
-					<div class="group" id="basic" style="order:0;">
-						<div class="component" id="data-instream" style="order:0;">导入数据</div>
-						<div class="component" id="sql-instream" style="order:1;">SQL导入数据</div>
-						<div class="component" id="model-instream" style="order:2;">导入模型</div>
-						<div class="component" id="data-outstream" style="order:3;">导出数据</div>
-						<div class="component" id="sql-outstream" style="order:4;">SQL导出数据</div>
-						<div class="component" id="model-outstream" style="order:5;">导出模型</div>
-					</div>
-					<div class="group-title" style="order:1;">数据处理</div>
-					<div class="group" id="process" style="order:1;">
-						<div class="component" id="random" style="order:0;">打乱数据</div>
-						<div class="component" id="merge-row" style="order:1;">合并行</div>
-						<div class="component" id="merge-col" style="order:2;">合并列</div>
-						<div class="component" id="split-row" style="order:3;">拆分行</div>
-						<div class="component" id="split-col" style="order:4;">拆分列</div>
-					</div>
-					<div class="group-title" style="order:2;">机器学习算法</div>
-					<div class="group" id="machine-learning" style="order:2;">
-						<div class="component" id="naive-bayes" style="order:0;">朴素贝叶斯</div>
-						<div class="component" id="decision-tree" style="order:1;">决策树</div>
-						<div class="component" id="svm" style="order:2;">支持向量机</div>
-						<div class="component" id="knn" style="order:3;">K近邻</div>
-						<div class="component" id="adaboost" style="order:4;">Adaboost</div>
-						<div class="component" id="neural-network" style="order:5;">神经网络</div>
-					</div>
-					<div class="group-title" style="order:3;">其他</div>
-					<div class="group" id="utility" style="order:3;">
-						<div class="component" id="predict" style="order:0;" >预测</div>
-						<div class="component" id="sql-execute" style="order:1;">SQL语句</div>
-					</div>
-				</div>
-				<div class="canvas">
-					<img src="{{url_for('.static', filename='background.jpg')}}" alt="" draggable="false">
-					<svg id="svg" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;"></svg>
-				</div>
-				<div class="detail-view" id="detail-box">
-					<button type="button" style="order:100;" onclick="run_button()">运行</button>
-				</div>
-			</div>
-			<div class="top-row">
-				<div class="logo-title">
-					<div>Visual Analysis Platform</div>
-				</div>
-			</div>
-		</div>
-		<script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
-		<script src="{{url_for('.static', filename='index.js')}}"></script>
-	</body>
+  <head>
+    <meta charset="utf-8">
+    <title>可视化数据分析平台</title>
+    <link href="{{url_for('.static', filename='index.css')}}" rel="stylesheet" type="text/css">
+    <!--<link href="{{url_for('static', filename='bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css">-->
+  </head>
+  <body>
+    <div class="root">
+      <div class="main-scope">
+        <div class="function-view noselect">
+          <div class="group-title" style="order:0;">基本操作</div>
+          <div class="group" id="basic" style="order:0;">
+            <div class="component" id="data-instream" style="order:0;">导入数据</div>
+            <div class="component" id="sql-instream" style="order:1;">SQL导入数据</div>
+            <div class="component" id="model-instream" style="order:2;">导入模型</div>
+            <div class="component" id="data-outstream" style="order:3;">导出数据</div>
+            <div class="component" id="sql-outstream" style="order:4;">SQL导出数据</div>
+            <div class="component" id="model-outstream" style="order:5;">导出模型</div>
+          </div>
+          <div class="group-title" style="order:1;">数据处理</div>
+          <div class="group" id="process" style="order:1;">
+            <div class="component" id="random" style="order:0;">打乱数据</div>
+            <div class="component" id="merge-row" style="order:1;">合并行</div>
+            <div class="component" id="merge-col" style="order:2;">合并列</div>
+            <div class="component" id="split-row" style="order:3;">拆分行</div>
+            <div class="component" id="split-col" style="order:4;">拆分列</div>
+          </div>
+          <div class="group-title" style="order:2;">机器学习算法</div>
+          <div class="group" id="machine-learning" style="order:2;">
+            <div class="component" id="naive-bayes" style="order:0;">朴素贝叶斯</div>
+            <div class="component" id="decision-tree" style="order:1;">决策树</div>
+            <div class="component" id="svm" style="order:2;">支持向量机</div>
+            <div class="component" id="knn" style="order:3;">K近邻</div>
+            <div class="component" id="adaboost" style="order:4;">Adaboost</div>
+            <div class="component" id="neural-network" style="order:5;">神经网络</div>
+          </div>
+          <div class="group-title" style="order:3;">其他</div>
+          <div class="group" id="utility" style="order:3;">
+            <div class="component" id="predict" style="order:0;" >预测</div>
+            <div class="component" id="sql-execute" style="order:1;">SQL语句</div>
+          </div>
+        </div>
+        <div class="canvas">
+          <img src="{{url_for('.static', filename='background.jpg')}}" alt="" draggable="false">
+          <svg id="svg" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;"></svg>
+        </div>
+        <div class="detail-view" id="detail-box">
+          <button type="button" style="order:100;" onclick="run_button()">运行</button>
+        </div>
+      </div>
+      <div class="top-row">
+        <div class="logo-title">
+          <div>Visual Analysis Platform</div>
+        </div>
+      </div>
+    </div>
+    <script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
+    <script src="{{url_for('.static', filename='index.js')}}"></script>
+  </body>
 </html>
 
