@@ -1,0 +1,10 @@
+SQLAlchemy==1.1.15
+Flask==0.12.2
+alembic==0.9.9
+flask_migrate==2.1.1
+flask_script==2.0.6
+flask_sqlalchemy==2.3.2
+pandas==0.22.0
+pymysql==0.8.0
+redis==2.10.6
+scikit_learn==0.19.1
