@@ -3,3 +3,4 @@
 __pycache__/
 back.log
 /migrations/
+*.pyc
