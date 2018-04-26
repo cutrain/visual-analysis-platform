@@ -1,64 +1,147 @@
 <!DOCTYPE html>
-<html>
+<html> 
 
-  <head>
-    <meta charset="utf-8">
-    <title>可视化数据分析平台</title>
-    <link href="{{url_for('.static', filename='index.css')}}" rel="stylesheet" type="text/css">
-    <!--<link href="{{url_for('static', filename='bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css">-->
-  </head>
-  <body>
-    <div class="root">
-      <div class="main-scope">
-        <div class="function-view noselect">
-          <div class="group-title" style="order:0;">基本操作</div>
-          <div class="group" id="basic" style="order:0;">
-            <div class="component" id="data-instream" style="order:0;">导入数据</div>
-            <div class="component" id="sql-instream" style="order:1;">SQL导入数据</div>
-            <div class="component" id="model-instream" style="order:2;">导入模型</div>
-            <div class="component" id="data-outstream" style="order:3;">导出数据</div>
-            <div class="component" id="sql-outstream" style="order:4;">SQL导出数据</div>
-            <div class="component" id="model-outstream" style="order:5;">导出模型</div>
-          </div>
-          <div class="group-title" style="order:1;">数据处理</div>
-          <div class="group" id="process" style="order:1;">
-            <div class="component" id="random" style="order:0;">打乱数据</div>
-            <div class="component" id="merge-row" style="order:1;">合并行</div>
-            <div class="component" id="merge-col" style="order:2;">合并列</div>
-            <div class="component" id="split-row" style="order:3;">拆分行</div>
-            <div class="component" id="split-col" style="order:4;">拆分列</div>
-          </div>
-          <div class="group-title" style="order:2;">机器学习算法</div>
-          <div class="group" id="machine-learning" style="order:2;">
-            <div class="component" id="naive-bayes" style="order:0;">朴素贝叶斯</div>
-            <div class="component" id="decision-tree" style="order:1;">决策树</div>
-            <div class="component" id="svm" style="order:2;">支持向量机</div>
-            <div class="component" id="knn" style="order:3;">K近邻</div>
-            <div class="component" id="adaboost" style="order:4;">Adaboost</div>
-            <div class="component" id="neural-network" style="order:5;">神经网络</div>
-          </div>
-          <div class="group-title" style="order:3;">其他</div>
-          <div class="group" id="utility" style="order:3;">
-            <div class="component" id="predict" style="order:0;" >预测</div>
-            <div class="component" id="sql-execute" style="order:1;">SQL语句</div>
-          </div>
-        </div>
-        <div class="canvas">
-          <img src="{{url_for('.static', filename='background.jpg')}}" alt="" draggable="false">
-          <svg id="svg" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;"></svg>
-        </div>
-        <div class="detail-view" id="detail-box">
-          <button type="button" style="order:100;" onclick="run_button()">运行</button>
-        </div>
+<head>
+  <meta charset="utf-8">
+  <title>可视化数据分析平台</title>
+  <link href="{{url_for('.static', filename='index.css')}}" rel="stylesheet" type="text/css"> 
+  <link href="{{url_for('.static', filename='style.css')}}" rel="stylesheet" type="text/css"> 
+  <!-- <link href="static/index.css" rel="stylesheet" type="text/css"> -->
+  <!-- <link href="static/style.css" rel="stylesheet" type="text/css"> -->
+  <!-- <link href="{{url_for('static', filename='bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"> -->
+</head>
+<body>
+  <div class="root">
+    <input id="hamburger" class="hamburger" type="checkbox" />
+    <label for="hamburger" class="hamburger">
+      <i></i>
+    </label>
+    <nav class="primnav">
+      <ul>
+        <li>
+          <a title="基本操作">
+            <svg class="icon"><use xlink:href="#icon-basic"></use></svg> <b>基本操作</b>
+            <div class="tag">6</div>
+          </a>
+          <ul class="secnav">
+            <li>
+              <div class="component" id="data-instream" style="order:0;">导入数据</div>
+              <div class="component" id="sql-instream" style="order:1;">SQL导入数据</div>
+              <div class="component" id="model-instream" style="order:2;">导入模型</div>
+              <div class="component" id="data-outstream" style="order:3;">导出数据</div>
+            </li>
+            <li>
+              <div class="component" id="sql-outstream" style="order:4;">SQL导出数据</div>
+              <div class="component" id="model-outstream" style="order:5;">导出模型</div>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a title="数据处理">
+            <svg class="icon"><use xlink:href="#icon-data"></use></svg> 
+            <b>数据处理</b>
+            <div class="tag">5</div>
+          </a>
+          <ul class="secnav">
+            <li>
+              <div class="component" id="random" style="order:0;">打乱数据</div>
+              <div class="component" id="merge-row" style="order:1;">合并行</div>
+              <div class="component" id="merge-col" style="order:2;">合并列</div>
+              <div class="component" id="split-row" style="order:3;">拆分行</div>
+              <div class="component" id="split-col" style="order:4;">拆分列</div>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a title="机器学习算法">
+            <svg class="icon"><use xlink:href="#icon-algorithm"></use></svg> 
+            <b>
+              机器学习算法
+            </b>
+            <div class="tag">6</div>
+          </a>
+          <ul class="secnav">
+            <li>
+              <div class="component" id="naive-bayes" style="order:0;">朴素贝叶斯</div>
+              <div class="component" id="decision-tree" style="order:1;">决策树</div>
+              <div class="component" id="svm" style="order:2;">支持向量机</div>
+              <div class="component" id="knn" style="order:3;">K近邻</div>
+              <div class="component" id="adaboost" style="order:4;">Adaboost</div>
+              <div class="component" id="neural-network" style="order:5;">神经网络</div>
+            </li>
+          </ul>
+        </li>
+        <li>
+          <a title="其他">
+            <svg class="icon"><use xlink:href="#icon-other"></use></svg> 
+            <b>
+              其他
+            </b>
+            <div class="tag">2</div>
+          </a>
+          <ul class="secnav">
+            <li>     
+              <div class="component" id="predict" style="order:0;" >预测</div>
+              <div class="component" id="sql-execute" style="order:1;">SQL语句</div>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </nav>
+    <div class="main-scope">
+      <div class="canvas">
+        <img src="static/bg.png" alt="" draggable="false">
+        <svg id="svg" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;"></svg>
       </div>
-      <div class="top-row">
-        <div class="logo-title">
-          <div>Visual Analysis Platform</div>
-        </div>
+      <div class="detail-view" style="display:none" id="detail-box">
+      </div>
+      <div class='button-div' style="display:none" id='button_run'>
+        <button class="bubbly-button" onclick="run_button()">运行</button>
       </div>
     </div>
-    <script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
-    <script src="{{url_for('.static', filename='index.js')}}"></script>
-  </body>
+    <div class="top-row">
+<!--       <div class="logo-title">
+        <div>Visual Analysis Platform</div>
+      </div> -->
+      <user id="user">
+        <section>
+          <img src="static/logo.jpg" />
+          <section>
+            <name>可视化数据分析平台</name>
+            <actions><a>Visual Analysis Platform</a></actions>
+          </section>
+        </section>
+      </user>
+    </div>
+  </div>
+  <svg style="position: absolute; width: 0; height: 0;" width="0" height="0" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <defs>
+      <symbol id="icon-th-large" viewBox="0 0 30 32">
+        <title>th-large</title>
+        <path class="path1" d="M13.714 18.286v6.857c0 1.25-1.036 2.286-2.286 2.286h-9.143c-1.25 0-2.286-1.036-2.286-2.286v-6.857c0-1.25 1.036-2.286 2.286-2.286h9.143c1.25 0 2.286 1.036 2.286 2.286zM13.714 4.571v6.857c0 1.25-1.036 2.286-2.286 2.286h-9.143c-1.25 0-2.286-1.036-2.286-2.286v-6.857c0-1.25 1.036-2.286 2.286-2.286h9.143c1.25 0 2.286 1.036 2.286 2.286zM29.714 18.286v6.857c0 1.25-1.036 2.286-2.286 2.286h-9.143c-1.25 0-2.286-1.036-2.286-2.286v-6.857c0-1.25 1.036-2.286 2.286-2.286h9.143c1.25 0 2.286 1.036 2.286 2.286zM29.714 4.571v6.857c0 1.25-1.036 2.286-2.286 2.286h-9.143c-1.25 0-2.286-1.036-2.286-2.286v-6.857c0-1.25 1.036-2.286 2.286-2.286h9.143c1.25 0 2.286 1.036 2.286 2.286z"></path>
+      </symbol>
+      <symbol id="icon-other" viewBox="0 0 1000 1000">
+        <title>other</title>
+        <path class="path1" d="M500,10C229.4,10,10,229.4,10,500c0,270.6,219.4,490,490,490c270.6,0,490-219.4,490-490C990,229.4,770.6,10,500,10z M223,581.9c-39.6,0-71.7-32.1-71.7-71.7c0-39.6,32.1-71.7,71.7-71.7s71.7,32.1,71.7,71.7C294.9,549.8,262.8,581.9,223,581.9z M500,581.9c-39.6,0-71.7-32.1-71.7-71.7c0-39.6,32.1-71.7,71.7-71.7s71.7,32.1,71.7,71.7C571.7,549.8,539.6,581.9,500,581.9z M777,581.9c-39.6,0-71.7-32.1-71.7-71.7c0-39.6,32.1-71.7,71.7-71.7s71.7,32.1,71.7,71.7C848.7,549.8,816.6,581.9,777,581.9z"></path>
+      </symbol>
+      <symbol id="icon-data" viewBox="0 0 1000 1000">
+        <title>data</title>
+        <path d="M10,98.8v802.5c0,21.8,17.7,39.5,39.5,39.5h900.9c21.8,0,39.5-17.7,39.5-39.5c0-21.8-17.7-39.5-39.5-39.5H89.1V98.8c0-21.8-17.7-39.5-39.5-39.5C27.7,59.2,10,76.9,10,98.8z"/><path d="M937,645.7v148.8H763.1V645.7c0-20.6,16.7-37.3,37.3-37.3h99.2C920.3,608.3,937,625.1,937,645.7z"/><path d="M519.7,116.4v678.1H345.7V116.4c0-20.6,16.7-37.4,37.4-37.4h99.2C502.9,79,519.7,95.7,519.7,116.4z"/><path d="M311,336.2v458.3H137V336.2c0-20.6,16.7-37.4,37.4-37.4h99.2C294.3,298.9,311,315.6,311,336.2z"/><path d="M728.3,398.4v396.1H554.4V398.4c0-20.6,16.7-37.4,37.4-37.4H691C711.6,361.1,728.3,377.8,728.3,398.4z"/>
+      </symbol>
+      <symbol id="icon-algorithm" viewBox="0 0 1000 1000">
+        <title>algorithm</title>
+        <path d="M835.2,680.6c-37.3,0-71.6,13.2-98.4,35.2l0.2-0.5c0,0-50.2,51.5-130.4,33.6l-240.4-64.4c-49.4-17.9-70.8-53.4-78.7-71.1c-5.5-17.8-14.2-34-25.7-48.1h0.2c0,0-43.9-50.7-26.9-123.6l37.3-139.4c14.1-42.6,45.6-59.5,61.6-67.6c22.6-8.4,41.9-23.7,55.2-43.3c9.7-11.8,35.9-37.2,82.3-39.6h216.9c35.4,2.9,56.1,25.7,62.6,34c0.4,0.6,0.9,1.2,1.2,1.8l0,0c0,0,26.8,36.1,15.5,78l0,0l-23.4,87.7c-0.2,0.7-0.5,1.4-0.7,2.3c-9.3,34.9-29.7,52-41.2,59.1c-15.5,5.4-29.2,14.9-39.6,27.3c-0.1,0.1-0.3,0.3-0.5,0.5c-3.2,4-6.3,8.3-8.8,12.7c-17.2,18.4-44.3,18.9-46.2,18.9h-0.1h-3.6c-7.6-0.4-26-3.3-42.8-21.6c-0.6-0.9-1.3-1.7-1.9-2.5c-10.2-14.4-10.2-28.3-9.1-36.2l2.3-8.5c2-5,8.5-18.6,22.1-25.5c24.3-9.3,41.7-32.8,41.7-60.3c0-35.7-28.8-64.5-64.5-64.5c-35.6,0-64.5,28.8-64.5,64.5c0,12.2,3.4,23.4,9.2,33.2c8.3,24,5.4,42.3,5.4,42.3s0,0.1-0.1,0.2l-1.7,6.5c-2.7,6.8-9.6,17.1-27.1,25.8c-29.3,11.1-50.2,39.3-50.2,72.4c0,42.7,34.6,77.4,77.4,77.4c25,0,47.2-11.8,61.3-30c22.3-20.9,43.9-21.6,43.9-21.6h7.7c10.1,0.8,28.4,4.9,43.4,23.2c16.2,24.9,44,41.3,75.8,41.3c49.8,0,90.3-40.4,90.3-90.3c0-21.6-7.6-41.4-20.1-57c-6.4-13.7-17-41.4-10.1-67.5c0.4-1.3,0.6-2.6,0.9-4l23.8-89c12.6-37.5,45.9-55.7,56.5-60.7c38.2-15.1,65.2-52.3,65.2-95.9c0-57-46.3-103.2-103.3-103.2c-31.9,0-60.6,14.7-79.5,37.5l0.1-0.4c0,0-28,40.3-81.3,40.3H481.6c-53.3-0.1-81-26.1-91.2-38.5C369.5,30.6,334,10,293.7,10c-64.1,0-116.1,51.9-116.1,116.1c0,27.5,9.5,52.6,25.4,72.5c19.7,28.2,26.8,64.3,17.5,98.3c-0.1,0.9-0.4,1.6-0.5,2.3l-34.6,129.2c-21.7,76.9-85.1,93.9-85.1,93.9l0.6,0.2C47.8,542.9,10,594.4,10,654.8c0,78.2,63.5,141.8,141.8,141.8c36.5,0,69.9-13.9,95-36.6c16.3-11.2,62-37,121.9-20.9c4,1.1,7.7,1.9,11.4,2.6l213.4,57.1c62.7,19.4,89.8,74,96,88.3C710.8,947.1,768.1,990,835.3,990c85.5,0,154.7-69.3,154.7-154.7C989.9,749.8,920.7,680.6,835.2,680.6L835.2,680.6z"/>
+      </symbol>
+      <symbol id="icon-basic" viewBox="0 0 1000 1000">
+        <title>basic</title>
+        <g transform="translate(0.000000,511.000000) scale(0.100000,-0.100000)"><path d="M1238.1,4905.8c-209.1-55-303.8-96.9-477.7-213.5c-264.2-173.9-473.3-446.9-583.3-759.4c-50.6-143.1-59.4-202.5-68.2-550.3l-8.8-391.8h3801.6h3801.6l-8.8,380.8c-8.8,334.6-17.6,398.4-68.2,554.7c-145.3,440.2-493.1,788-950.9,950.9l-176.1,61.6l-2553.5,4.4C1511,4947.7,1385.5,4945.5,1238.1,4905.8z"/><path d="M104.4,1427.9V437.3h3797.2h3797.2v990.6v990.6H3901.6H104.4V1427.9z"/><path d="M104.4-1103.6v-990.6h2892.5c1932.7,0,2899.1,6.6,2907.9,22c35.2,55,222.3,118.9,686.8,233.3c277.4,68.3,512.9,134.3,528.3,149.7c13.2,13.2,149.7,239.9,301.6,504.1L7698.7-703v295v295H3901.6H104.4V-1103.6z"/><path d="M8070.8-1466.8c-39.6-19.8-123.3-154.1-270.8-433.7c-118.9-222.3-224.5-411.6-233.3-420.4c-8.8-8.8-233.3-57.2-497.5-107.9c-449.1-81.4-486.5-92.5-541.5-151.9c-46.2-48.4-61.6-85.8-61.6-154.1c0-83.7,15.4-105.7,314.8-418.2c171.7-182.7,321.4-345.6,332.4-361c15.4-19.8,0-198.1-39.6-515.1c-52.8-411.6-57.2-497.5-35.2-552.5c30.8-74.9,121.1-132.1,204.7-132.1c28.6,0,237.7,88,464.5,198.1c226.7,107.9,422.6,198.1,438,198.1c15.4,0,224.6-94.6,466.7-211.3c488.7-233.3,532.7-240,636.2-116.7c70.4,83.7,70.4,99.1,0,627.4l-57.2,427.1l220.1,237.7c121.1,129.9,266.4,279.6,323.6,334.6c107.9,103.5,165.1,193.7,165.1,253.1c0,57.2-61.6,173.9-107.9,202.5c-24.2,15.4-244.3,61.6-490.9,105.7c-244.3,44-457.9,92.5-471.1,105.7c-15.4,15.4-123.3,204.7-239.9,422.6c-116.7,217.9-237.7,418.2-266.3,446.9C8260.1-1427.2,8156.6-1420.6,8070.8-1466.8z"/><path d="M104.4-2959.2c0-376.4,39.6-565.7,176.1-825.5c162.9-317,385.2-534.9,693.4-689c317-156.3,206.9-151.9,2910.1-151.9h2423.6l13.2,61.6c6.6,33,33,224.5,59.4,429.2l46.3,367.6l-295,321.4c-402.8,440.3-433.6,486.5-488.7,741.8l-13.2,59.4H2867H104.4V-2959.2z"/></g>
+      </symbol>
+    </defs>
+  </svg>
+<!--   <script src="static/jquery/jquery.min.js"></script>
+  <script src="static/index.js"></script> -->
+  <script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
+  <script src="{{url_for('.static', filename='index.js')}}"></script>
+</body>
 </html>
 

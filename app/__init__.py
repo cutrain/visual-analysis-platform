@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, redirect
 from flask_sqlalchemy import SQLAlchemy
 from config import config
 
@@ -11,9 +11,14 @@ def create_app(config_name):
 
     db.init_app(app)
 
+    @app.route('/')
+    def index():
+        return redirect('/index')
+
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint, url_prefix='/main')
     from .index import main as index_blueprint
     app.register_blueprint(index_blueprint, url_prefix='/index')
+
 
     return app
