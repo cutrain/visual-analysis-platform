@@ -262,11 +262,14 @@ for (var i in typeList) {
 }
 // *count all nodes with types [node_id, type]
 var all_nodes = {};
-// *count all lines [line_id, [out_node_id, in_node_id]]
+
+// *count all lines [line_id, [out_circle_id, in_circle_id]]
 var all_lines = {};
-// all line from the node [node_id, map:[out_circle_id, line_id]]
+// node have lines [node_id, [line_id, dir]]
+var in_lines = {};
+// all line from the node [node_id, map:[line_id, out_circle_id]]
 var line_from = {};
-// all line to the node [node_id, map:[in_circle_id, line_id]]
+// all line to the node [node_id, map:[line_id, in_circle_id]]
 var line_to = {};
 
 var now_node_id= null;
@@ -388,9 +391,67 @@ function run_button() {
     JSON.stringify(data),
     function() {
       window.progress = 1;
-      setTimeout("check_progress()", 1000);
+      setTimeout("check_progress()", 200);
     }
-    );
+  );
+}
+
+function run_single(node_name) {
+  if (window.progress == 1)
+    return;
+  save_detail();
+  var data = {
+    "all_nodes":all_nodes,
+    "all_lines":all_lines,
+    "nodes_details":nodes_details,
+    "run":[node_name]
+  };
+  $.post(
+    '/main/run',
+    JSON.stringify(data),
+    function() {
+      window.progress = 1;
+      setTimeout("check_progress()", 200);
+    }
+  );
+}
+
+function circle2node(circle_name) {
+  while (circle_name[circle_name.length-1] >= '0' && circle_name[circle_name.length-1] <= '9')
+    circle_name = circle_name.substring(0, circle_name.length - 1);
+  if (circle_name.substring(circle_name.length-2, circle_name.length) == 'in')
+    circle_name = circle_name.substring(0, circle_name.length-2);
+  else
+    circle_name = circle_name.substring(0, circle_name.length-3);
+  return circle_name;
+}
+
+function delete_node(node_name) {
+  var node = $("#"+node_name);
+  if (!(node_name in all_nodes))
+    return;
+  for (var line_name in in_lines[node_name]) {
+    var line = all_lines[line_name];
+    var dir = in_lines[node_name][line_name];
+    var o_node_name = circle2node(line[1-dir]);
+    if (dir == 0)
+      delete line_to[o_node_name][line_name];
+    else
+      delete line_from[o_node_name][line_name];
+    delete all_lines[line_name];
+    delete in_lines[o_node_name][line_name];
+    $("#"+line_name).remove();
+  }
+  delete all_nodes[node_name];
+  delete nodes_details[node_name];
+  delete in_lines[node_name];
+  delete line_from[node_name];
+  delete line_to[node_name];
+  var circles = $(".circle[id^='"+node_name+"']");
+  circles.remove();
+  node.remove();
+  if (now_node_id == node_name)
+    now_node_id = null;
 }
 
 // component event
@@ -547,9 +608,22 @@ function circle_drop(e) {
     return false;
   var to_id = e.target.id;
   var id = from_id + to_id;
-  // TODO: fix this trick
-  var from_node_id = from_id.substring(0, from_id.length-4);
-  var to_node_id = to_id.substring(0, to_id.length-3);
+  var from_type = from_id;
+  var to_type = to_id;
+  while (from_type[from_type.length-1] >= '0' && from_type[from_type.length-1] <= '9')
+    from_type = from_type.substring(0, from_type.length - 1);
+  while (to_type[to_type.length-1] >= '0' && to_type[to_type.length-1] <= '9')
+    to_type = to_type.substring(0, to_type.length - 1);
+  if (from_type.substring(from_type.length-2, from_type.length) == "in") {
+    var temp = from_id;
+    from_id = to_id;
+    to_id = temp
+    temp = from_type;
+    from_type = to_type;
+    to_type = temp;
+  }
+  var from_node_id = from_type.substring(0, from_type.length - 3);
+  var to_node_id = to_type.substring(0, to_type.length - 2);
 
   var from = $("#" + from_id);
   var to = $("#" + to_id);
@@ -558,12 +632,14 @@ function circle_drop(e) {
   var x2 = parseInt(to.css("left")) + 5;
   var y2 = parseInt(to.css("top")) + 5;
 
-  // TODO: fix this trick
   var from_list = line_from[from_node_id];
   var to_list = line_to[to_node_id];;
-  from_list[from_id] = id;
-  to_list[to_id] = id;
+  from_list[id] = from_id;
+  to_list[id] = to_id;
   all_lines[id] = [from_id, to_id];
+  in_lines[from_node_id][id] = 0;
+  in_lines[to_node_id][id] = 1;
+
 
   var $line = $('<line class="line"/>');
   $line.attr("id", id);
@@ -615,6 +691,7 @@ function canvas_drop(e) {
     $(".canvas").append($node);
     line_from[id] = {};
     line_to[id] = {};
+    in_lines[id] = {};
     all_nodes[id] = type;
     var list = details[type];
     if (!(id in nodes_details)) {
@@ -720,19 +797,19 @@ function canvas_drop(e) {
 
     var from_list = line_from[id];
     var to_list = line_to[id];
-    for (var key in from_list) {
-      var value = from_list[key];
-      console.log("get " + key + " " + value);
-      var line = $("#"+value);
-      var circle = $("#"+key);
+    for (var line_name in from_list) {
+      var circle_name = from_list[line_name];
+      console.log("get " + line_name + " " + circle_name);
+      var line = $("#"+line_name);
+      var circle = $("#"+circle_name);
       line.attr("x1", parseInt(circle.css("left"))+5);
       line.attr("y1", parseInt(circle.css("top"))+5);
     }
-    for (var key in to_list) {
-      var value = to_list[key];
-      console.log("get " + key + " " + value);
-      var line = $("#"+value);
-      var circle = $("#"+key);
+    for (var line_name in to_list) {
+      var circle_name = to_list[line_name];
+      console.log("get " + line_name + " " + circle_name);
+      var line = $("#"+line_name);
+      var circle = $("#"+circle_name);
       line.attr("x2", parseInt(circle.css("left"))+5);
       line.attr("y2", parseInt(circle.css("top"))+5);
     }
