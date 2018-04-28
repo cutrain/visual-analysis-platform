@@ -22,7 +22,7 @@ def split_row(in1, **params):
     results = [0, 1]
     size = int(len(in1) * (float(params['ratio']) / 100.))
     results[0] = in1[0:size]
-    results[1] = in1[size:]
+    results[1] = in1[size:].reset_index(drop=True)
     return True, results
 
 @err_wrap
