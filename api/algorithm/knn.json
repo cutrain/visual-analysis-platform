@@ -1,0 +1,9 @@
+[
+  {
+    "name":"method",
+    "display":"方法",
+    "type":"list",
+    "default":"classify",
+    "list":["classify", "regress"]
+  }
+]

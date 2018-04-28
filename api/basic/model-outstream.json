@@ -1,0 +1,8 @@
+[
+  {
+    "name":"path",
+    "display":"路径",
+    "type":"file",
+    "default":""
+  }
+]

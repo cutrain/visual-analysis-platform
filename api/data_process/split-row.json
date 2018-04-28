@@ -1,0 +1,8 @@
+[
+  {
+    "name":"ratio",
+    "display":"拆分比例(0-100%)",
+    "type":"number",
+    "default":"75"
+  }
+]

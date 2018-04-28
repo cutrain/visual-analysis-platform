@@ -1,0 +1,45 @@
+[
+  {
+    "name":"database-type",
+    "display":"数据库类型",
+    "type":"list",
+    "default":"MySQL",
+    "list": ["MySQL"]
+  },
+  {
+    "name":"address",
+    "display":"地址",
+    "type":"text",
+    "default":"localhost"
+  },
+  {
+    "name":"port",
+    "display":"端口",
+    "type":"text",
+    "default":"3306"
+  },
+  {
+    "name":"user",
+    "display":"账号",
+    "type":"text",
+    "default":"root"
+  },
+  {
+    "name":"password",
+    "display":"密码",
+    "type":"password",
+    "default":"123"
+  },
+  {
+    "name":"database-name",
+    "display":"数据库名",
+    "type":"text",
+    "default":""
+  },
+  {
+    "name":"table-name",
+    "display":"表名",
+    "type":"text",
+    "default":""
+  }
+]

@@ -1,0 +1,8 @@
+[
+  {
+    "name":"cols",
+    "display":"列名(逗号分隔)",
+    "type":"text",
+    "default":""
+  }
+]
