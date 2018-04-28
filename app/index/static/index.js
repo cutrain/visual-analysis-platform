@@ -1,4 +1,4 @@
-// constant
+// constant 
 in0out1 = ["data-instream", "sql-instream", "model-instream"];
 in1out0 = ["data-outstream", "sql-outstream", "model-outstream"];
 in1out1 = ["random", "sql-execute"];
@@ -275,6 +275,8 @@ var line_to = {};
 var now_node_id= null;
 // *all nodes details [node_id, map:[detail_key, detail_value]]
 var nodes_details = {};
+//current node id
+var curr_id = '';
 
 // common functions
 function getX(obj) {
@@ -393,7 +395,11 @@ function run_button() {
       window.progress = 1;
       setTimeout("check_progress()", 200);
     }
-  );
+    );
+}
+
+function run_single_button() {
+  run_single(curr_id);
 }
 
 function run_single(node_name) {
@@ -413,7 +419,7 @@ function run_single(node_name) {
       window.progress = 1;
       setTimeout("check_progress()", 200);
     }
-  );
+    );
 }
 
 function circle2node(circle_name) {
@@ -454,6 +460,14 @@ function delete_node(node_name) {
     now_node_id = null;
 }
 
+function delete_button(){
+  delete_node(curr_id);
+  var detailBox = $("#detail-box");
+  detailBox.css("display","none");
+  var dataBox = $("#data-box");
+  dataBox.css("display","none");
+}
+
 // component event
 function comp_dragstart(e) {
   e.dataTransfer.effectAllowed = "copy";
@@ -479,6 +493,7 @@ function node_dragstart(e) {
 
 function node_click(e) {
   var id = e.target.id;
+  curr_id = id;
   var node = $("#"+id);
   var type = node.attr("data-type");
   var list = details[type];
@@ -493,10 +508,18 @@ function node_click(e) {
     detailBox.css("flex-direction","column");
     detailBox.css("align-items","flex-start");
   }
+  var dataBox = $("#data-box");
+  if(dataBox.css('display')=='none'){
+    dataBox.css("display","block");
+  }
+  var tableBox = $("#table-box");
   $("#button_run").css("display",'table-cell');
+  $("#button_single_run").css("display",'table-cell');
+  $("#button_delete").css("display",'table-cell');
   save_detail();
   now_node_id = id;
   detailBox.empty();
+  tableBox.empty();
   var saved = nodes_details[id];
 
 
@@ -550,7 +573,7 @@ function node_click(e) {
       var $bt = $('<input></input>');
       $bt.attr("type", "file");
       $bt.attr("id", "pathbt");
-      $bt.attr("onchange", '$("#path").val($("#pathbt").val())');
+      $bt.attr("onchange", 'file_name()');
       $bt.css("order", "3");
       $border.prepend($bt);
     }
@@ -559,9 +582,45 @@ function node_click(e) {
   }  
   var $detail_top = $("<div class='detail-top'style='order:0;'>属性</div>")
   detailBox.prepend($detail_top);
+  var data = {
+    "number":10,
+    "node_name":id
+  };
+  $.post(
+    '/main/sample',
+    JSON.stringify(data),
+    function(reData) {
+      window.progress = 1;
+      setTimeout("check_progress()", 1000);
+      reData = JSON.parse(reData);
+      if (reData.row > 0) {
+        var table = $('<table class="table" border="1"></table>');
+        var row = reData.row;
+        var col = reData.col;
+        var tr = $('<tr></tr>');
+        reData.index.forEach(function (value) {
+          var th = $('<th>'+value+'</th>');
+          tr.append(th);
+        });
+        table.append(tr);
+        reData.data.forEach(function (rowValue) {
+          var tr = $('<tr></tr>');
+          rowValue.forEach(function (value) {
+            var td = $('<td>'+value+'</td>');
+            tr.append(td);
+          });
+          table.append(tr);
+        });
+        tableBox.append(table);
+      }
+    }
+    );
 }
 
-
+function file_name(){
+  var file = document.getElementById('pathbt');
+  $("#path").val(file.name);
+}
 
 // circle event
 function circle_dragstart(e) {

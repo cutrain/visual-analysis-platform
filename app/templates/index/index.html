@@ -93,10 +93,19 @@
         <img src="static/bg.png" alt="" draggable="false">
         <svg id="svg" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" style="position:absolute;top:0;left:0;"></svg>
       </div>
-      <div class="detail-view" style="display:none" id="detail-box">
+      <div class="detail-view" style="display:none" id="detail-box"></div>
+      <div class="data-view" style="display:none" id="data-box">
+        <div class='detail-top'>数据</div>
+        <div class="table-div" id="table-box"></div>
+      </div>
+      <div class='button-single-div' style="display:none" id='button_single_run'>
+        <button class="bubbly-button" onclick="run_single_button()">运行节点</button>
       </div>
       <div class='button-div' style="display:none" id='button_run'>
-        <button class="bubbly-button" onclick="run_button()">运行</button>
+      <button class="bubbly-button" onclick="run_button()">运行全部</button>
+      </div>
+      <div class='delete-div' style="display:none" id='button_delete'>
+        <button class="bubbly-button-delete" onclick="delete_button()">删除节点</button>
       </div>
     </div>
     <div class="top-row">
@@ -107,7 +116,7 @@
         <section>
           <img src="static/logo.jpg" />
           <section>
-            <name>可视化数据分析平台</name>
+            <name align='right'>可视化数据分析平台</name>
             <actions><a>Visual Analysis Platform</a></actions>
           </section>
         </section>
