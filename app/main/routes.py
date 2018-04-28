@@ -4,11 +4,13 @@ from ..models import Hello
 from flask import render_template, request
 
 from .analysis import analysis
+from .analysis import data
 
 import os
 import redis
 import json as js
 import pandas as pd
+import numpy as np
 
 r = redis.StrictRedis(host='localhost', port=6379, charset='utf-8', decode_responses=True)
 
@@ -40,4 +42,30 @@ def progress():
     }
     return js.dumps(tmp)
 
+@main.route('/sample', methods=['POST'])
+def sample():
+    try:
+        a = request.get_data().decode('utf-8')
+        a = js.loads(a)
+        df = data[a['node_name']+'out1']
+        num = max(a['number'], 0)
+        num = min(num, len(df))
+        index = df.columns.tolist()
+        df = np.array(df[0:num]).tolist()
 
+        ret = {}
+        ret = {
+            'col':len(index),
+            'index':index,
+            'row':num,
+            'data': df
+        }
+    except Exception as e:
+        ret = {
+            'col':0,
+            'index':[],
+            'row':0,
+            'data':[],
+            'message':str(e)
+        }
+    return js.dumps(ret).encode('utf-8')

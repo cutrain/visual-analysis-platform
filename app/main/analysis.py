@@ -16,7 +16,15 @@ in1out2 = ["split-row", "split-col"];
 
 data = {}
 
+# status : 0 finish 1 running 2 unvisited -1 failed
+
 def analysis(data):
+    """
+    execute gragh according "all_nodes" "all_lines" "nodes_details"
+    detail:
+    1. delete old nodes which doesn't appear (use old nodes table)
+    2. set new lines, degree setting & type check
+    """
     r.set('global', '1')
     # check nodes' type
 
