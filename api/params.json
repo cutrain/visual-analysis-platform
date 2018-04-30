@@ -215,6 +215,16 @@
       "default":""
     }
   ],
+  "random":[],
+  "sql-execute":[
+    {
+      "name":"sql_command",
+      "display":"SQL语句,用{this}指代该表",
+      "type":"richtext",
+      "default":"SELECT * \nFROM {this}"
+    }
+  ],
+  "predict":[],
   "split-col":[
     {
       "name":"cols",
@@ -231,16 +241,6 @@
       "default":"75"
     }
   ],
-  "random":[],
   "merge-row":[],
-  "merge-col":[],
-  "predict":[],
-  "sql-execute":[
-    {
-      "name":"sql_command",
-      "display":"SQL语句,用{this}指代该表",
-      "type":"richtext",
-      "default":"SELECT * \nFROM {this}"
-    }
-  ]
+  "merge-col":[]
 }

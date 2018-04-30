@@ -16,14 +16,14 @@ type_id = {
 		"model-outstream":"导出模型",
 	},
 	"data_process": {
-		"split-col":"拆分列",
-		"split-row":"拆分行",
 		"random":"打乱数据",
-		"merge-row":"合并行",
-		"merge-col":"合并列",
+		"sql-execute":"SQL语句",
 	},
 	"others": {
 		"predict":"预测",
-		"sql-execute":"SQL语句",
+		"split-col":"拆分列",
+		"split-row":"拆分行",
+		"merge-row":"合并行",
+		"merge-col":"合并列",
 	},
 }
