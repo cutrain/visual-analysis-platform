@@ -1,6 +1,8 @@
 # Visual Analysis Platform
 
-## enviroment
+## 使用指南
+见[wiki](https://github.com/cutrain/visual-analysis-platform/wiki "数据分析平台wiki")
+
 ### 运行环境要求
 ```
 redis
@@ -32,9 +34,6 @@ python3 manage.py runserver
 `./data/`
 ### 模型存放位置
 `./model/`
-
-### 功能使用指南
-见wiki
 
 
 ## 参与开发
