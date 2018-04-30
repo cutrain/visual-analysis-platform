@@ -242,5 +242,18 @@ details = {
     }
   ],
   "merge-row":[],
-  "merge-col":[]
+  "merge-col":[
+    {
+      "name":"how",
+      "display":"合并方式",
+      "type":"list",
+      "default":"inner",
+      "list":[
+        "inner",
+        "left",
+        "right",
+        "outer"
+      ]
+    }
+  ]
 }

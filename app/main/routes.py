@@ -51,7 +51,8 @@ def sample():
         num = max(a['number'], 0)
         num = min(num, len(df))
         index = df.columns.tolist()
-        df = np.array(df[0:num]).tolist()
+        df = df[0:num].fillna('NaN')
+        df = np.array(df).tolist()
 
         ret = {}
         ret = {

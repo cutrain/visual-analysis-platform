@@ -3,5 +3,12 @@
   "display":"合并列",
   "inout":"in2out1",
   "attr": [
+    {
+      "name":"how",
+      "display":"合并方式",
+      "type":"list",
+      "default":"inner",
+      "list":["inner","left","right","outer"]
+    }
   ]
 }
