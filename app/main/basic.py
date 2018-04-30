@@ -2,9 +2,16 @@ import pandas as pd
 import MySQLdb
 from .error import err_wrap
 
+def truepath(path, content=""):
+    import os
+    if os.path.isabs(path):
+        return path
+    return os.path.join(os.getcwd(), content, path)
+
+
 @err_wrap
 def data_instream(**params):
-    return True, pd.read_csv(params['path'])
+    return True, pd.read_csv(truepath(params['path'], "data"))
 
 @err_wrap
 def sql_instream(**params):
@@ -22,13 +29,13 @@ def sql_instream(**params):
 @err_wrap
 def model_instream(**params):
     from sklearn.externals import joblib
-    model = joblib.load(params['path'])
+    model = joblib.load(truepath(params['path'], "model"))
     return True, model
 
 @err_wrap
 def data_outstream(in1, **params):
     df = in1
-    df.to_csv(params['path'], encoding='utf-8', index=False)
+    df.to_csv(truepath(params['path'], "data"), encoding='utf-8', index=False)
     return True, None
 
 @err_wrap
@@ -49,7 +56,7 @@ def sql_outstream(in1, **params):
 def model_outstream(in1, **params):
     model = in1
     from sklearn.externals import joblib
-    joblib.dump(model, params['path'])
+    joblib.dump(model, truepath(params['path'], "model"))
     return True, None
 
 

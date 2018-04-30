@@ -83,8 +83,6 @@ function save_detail() {
       value = tnode.val();
     }else if (type == "password") {
       value = tnode.val();
-    }else if (type == "select") {
-      value = tnode.val();
     }else if (type == "number") {
       value = tnode.val();
     }else if (type == "list") {
@@ -632,7 +630,9 @@ function nodes_init() {
   for (var cls in type_id) {
     var div = $("#" + cls + "-list");
     var cls_list = type_id[cls];
+    var type_count = 0;
     for (var type_name in cls_list) {
+      type_count += 1;
       var $new_type = $(
         '<div class="component" id="' + 
         type_name +
@@ -641,6 +641,7 @@ function nodes_init() {
         '</div>');
       div.append($new_type);
     }
+    $("#" + cls + "-tag").text(type_count);
   }
 }
 
