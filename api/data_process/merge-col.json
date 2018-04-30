@@ -1,2 +1,7 @@
-[
-]
+{
+  "name":"merge-col",
+  "display":"合并列",
+  "inout":"in2out1",
+  "attr": [
+  ]
+}

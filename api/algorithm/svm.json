@@ -1,9 +1,14 @@
-[
-  {
-    "name":"method",
-    "display":"方法",
-    "type":"list",
-    "default":"classify",
-    "list":["classify", "regress"]
-  }
-]
+{
+  "name":"svm",
+  "display":"支持向量机",
+  "inout":"in2out1",
+  "attr": [
+    {
+      "name":"method",
+      "display":"方法",
+      "type":"list",
+      "default":"classify",
+      "list":["classify", "regress"]
+    }
+  ]
+}

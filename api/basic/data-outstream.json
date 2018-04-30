@@ -1,8 +1,13 @@
-[
-  {
-    "name":"path",
-    "display":"路径",
-    "type":"file",
-    "default":""
-  }
-]
+{
+  "name":"data-outstream",
+  "display":"导出数据",
+  "inout":"in1out0",
+  "attr": [
+    {
+      "name":"path",
+      "display":"路径",
+      "type":"file",
+      "default":""
+    }
+  ]
+}

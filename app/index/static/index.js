@@ -1,258 +1,13 @@
 // constant 
-in0out1 = ["data-instream", "sql-instream", "model-instream"];
-in1out0 = ["data-outstream", "sql-outstream", "model-outstream"];
-in1out1 = ["random", "sql-execute"];
-in2out1 = ["naive-bayes", "decision-tree", "svm", "knn", "adaboost", "neural-network", "predict", "merge-row", "merge-col"];
-in1out2 = ["split-row", "split-col"];
+// inout read from "inout.js" in "index.html"
 
 typeList = [];
 typeList = typeList.concat(in0out1);
 typeList = typeList.concat(in1out0);
 typeList = typeList.concat(in1out1);
-typeList = typeList.concat(in2out1);
 typeList = typeList.concat(in1out2);
-
-details = {
-  "data-instream" : [
-  {
-    "name":"path",
-    "display":"路径",
-    "type":"file",
-    "default":"",
-  },
-  ],
-
-  "model-instream" : [
-  {
-    "name":"path",
-    "display":"路径",
-    "type":"file",
-    "default":"",
-  },
-  ],
-
-  "data-outstream" : [
-  {
-    "name":"path",
-    "display":"路径",
-    "type":"file",
-    "default":"",
-  },
-  ],
-
-  "model-outstream" : [
-  {
-    "name":"path",
-    "display":"路径",
-    "type":"file",
-    "default":"",
-  },
-  ],
-
-  "sql-instream" : [
-  {
-    "name":"database-type",
-    "display":"数据库类型",
-    "type":"list",
-    "default":"MySQL",
-    "list": ["MySQL"],
-  },
-  {
-    "name":"address",
-    "display":"地址",
-    "type":"text",
-    "default":"localhost",
-  },
-  {
-    "name":"port",
-    "display":"端口",
-    "type":"text",
-    "default":"3306",
-  },
-  {
-    "name":"user",
-    "display":"账号",
-    "type":"text",
-    "default":"root",
-  },
-  {
-    "name":"password",
-    "display":"密码",
-    "type":"password",
-    "default":"123",
-  },
-  {
-    "name":"database-name",
-    "display":"数据库名",
-    "type":"text",
-    "default":"",
-  },
-  {
-    "name":"table-name",
-    "display":"表名",
-    "type":"text",
-    "default":"",
-  },
-  ],
-
-  "sql-outstream" : [
-  {
-    "name":"database-type",
-    "display":"数据库类型",
-    "type":"list",
-    "default":"MySQL",
-    "list": ["MySQL"],
-  },
-  {
-    "name":"address",
-    "display":"地址",
-    "type":"text",
-    "default":"localhost",
-  },
-  {
-    "name":"port",
-    "display":"端口",
-    "type":"text",
-    "default":"3306",
-  },
-  {
-    "name":"user",
-    "display":"账号",
-    "type":"text",
-    "default":"root",
-  },
-  {
-    "name":"password",
-    "display":"密码",
-    "type":"password",
-    "default":"root",
-  },
-  {
-    "name":"database-name",
-    "display":"数据库名",
-    "type":"text",
-    "default":"",
-  },
-  {
-    "name":"table-name",
-    "display":"表名",
-    "type":"text",
-    "default":"",
-  },
-  ],
-
-  "random" : [
-  ],
-
-  "merge-row" : [
-  ],
-
-  "merge-col" : [
-  ],
-
-  "split-row" : [
-  {
-    "name":"ratio",
-    "display":"拆分比例(0-100%)",
-    "type":"number",
-    "default":"75"
-  }
-  ],
-
-  "split-col" : [
-  {
-    "name":"cols",
-    "display":"列名(逗号分隔)",
-    "type":"text",
-    "default":""
-  }
-  ],
-
-  "naive-bayes" : [
-  ],
-
-  "decision-tree" : [
-  {
-    "name":"method",
-    "display":"方法",
-    "type":"list",
-    "default":"classify",
-    "list":["classify", "regress"]
-  }
-  ],
-
-  "svm" : [
-  {
-    "name":"method",
-    "display":"方法",
-    "type":"list",
-    "default":"classify",
-    "list":["classify", "regress"]
-  }
-  ],
-
-  "knn" : [
-  {
-    "name":"method",
-    "display":"方法",
-    "type":"list",
-    "default":"classify",
-    "list":["classify", "regress"]
-  }
-  ],
-
-  "adaboost" : [
-  {
-    "name":"method",
-    "display":"方法",
-    "type":"list",
-    "default":"classify",
-    "list":["classify", "regress"]
-  }
-  ],
-
-  "neural-network" : [
-  {
-    "name":"method",
-    "display":"方法",
-    "type":"list",
-    "default":"classify",
-    "list":["classify", "regress"]
-  },
-  {
-    "name":"activation",
-    "display":"激发函数",
-    "type":"list",
-    "default":"relu",
-    "list":["relu", "identity", "logistic", "tanh"]
-  },
-  {
-    "name":"solver",
-    "display":"优化器",
-    "type":"list",
-    "default":"adam",
-    "list":["adam", "lbfgs", "sgd"]
-  },
-  {
-    "name":"alpha",
-    "display":"alpha",
-    "type":"number",
-    "default":"0.0001",
-  },
-  ],
-
-  "sql-execute": [
-  {
-    "name":"sql_command",
-    "display":"SQL语句,用{this}指代该表",
-    "type":"richtext",
-    "default":"SELECT * \nFROM {this}"
-  }
-  ],
-
-  "predict" : [
-  ],
-};
+typeList = typeList.concat(in2out1);
+typeList = typeList.concat(in2out2);
 
 // initialize
 // count all type [type, num(int)]
@@ -590,8 +345,6 @@ function node_click(e) {
     '/main/sample',
     JSON.stringify(data),
     function(reData) {
-      window.progress = 1;
-      setTimeout("check_progress()", 1000);
       reData = JSON.parse(reData);
       if (reData.row > 0) {
         var table = $('<table class="table" border="1"></table>');
@@ -710,12 +463,6 @@ function circle_drop(e) {
   svg.append($line);
   svg.html(svg.html());
 }
-
-// component attr
-var ele_components = $(".component");
-ele_components.attr("draggable", "true");
-ele_components.attr("ondragstart", "comp_dragstart(event)");
-ele_components.attr("ondragend", "comp_dragend(event)");
 
 // canvas event
 function canvas_dragover(e) {
@@ -878,6 +625,32 @@ function canvas_drop(e) {
   }
   return false;
 }
+
+function nodes_init() {
+  // "type_id" read from "nodes.js" in "index.html"
+  // type_id : {"class_name" : {"type_name" : "display_name"}}
+  for (var cls in type_id) {
+    var div = $("#" + cls + "-list");
+    var cls_list = type_id[cls];
+    for (var type_name in cls_list) {
+      var $new_type = $(
+        '<div class="component" id="' + 
+        type_name +
+        '">' + 
+        cls_list[type_name] + 
+        '</div>');
+      div.append($new_type);
+    }
+  }
+}
+
+nodes_init();
+
+// component attr
+var ele_components = $(".component");
+ele_components.attr("draggable", "true");
+ele_components.attr("ondragstart", "comp_dragstart(event)");
+ele_components.attr("ondragend", "comp_dragend(event)");
 
 // canvas attr
 var ele_canvas = $("#svg");

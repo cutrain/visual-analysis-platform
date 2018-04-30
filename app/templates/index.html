@@ -6,6 +6,9 @@
   <title>可视化数据分析平台</title>
   <link href="{{url_for('.static', filename='index.css')}}" rel="stylesheet" type="text/css"> 
   <link href="{{url_for('.static', filename='style.css')}}" rel="stylesheet" type="text/css"> 
+  <script src="{{url_for('.static', filename='api/params.js')}}"></script>
+  <script src="{{url_for('.static', filename='api/inout.js')}}"></script>
+  <script src="{{url_for('.static', filename='api/nodes.js')}}"></script>
   <!-- <link href="static/index.css" rel="stylesheet" type="text/css"> -->
   <!-- <link href="static/style.css" rel="stylesheet" type="text/css"> -->
   <!-- <link href="{{url_for('static', filename='bootstrap/css/bootstrap.min.css')}}" rel="stylesheet" type="text/css"> -->
@@ -24,15 +27,15 @@
             <div class="tag">6</div>
           </a>
           <ul class="secnav">
-            <li>
-              <div class="component" id="data-instream" style="order:0;">导入数据</div>
-              <div class="component" id="sql-instream" style="order:1;">SQL导入数据</div>
-              <div class="component" id="model-instream" style="order:2;">导入模型</div>
-              <div class="component" id="data-outstream" style="order:3;">导出数据</div>
-            </li>
-            <li>
-              <div class="component" id="sql-outstream" style="order:4;">SQL导出数据</div>
-              <div class="component" id="model-outstream" style="order:5;">导出模型</div>
+            <li id="basic-list">
+              <!--<div class="component" id="data-instream" style="order:0;">导入数据</div>-->
+              <!--<div class="component" id="sql-instream" style="order:1;">SQL导入数据</div>-->
+              <!--<div class="component" id="model-instream" style="order:2;">导入模型</div>-->
+              <!--<div class="component" id="data-outstream" style="order:3;">导出数据</div>-->
+            <!--</li>-->
+            <!--<li>-->
+              <!--<div class="component" id="sql-outstream" style="order:4;">SQL导出数据</div>-->
+              <!--<div class="component" id="model-outstream" style="order:5;">导出模型</div>-->
             </li>
           </ul>
         </li>
@@ -43,12 +46,12 @@
             <div class="tag">5</div>
           </a>
           <ul class="secnav">
-            <li>
-              <div class="component" id="random" style="order:0;">打乱数据</div>
-              <div class="component" id="merge-row" style="order:1;">合并行</div>
-              <div class="component" id="merge-col" style="order:2;">合并列</div>
-              <div class="component" id="split-row" style="order:3;">拆分行</div>
-              <div class="component" id="split-col" style="order:4;">拆分列</div>
+            <li id="data_process-list">
+              <!--<div class="component" id="random" style="order:0;">打乱数据</div>-->
+              <!--<div class="component" id="merge-row" style="order:1;">合并行</div>-->
+              <!--<div class="component" id="merge-col" style="order:2;">合并列</div>-->
+              <!--<div class="component" id="split-row" style="order:3;">拆分行</div>-->
+              <!--<div class="component" id="split-col" style="order:4;">拆分列</div>-->
             </li>
           </ul>
         </li>
@@ -61,13 +64,13 @@
             <div class="tag">6</div>
           </a>
           <ul class="secnav">
-            <li>
-              <div class="component" id="naive-bayes" style="order:0;">朴素贝叶斯</div>
-              <div class="component" id="decision-tree" style="order:1;">决策树</div>
-              <div class="component" id="svm" style="order:2;">支持向量机</div>
-              <div class="component" id="knn" style="order:3;">K近邻</div>
-              <div class="component" id="adaboost" style="order:4;">Adaboost</div>
-              <div class="component" id="neural-network" style="order:5;">神经网络</div>
+            <li id="algorithm-list">
+              <!--<div class="component" id="naive-bayes" style="order:0;">朴素贝叶斯</div>-->
+              <!--<div class="component" id="decision-tree" style="order:1;">决策树</div>-->
+              <!--<div class="component" id="svm" style="order:2;">支持向量机</div>-->
+              <!--<div class="component" id="knn" style="order:3;">K近邻</div>-->
+              <!--<div class="component" id="adaboost" style="order:4;">Adaboost</div>-->
+              <!--<div class="component" id="neural-network" style="order:5;">神经网络</div>-->
             </li>
           </ul>
         </li>
@@ -80,9 +83,10 @@
             <div class="tag">2</div>
           </a>
           <ul class="secnav">
-            <li>     
-              <div class="component" id="predict" style="order:0;" >预测</div>
-              <div class="component" id="sql-execute" style="order:1;">SQL语句</div>
+            <li id="others-list">
+              <!--<div class="component" id="predict" style="order:0;" >预测</div>-->
+              <!--<div class="component" id="sql-execute" style="order:1;">SQL语句</div>-->
+              <!--<div class="component" id="sort" style="order:2;">排序</div>-->
             </li>
           </ul>
         </li>

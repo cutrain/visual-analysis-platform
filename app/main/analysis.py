@@ -8,11 +8,8 @@ from .utility import *
 from .machine_learning import *
 
 r = redis.StrictRedis(host='localhost', port=6379, charset='utf-8', decode_responses=True)
-in0out1 = ["data-instream", "sql-instream", "model-instream"];
-in1out0 = ["data-outstream", "sql-outstream", "model-outstream"];
-in1out1 = ["random", "sql-execute"];
-in2out1 = ["naive-bayes", "decision-tree", "svm", "knn", "adaboost", "neural-network", "predict", "merge-row", "merge-col"];
-in1out2 = ["split-row", "split-col"];
+
+from .api.inout import in0out1, in1out0, in1out1, in1out2, in2out1, in2out2
 
 data = {}
 

@@ -1,4 +1,4 @@
-{
+details = {
   "adaboost":[
     {
       "name":"method",

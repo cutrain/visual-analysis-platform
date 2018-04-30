@@ -1,8 +1,13 @@
-[
-  {
-    "name":"cols",
-    "display":"列名(逗号分隔)",
-    "type":"text",
-    "default":""
-  }
-]
+{
+  "name":"split-col",
+  "display":"拆分列",
+  "inout":"in1out2",
+  "attr": [
+    {
+      "name":"cols",
+      "display":"列名(逗号分隔)",
+      "type":"text",
+      "default":""
+    }
+  ]
+}

@@ -1,8 +1,13 @@
-[
-  {
-    "name":"ratio",
-    "display":"拆分比例(0-100%)",
-    "type":"number",
-    "default":"75"
-  }
-]
+{
+  "name":"split-row",
+  "display":"拆分行",
+  "inout":"in1out2",
+  "attr": [
+    {
+      "name":"ratio",
+      "display":"拆分比例(0-100%)",
+      "type":"number",
+      "default":"75"
+    }
+  ]
+}

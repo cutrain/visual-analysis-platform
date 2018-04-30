@@ -1,2 +1,7 @@
-[
-]
+{
+  "name":"predict",
+  "display":"预测",
+  "inout":"in2out1",
+  "attr": [
+  ]
+}
