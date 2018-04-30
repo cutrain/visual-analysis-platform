@@ -215,6 +215,34 @@ details = {
       "default":""
     }
   ],
+  "sort":[
+    {
+      "name":"columns",
+      "display":"列名",
+      "type":"text",
+      "default":""
+    },
+    {
+      "name":"ascending",
+      "display":"升序",
+      "type":"list",
+      "default":"True",
+      "list":[
+        "True",
+        "False"
+      ]
+    },
+    {
+      "name":"na_position",
+      "display":"Nan所在位置",
+      "type":"list",
+      "default":"last",
+      "list":[
+        "first",
+        "last"
+      ]
+    }
+  ],
   "random":[],
   "sql-execute":[
     {
@@ -227,8 +255,8 @@ details = {
   "predict":[],
   "split-col":[
     {
-      "name":"cols",
-      "display":"列名(逗号分隔)",
+      "name":"columns",
+      "display":"列名",
       "type":"text",
       "default":""
     }

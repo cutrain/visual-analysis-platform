@@ -4,8 +4,8 @@
   "inout":"in1out2",
   "attr": [
     {
-      "name":"cols",
-      "display":"列名(逗号分隔)",
+      "name":"columns",
+      "display":"列名",
       "type":"text",
       "default":""
     }

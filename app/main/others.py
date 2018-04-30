@@ -31,7 +31,7 @@ def split_row(in1, **params):
 @err_wrap
 def split_col(in1, **params):
     results = [0, 1]
-    cols = params['cols'].split(',')
+    cols = params['columns'].split(',')
     results[1] = in1[cols]
     results[0] = in1.drop(cols, axis=1)
     return True, results

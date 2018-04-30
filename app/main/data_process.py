@@ -24,5 +24,11 @@ def sql_execute(in1, **params):
     con.close()
     return True, df
 
+@err_wrap
+def sort(in1, **params):
+    params.pop('in2')
+    cols = params.pop('columns').split(',')
+    asc = True if params.pop('ascending') == "True" else False
+    return True, in1.sort_values(by=cols, ascending=asc, kind='mergesort', **params)
 
 

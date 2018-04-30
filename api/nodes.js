@@ -16,6 +16,7 @@ type_id = {
 		"model-outstream":"导出模型",
 	},
 	"data_process": {
+		"sort":"排序",
 		"random":"打乱数据",
 		"sql-execute":"SQL语句",
 	},

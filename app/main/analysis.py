@@ -2,10 +2,10 @@ import redis
 import pandas as pd
 import MySQLdb
 import queue
+from .algorithm import *
 from .basic import *
-from .process import *
-from .utility import *
-from .machine_learning import *
+from .data_process import *
+from .others import *
 
 r = redis.StrictRedis(host='localhost', port=6379, charset='utf-8', decode_responses=True)
 
