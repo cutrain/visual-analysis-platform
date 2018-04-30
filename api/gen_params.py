@@ -1,3 +1,4 @@
+import os
 import json as js
 
 import algorithm
@@ -6,6 +7,9 @@ import data_process
 import others
 
 if __name__ == "__main__":
+    path = os.path.split(os.path.realpath(__file__))[0]
+    os.chdir(path)
+
     params = {}
     params.update(algorithm.gen_params())
     params.update(basic.gen_params())

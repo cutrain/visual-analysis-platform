@@ -5,8 +5,8 @@
   "attr": [
     {
       "name":"path",
-      "display":"路径",
-      "type":"file",
+      "display":"文件名",
+      "type":"text",
       "default":""
     }
   ]
