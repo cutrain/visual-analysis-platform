@@ -172,13 +172,13 @@
 
 .circle{
   position:absolute;
-  border-radius:5px;
+  border-radius:8px;
   border-color:rgb(80,80,80);
   border-style:solid;
   border-width:2px;
   background:white;
-  width:5px;
-  height:5px;
+  width:8px;
+  height:8px;
 }
 
 .circle:hover{

@@ -1,5 +1,6 @@
 // constant 
 // inout read from "inout.js" in "index.html"
+circle_radius = 8
 
 typeList = [];
 typeList = typeList.concat(in0out1);
@@ -378,8 +379,8 @@ function circle_dragstart(e) {
   e.dataTransfer.effectAllowed = "all";
   e.dataTransfer.setData("from", e.target.id);
   var circle = $("#" + e.target.id);
-  var x1 = parseInt(circle.css("left")) + 5;
-  var y1 = parseInt(circle.css("top")) + 5;
+  var x1 = parseInt(circle.css("left")) + 8;
+  var y1 = parseInt(circle.css("top")) + 8;
 
   var $line = $('<line id="line"/>');
   $line.css("stroke", "rgb(99,99,99)");
@@ -437,10 +438,10 @@ function circle_drop(e) {
 
   var from = $("#" + from_id);
   var to = $("#" + to_id);
-  var x1 = parseInt(from.css("left")) + 5;
-  var y1 = parseInt(from.css("top")) + 5;
-  var x2 = parseInt(to.css("left")) + 5;
-  var y2 = parseInt(to.css("top")) + 5;
+  var x1 = parseInt(from.css("left")) + 8;
+  var y1 = parseInt(from.css("top")) + 8;
+  var x2 = parseInt(to.css("left")) + 8;
+  var y2 = parseInt(to.css("top")) + 8;
 
   var from_list = line_from[from_node_id];
   var to_list = line_to[to_node_id];;
@@ -520,65 +521,65 @@ function canvas_drop(e) {
       var out1 = $circle.clone();
       out1.attr("id", id + "out1");
       out1.css("top", y + node[0].clientHeight);
-      out1.css("left", x + node[0].clientWidth/2 - 2.5);
+      out1.css("left", x + node[0].clientWidth/2 - 4);
       node.after(out1);
 
     }else if (in_array(type,in1out0)) {
       var in1 = $circle.clone();
       in1.attr("id", id + "in1");
-      in1.css("top", y - 5);
-      in1.css("left", x + node[0].clientWidth/2 - 2.5);
+      in1.css("top", y - 8);
+      in1.css("left", x + node[0].clientWidth/2 - 4);
       node.after(in1);
 
     }else if (in_array(type,in1out1)) {
       var in1 = $circle.clone();
       in1.attr("id", id + "in1");
-      in1.css("top", y - 5);
-      in1.css("left", x + node[0].clientWidth/2 - 2.5);
+      in1.css("top", y - 8);
+      in1.css("left", x + node[0].clientWidth/2 - 4);
       node.after(in1);
 
       var out1 = $circle.clone();
       out1.attr("id", id + "out1");
       out1.css("top", y + node[0].clientHeight);
-      out1.css("left", x + node[0].clientWidth/2 - 2.5);
+      out1.css("left", x + node[0].clientWidth/2 - 4);
       node.after(out1);
 
     }else if (in_array(type,in1out2)) {
       var in1 = $circle.clone();
       in1.attr("id", id + "in1");
-      in1.css("top", y - 5);
-      in1.css("left", x + node[0].clientWidth/2 - 2.5);
+      in1.css("top", y - 8);
+      in1.css("left", x + node[0].clientWidth/2 - 4);
       node.after(in1);
 
       var out1 = $circle.clone();
       out1.attr("id", id + "out1");
       out1.css("top", y + node[0].clientHeight);
-      out1.css("left", x + node[0].clientWidth/3 - 2.5);
+      out1.css("left", x + node[0].clientWidth/3 - 3);
       node.after(out1);
 
       var out2 = $circle.clone();
       out2.attr("id", id + "out2");
       out2.css("top", y + node[0].clientHeight);
-      out2.css("left", x + node[0].clientWidth*2/3 - 2.5);
+      out2.css("left", x + node[0].clientWidth*2/3 - 3);
       node.after(out2);
 
     }else if (in_array(type,in2out1)) {
       var in1 = $circle.clone();
       in1.attr("id", id + "in1");
-      in1.css("top", y - 5);
-      in1.css("left", x + node[0].clientWidth/3 - 2.5);
+      in1.css("top", y - 8);
+      in1.css("left", x + node[0].clientWidth/3 - 3);
       node.after(in1);
 
       var in2 = $circle.clone();
       in2.attr("id", id + "in2");
-      in2.css("top", y - 5);
-      in2.css("left", x + node[0].clientWidth*2/3 - 2.5);
+      in2.css("top", y - 8);
+      in2.css("left", x + node[0].clientWidth*2/3 - 3);
       node.after(in2);
 
       var out1 = $circle.clone();
       out1.attr("id", id + "out1");
       out1.css("top", y + node[0].clientHeight);
-      out1.css("left", x + node[0].clientWidth/2 - 2.5);
+      out1.css("left", x + node[0].clientWidth/2 - 4);
       node.after(out1);
     }
 
@@ -606,16 +607,16 @@ function canvas_drop(e) {
       console.log("get " + line_name + " " + circle_name);
       var line = $("#"+line_name);
       var circle = $("#"+circle_name);
-      line.attr("x1", parseInt(circle.css("left"))+5);
-      line.attr("y1", parseInt(circle.css("top"))+5);
+      line.attr("x1", parseInt(circle.css("left"))+8);
+      line.attr("y1", parseInt(circle.css("top"))+8);
     }
     for (var line_name in to_list) {
       var circle_name = to_list[line_name];
       console.log("get " + line_name + " " + circle_name);
       var line = $("#"+line_name);
       var circle = $("#"+circle_name);
-      line.attr("x2", parseInt(circle.css("left"))+5);
-      line.attr("y2", parseInt(circle.css("top"))+5);
+      line.attr("x2", parseInt(circle.css("left"))+8);
+      line.attr("y2", parseInt(circle.css("top"))+8);
     }
     var svg = $("#svg");
     svg.html(svg.html());
