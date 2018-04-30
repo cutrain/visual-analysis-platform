@@ -4,3 +4,5 @@ __pycache__/
 back.log
 *.pyc
 *.csv
+/data/
+/model/
