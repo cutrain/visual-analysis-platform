@@ -44,7 +44,7 @@ python3 manage.py runserver
 添加新的json文件到 `api/*/*.json`
 
 json格式如下,
-```json
+```js
 {
   "name":"knn", // 功能id
   "display":"k近邻", // 功能显示内容
@@ -61,6 +61,7 @@ json格式如下,
 }
 ```
 添加后,运行脚本更新api ```python3 api/gen_params.py```
+更新app/main中的函数
 ### node attribute's type
 + *list* 列表列出可选项,添加"list"的key
 ```json
