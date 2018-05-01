@@ -106,13 +106,13 @@ function render_nodes(data) {
     var node = $("#"+key);
     var color;
     if (data[key] == '0')
-      color = 'rgba(0,128,0,0.6)';
+      color = '#D5F5E3';
     else if (data[key] == '-1')
-      color = 'rgba(255,0,0,0.6)';
+      color = '#FADBD8';
     else if (data[key] == '1')
-      color = 'rgba(255,255,0,0.6)';
+      color = '#FCF3CF';
     else
-      color = 'rgba(128,128,128,0.6)';
+      color = 'rgba(128,128,128,0)';
     node.css("background", color);
   }
 }
