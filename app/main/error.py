@@ -4,6 +4,6 @@ def err_wrap(func):
             return func(*args, **kwargs)
         except Exception as e:
             print("error happend in excuting : " + func.__name__ + ", got :", e)
-            return False, None
+            return False, [e, None]
     return wrap
 

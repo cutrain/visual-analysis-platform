@@ -8,11 +8,17 @@ from .analysis import data
 
 import os
 import redis
+import pickle
 import json as js
 import pandas as pd
 import numpy as np
 
+debug = True
+
 r = redis.StrictRedis(host='localhost', port=6379, charset='utf-8', decode_responses=True)
+r_data = redis.StrictRedis(host='localhost', port=6379)
+r.delete('status')
+r.delete('data')
 
 @main.route('/')
 def index():
@@ -44,10 +50,11 @@ def progress():
 
 @main.route('/sample', methods=['POST'])
 def sample():
+    finish = False
     try:
         a = request.get_data().decode('utf-8')
         a = js.loads(a)
-        df = data[a['node_name']+'out1']
+        df = pickle.loads(r_data.hget('data', a['node_name']+'out1'))
         num = max(a['number'], 0)
         num = min(num, len(df))
         index = df.columns.tolist()
@@ -61,12 +68,35 @@ def sample():
             'row':num,
             'data': df
         }
+        finish = True
+
+    except AttributeError as e:
+        print('Error in route : sapmle Attribute')
+        print(e)
+        if type(df) is "list":
+            df = df[0]
+        ret = {
+            'col':1,
+            'index':['ErrorMessage'],
+            'row':1,
+            'data':[[str(df[0])]]
+        }
     except Exception as e:
+        print('Error in route : sapmle Exception')
+        print(e)
+        ret = {
+            'col':1,
+            'index':['ErrorMessage'],
+            'row':1,
+            'data':[[str(e)]]
+        }
+    if not finish and not debug:
         ret = {
             'col':0,
             'index':[],
             'row':0,
             'data':[],
-            'message':str(e)
+            'message':ret['data']
         }
+
     return js.dumps(ret).encode('utf-8')

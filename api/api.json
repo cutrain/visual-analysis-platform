@@ -10,7 +10,8 @@
         "node_id":{
           "key":"value"
         }
-      }
+      },
+      "run":["node_name"]
     },
     "return":{"status":"0"}
   },
@@ -33,8 +34,7 @@
       "row":"<int>",
       "col":"<int>",
       "index":["col1","col<int>"],
-      "data":[["row1col1","row1col<int:col>"],["row<int:row>col1","row<int:row>col<int:col>"]],
-      "message":"<string>"
+      "data":[["row1col1","row1col<int:col>"],["row<int:row>col1","row<int:row>col<int:col>"]]
     }
   }
 ]
