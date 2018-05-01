@@ -15,6 +15,9 @@ python3
 sudo apt-get install python3
 sudo apt-get install redis-server
 pip install -r requirements.txt
+# if you want use SQL Server input following
+# sudo apt-get install unixodbc unixodbc-dev freetds-dev freetds-bin tdsodbc 
+# pip install pymssql
 ```
 
 ### windows(x64) 安装

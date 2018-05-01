@@ -8,7 +8,7 @@
       "display":"数据库类型",
       "type":"list",
       "default":"MySQL",
-      "list": ["MySQL"]
+      "list": ["MySQL","sqlite","oracle","SQLServer","PostgreSQL"]
     },
     {
       "name":"address",
@@ -41,10 +41,10 @@
       "default":""
     },
     {
-      "name":"table-name",
-      "display":"表名",
-      "type":"text",
-      "default":""
+      "name":"command",
+      "display":"SQL查询语句",
+      "type":"richtext",
+      "default":"SELECT *\n FROM tableA"
     }
   ]
 }

@@ -8,7 +8,7 @@
       "display":"数据库类型",
       "type":"list",
       "default":"MySQL",
-      "list": ["MySQL"]
+      "list": ["MySQL","sqlite","oracle","SQLServer","PostgreSQL"]
     },
     {
       "name":"address",
@@ -45,6 +45,13 @@
       "display":"表名",
       "type":"text",
       "default":""
+    },
+    {
+      "name":"if_exists",
+      "display":"冲突解决方式",
+      "type":"list",
+      "default":"fail",
+      "list":["replace","append","fail"]
     }
   ]
 }

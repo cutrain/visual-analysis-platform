@@ -96,7 +96,11 @@
       "type":"list",
       "default":"MySQL",
       "list":[
-        "MySQL"
+        "MySQL",
+        "sqlite",
+        "oracle",
+        "SQLServer",
+        "PostgreSQL"
       ]
     },
     {
@@ -130,10 +134,10 @@
       "default":""
     },
     {
-      "name":"table-name",
-      "display":"表名",
-      "type":"text",
-      "default":""
+      "name":"command",
+      "display":"SQL查询语句",
+      "type":"richtext",
+      "default":"SELECT *\n FROM tableA"
     }
   ],
   "model-instream":[
@@ -167,7 +171,11 @@
       "type":"list",
       "default":"MySQL",
       "list":[
-        "MySQL"
+        "MySQL",
+        "sqlite",
+        "oracle",
+        "SQLServer",
+        "PostgreSQL"
       ]
     },
     {
@@ -205,6 +213,17 @@
       "display":"表名",
       "type":"text",
       "default":""
+    },
+    {
+      "name":"if_exists",
+      "display":"冲突解决方式",
+      "type":"list",
+      "default":"fail",
+      "list":[
+        "replace",
+        "append",
+        "fail"
+      ]
     }
   ],
   "model-outstream":[

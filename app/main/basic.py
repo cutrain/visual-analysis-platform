@@ -1,5 +1,6 @@
 import pandas as pd
-import MySQLdb
+import sqlite3
+
 from .error import err_wrap
 
 def truepath(path, content=""):
@@ -15,14 +16,45 @@ def data_instream(**params):
 
 @err_wrap
 def sql_instream(**params):
-    con = MySQLdb.connect(
-        host=params['address'],
-        port=params['port'],
-        user=params['user'],
-        passwd=params['password'],
-        db=params['database-name']
-    )
-    df = pd.read_sql('select * from ' + papram['table-name'] + ';', con)
+    dbtype = params['database-type']
+    if dbtype == 'MySQL':
+        import MySQLdb
+        con = MySQLdb.connect(
+            host=params['address'],
+            port=params['port'],
+            user=params['user'],
+            passwd=params['password'],
+            db=params['database-name']
+        )
+    elif dbtype == 'sqlite':
+        con = sqlite3.connect(truepath(params['database-name'], 'data'))
+    elif dbtype == 'oracle':
+        import cx_Oracle as cO
+        con = cO.connect(
+            params['user'],
+            params['password'],
+            params['address'] + '/' + params['host'] + ':' + params['port'] + '/' + params['database-name']
+        )
+    elif dbtype == 'SQLServer':
+        import pymssql
+        con = pymssql.connect(
+            server=params['address'],
+            port=params['port'],
+            user=params['user'],
+            password=params['password'],
+            database=params['database-name']
+        )
+    elif dbtype == "PostgreSQL":
+        import psycopg2
+        con = psycopg2.connect(
+            host=params['address'],
+            port=params['port'],
+            user=params['user'],
+            password=params['password'],
+            database=params['database-name']
+        )
+
+    df = pd.read_sql(params['command'], con)
     con.close()
     return True, df
 
@@ -41,14 +73,46 @@ def data_outstream(in1, **params):
 @err_wrap
 def sql_outstream(in1, **params):
     df = in1
-    con = MySQLdb.connect(
-        host=params['address'],
-        port=params['port'],
-        user=params['user'],
-        passwd=params['password'],
-        db=params['database-name']
-    )
-    df.to_sql(params['table-name'], con, flavor='mysql', if_exists='append')
+    dbtype = params['database-type']
+    if dbtype == "MySQL":
+        import MySQLdb
+        con = MySQLdb.connect(
+            host=params['address'],
+            port=params['port'],
+            user=params['user'],
+            passwd=params['password'],
+            db=params['database-name']
+        )
+    elif dbtype == 'sqlite':
+        con = sqlite3.connect(truepath(params['database-name'], 'data'))
+    elif dbtype == 'oracle':
+        import cx_Oracle as cO
+        con = cO.connect(
+            params['user'],
+            params['password'],
+            params['address'] + '/' + params['host'] + ':' + params['port'] + '/' + params['database-name']
+        )
+    elif dbtype == 'SQLServer':
+        import pymssql
+        con = pymssql.connect(
+            server=params['address'],
+            port=params['port'],
+            user=params['user'],
+            password=params['password'],
+            database=params['database-name']
+        )
+    elif dbtype == "PostgreSQL":
+        import psycopg2
+        con = psycopg2.connect(
+            host=params['address'],
+            port=params['port'],
+            user=params['user'],
+            password=params['password'],
+            database=params['database-name']
+        )
+
+    df.to_sql(params['table-name'], con, flavor='mysql', if_exists=params['if_exists'])
+    con.commit()
     con.close()
     return True, None
 
