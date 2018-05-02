@@ -46,8 +46,8 @@ python3 manage.py runserver
 json格式如下,
 ```js
 {
-  "name":"knn", // 功能id
-  "display":"k近邻", // 功能显示内容
+  "name":"knn", // 功能id,与函数实现接口名称相同，函数名中'-'替换为'_'
+  "display":"k近邻", // 功能显示内容
   "inout":"in2out1", // 输入输出个数
   "attr": [ // 功能参数表
     {
@@ -62,7 +62,7 @@ json格式如下,
 ```
 添加后,运行脚本更新api ```python3 api/gen_params.py```
 更新app/main中的函数
-### node attribute's type
+### 节点参数类型表
 + *list* 列表列出可选项,添加"list"的key
 ```json
 {
