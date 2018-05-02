@@ -58,7 +58,11 @@ def sample():
         num = max(a['number'], 0)
         num = min(num, len(df))
         index = df.columns.tolist()
-        df = df[0:num].fillna('NaN')
+        df = df[0:num]
+        df = df.round(3)
+        for i in range(len(index)):
+            index[i] += '\n(' + str(df[index[i]].dtype) + ')'
+        df = df.fillna('NaN')
         df = np.array(df).tolist()
 
         ret = {}

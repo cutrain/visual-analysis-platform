@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 from .error import err_wrap
 
 @err_wrap
@@ -75,4 +76,35 @@ def drop_duplicate(in1, **params):
         cols = None
     a = pd.DataFrame([1,2,3])
     return True, in1.drop_duplicates(subset=cols, keep=keep)
+
+@err_wrap
+def normalization(in1, **params):
+    ret = in1.copy()
+    method = params.pop("method", "z-score")
+    cols = params.pop("columns", "").split(",")
+    cnt = 0
+    for col in cols:
+        if len(col) == 0:
+            cnt += 1
+    if cnt == len(cols):
+        cols = in1.columns.tolist()
+    tmp = []
+    for i in range(len(cols)):
+        if ret[cols[i]].dtype != np.dtype('O'):
+            tmp.append(cols[i])
+    cols = tmp
+
+    if method == 'z-score':
+        ret[cols] = (ret[cols] - ret[cols].mean())/ (ret[cols].std() + 1e-20)
+    elif method == 'min-max':
+        ret[cols] = (ret[cols] - ret[cols].min()) / (ret[cols].max() - ret[cols].min() + 1e-20)
+    elif method == 'log':
+        ret[cols] = np.log(ret[cols]) / np.log(ret[cols].max())
+    elif method == 'atan':
+        ret[cols] = np.arctan(ret[cols]) * 2. / np.pi
+    else:
+        return False, "unknown normalization method"
+
+    return True, ret
+
 

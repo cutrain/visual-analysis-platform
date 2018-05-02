@@ -308,6 +308,26 @@ details = {
       "default":"SELECT * \nFROM {this}"
     }
   ],
+  "normalization":[
+    {
+      "name":"method",
+      "display":"标准化方式",
+      "type":"list",
+      "default":"z-score",
+      "list":[
+        "z-score",
+        "min-max",
+        "log",
+        "atan"
+      ]
+    },
+    {
+      "name":"columns",
+      "display":"列",
+      "type":"text",
+      "default":""
+    }
+  ],
   "fillna":[
     {
       "name":"fill_type",

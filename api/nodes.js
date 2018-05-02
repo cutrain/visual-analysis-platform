@@ -19,6 +19,7 @@ type_id = {
 		"sort":"排序",
 		"random":"打乱数据",
 		"sql-execute":"SQL语句",
+		"normalization":"标准化",
 		"fillna":"填充缺失值",
 		"drop_duplicate":"删除重复行",
 		"dropna":"丢弃缺失值",
