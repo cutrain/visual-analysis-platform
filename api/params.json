@@ -137,7 +137,7 @@
       "name":"command",
       "display":"SQL查询语句",
       "type":"richtext",
-      "default":"SELECT *\n FROM tableA"
+      "default":"SELECT *\nFROM tableA"
     }
   ],
   "model-instream":[
@@ -288,6 +288,25 @@
       "display":"值(all,specific)",
       "type":"text",
       "default":"0"
+    }
+  ],
+  "drop_duplicate":[
+    {
+      "name":"columns",
+      "display":"过滤列名",
+      "type":"text",
+      "default":""
+    },
+    {
+      "name":"keep",
+      "display":"保留方式",
+      "type":"list",
+      "default":"first",
+      "list":[
+        "first",
+        "last",
+        "None"
+      ]
     }
   ],
   "dropna":[

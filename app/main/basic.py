@@ -21,7 +21,7 @@ def sql_instream(**params):
         import MySQLdb
         con = MySQLdb.connect(
             host=params['address'],
-            port=params['port'],
+            port=int(params['port']),
             user=params['user'],
             passwd=params['password'],
             db=params['database-name']
@@ -33,13 +33,13 @@ def sql_instream(**params):
         con = cO.connect(
             params['user'],
             params['password'],
-            params['address'] + '/' + params['host'] + ':' + params['port'] + '/' + params['database-name']
+            params['address'] + '/' + params['host'] + ':' + int(params['port']) + '/' + params['database-name']
         )
     elif dbtype == 'SQLServer':
         import pymssql
         con = pymssql.connect(
             server=params['address'],
-            port=params['port'],
+            port=int(params['port']),
             user=params['user'],
             password=params['password'],
             database=params['database-name']
@@ -48,7 +48,7 @@ def sql_instream(**params):
         import psycopg2
         con = psycopg2.connect(
             host=params['address'],
-            port=params['port'],
+            port=int(params['port']),
             user=params['user'],
             password=params['password'],
             database=params['database-name']
@@ -78,7 +78,7 @@ def sql_outstream(in1, **params):
         import MySQLdb
         con = MySQLdb.connect(
             host=params['address'],
-            port=params['port'],
+            port=int(params['port']),
             user=params['user'],
             passwd=params['password'],
             db=params['database-name']
@@ -90,13 +90,13 @@ def sql_outstream(in1, **params):
         con = cO.connect(
             params['user'],
             params['password'],
-            params['address'] + '/' + params['host'] + ':' + params['port'] + '/' + params['database-name']
+            params['address'] + '/' + params['host'] + ':' + int(params['port']) + '/' + params['database-name']
         )
     elif dbtype == 'SQLServer':
         import pymssql
         con = pymssql.connect(
             server=params['address'],
-            port=params['port'],
+            port=int(params['port']),
             user=params['user'],
             password=params['password'],
             database=params['database-name']
@@ -105,7 +105,7 @@ def sql_outstream(in1, **params):
         import psycopg2
         con = psycopg2.connect(
             host=params['address'],
-            port=params['port'],
+            port=int(params['port']),
             user=params['user'],
             password=params['password'],
             database=params['database-name']

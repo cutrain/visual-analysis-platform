@@ -20,6 +20,7 @@ type_id = {
 		"random":"打乱数据",
 		"sql-execute":"SQL语句",
 		"fillna":"填充缺失值",
+		"drop_duplicate":"删除重复行",
 		"dropna":"丢弃缺失值",
 	},
 	"others": {

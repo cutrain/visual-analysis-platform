@@ -44,7 +44,7 @@
       "name":"command",
       "display":"SQL查询语句",
       "type":"richtext",
-      "default":"SELECT *\n FROM tableA"
+      "default":"SELECT *\nFROM tableA"
     }
   ]
 }

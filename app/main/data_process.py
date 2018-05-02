@@ -9,19 +9,22 @@ def random(in1, **params):
 
 @err_wrap
 def sql_execute(in1, **params):
-    con = MySQLdb.connect(
-        host='localhost',
-        port=3306,
-        user='root',
-        passwd='123',
-        db='temp'
-    )
-    in1.to_sql("temp", con, flavor='mysql', if_exists='replace')
-    cursor = con.cursor()
-    cursor.execute(params['sql_command'].format(this="temp"))
-    con.commit()
-    df = pd.read_sql('select * from temp;', con)
-    con.close()
+    user = 'root'
+    password = '123'
+    host = 'localhost'
+    port = '3306'
+    database = 'temp'
+
+    from sqlalchemy import create_engine
+    con = create_engine(
+        'mysql+mysqldb://' +
+        user + ':' + password + '@' +
+        host + ':' + port + '/' +
+        database + '?charset=utf8')
+
+    pd.io.sql.to_sql(in1, database, con=con, if_exists='replace')
+    con.execute(params['sql_command'].format(this=database))
+    df = pd.read_sql('select * from ' + database + ';', con)
     return True, df
 
 @err_wrap
@@ -57,4 +60,19 @@ def fillna(in1, **params):
             v = v.split(':')
             args.update({v[0]:v[1]})
         return True, in1.fillna(args)
+
+@err_wrap
+def drop_duplicate(in1, **params):
+    keep = params.pop("keep", "first")
+    if keep == 'None':
+        keep = False
+    cols = params.pop("columns", "").split(',')
+    cnt = 0
+    for col in cols:
+        if len(col) == 0:
+            cnt += 1
+    if cnt == len(cols):
+        cols = None
+    a = pd.DataFrame([1,2,3])
+    return True, in1.drop_duplicates(subset=cols, keep=keep)
 
