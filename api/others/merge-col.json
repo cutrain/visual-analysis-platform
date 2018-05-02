@@ -7,8 +7,8 @@
       "name":"how",
       "display":"合并方式",
       "type":"list",
-      "default":"inner",
-      "list":["inner","left","right","outer"]
+      "default":"concat",
+      "list":["concat","inner","left","right","outer"]
     }
   ]
 }

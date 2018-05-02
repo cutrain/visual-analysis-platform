@@ -1,20 +1,25 @@
 import pandas as pd
 from sklearn.naive_bayes import GaussianNB
 from sklearn.tree import DecisionTreeClassifier, DecisionTreeRegressor
-from sklearn.svm import NuSVC, NuSVR
+from sklearn.svm import SVC, SVR, LinearSVC, LinearSVR
 from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 
+from .error import err_wrap
+
 def training(data, func, params):
-    cols = params.pop('label_columns').split(',')
+    params.pop('in2')
+    cols = params.pop('label_columns')
     clf = func(**params)
     clf = clf.fit(data.drop(cols, axis=1), data[cols])
     return True, clf
 
+@err_wrap
 def naive_bayes(in1, **params):
     return training(in1, GaussianNB, params)
 
+@err_wrap
 def decision_tree(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
@@ -23,14 +28,24 @@ def decision_tree(in1, **params):
         func = DecisionTreeRegressor
     return training(in1, func, params)
 
+@err_wrap
 def svm(in1, **params):
     method = params.pop('method', None)
-    if method == 'classify':
-        func = NuSVC
-    elif method == 'regress':
-        func = NuSVR
+    kernel = params.pop('kernel', 'linear')
+    if kernel != 'linear':
+        params['kernel'] = kernel
+        if method == 'classify':
+            func = SVC
+        elif method == 'regress':
+            func = SVR
+    else:
+        if method == 'classify':
+            func = LinearSVC
+        elif method == 'regress':
+            func = LinearSVR
     return training(in1, func, params)
 
+@err_wrap
 def knn(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
@@ -39,6 +54,7 @@ def knn(in1, **params):
         func = KNeighborsRegressor
     return training(in1, func, params)
 
+@err_wrap
 def adaboost(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
@@ -47,6 +63,7 @@ def adaboost(in1, **params):
         func = AdaBoostRegressor
     return training(in1, func, params)
 
+@err_wrap
 def neural_network(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':

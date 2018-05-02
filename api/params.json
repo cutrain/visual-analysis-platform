@@ -29,6 +29,19 @@
       ]
     },
     {
+      "name":"kernel",
+      "display":"核函数",
+      "type":"list",
+      "default":"linear",
+      "list":[
+        "linear",
+        "poly",
+        "rbf",
+        "sigmoid",
+        "precomputed"
+      ]
+    },
+    {
       "name":"label_columns",
       "display":"标签列",
       "type":"text",
@@ -379,7 +392,30 @@
       ]
     }
   ],
-  "predict":[],
+  "predict":[
+    {
+      "name":"label_columns",
+      "display":"非特征列名",
+      "type":"text",
+      "default":"label"
+    },
+    {
+      "name":"predict_labels",
+      "display":"预测结果列名",
+      "type":"text",
+      "default":"predict"
+    },
+    {
+      "name":"store_origin",
+      "display":"输出保留原数据",
+      "type":"list",
+      "default":"False",
+      "list":[
+        "True",
+        "False"
+      ]
+    }
+  ],
   "split-col":[
     {
       "name":"columns",
@@ -402,8 +438,9 @@
       "name":"how",
       "display":"合并方式",
       "type":"list",
-      "default":"inner",
+      "default":"concat",
       "list":[
+        "concat",
         "inner",
         "left",
         "right",

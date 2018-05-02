@@ -1,3 +1,4 @@
+import time
 import pandas as pd
 import numpy as np
 from .error import err_wrap
@@ -5,7 +6,7 @@ from .error import err_wrap
 @err_wrap
 def random(in1, **params):
     df = in1
-    df = df.sample(frac=1)
+    df = df.sample(frac=1, random_state=int(time.time())).reset_index(drop=True)
     return True, df
 
 @err_wrap

@@ -5,9 +5,11 @@ from .error import err_wrap
 def predict(in1, in2, **params):
     model = in1
     data = in2
-    df = pd.DataFrame(model.predict(data))
-    print("in predict")
-    print(df)
+    cols = params.pop('label_columns', "").split(',')
+    df = pd.DataFrame(model.predict(data.drop(cols, axis=1)))
+    df.columns = params.pop('predict_labels', "predict_label").split(',')
+    if params.pop('store_origin', 'False') == 'True':
+        df = pd.concat([data, df], axis=1)
     return True, df
 
 @err_wrap
@@ -17,7 +19,11 @@ def merge_row(in1, in2, **params):
 
 @err_wrap
 def merge_col(in1, in2, **params):
-    result = pd.merge(in1, in2, **params)
+    how = params.pop('how', 'concat')
+    if how == 'concat':
+        result = pd.concat([in1, in2], axis=1)
+    else:
+        result = pd.merge(in1, in2, how=how, **params)
     return True, result
 
 @err_wrap
