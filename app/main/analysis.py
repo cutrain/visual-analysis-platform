@@ -8,8 +8,8 @@ from .basic import *
 from .data_process import *
 from .others import *
 
-r = redis.StrictRedis(host='localhost', port=6379, charset='utf-8', decode_responses=True)
-r_data = redis.StrictRedis(host='localhost', port=6379)
+r = redis.StrictRedis(host='localhost', port=6379, db=0, charset='utf-8', decode_responses=True)
+r_data = redis.StrictRedis(host='localhost', port=6379, db=0)
 
 from .api.inout import in0out1, in1out0, in1out1, in1out2, in2out1, in2out2
 
@@ -160,10 +160,15 @@ def analysis(args):
         q = full_mode(args)
     else:
         q = single_mode(args, run_list)
+    changed_node = []
     for node in q:
+        changed_node.append(node['name'])
         run(**node)
-    for node in data:
-        r_data.hset('data', node, pickle.dumps(data[node]))
+    for node in changed_node:
+        if node + 'out1' in data:
+            r_data.hset('data', node+'out1', pickle.dumps(data[node+'out1']))
+        if node + 'out2' in data:
+            r_data.hset('data', node+'out2', pickle.dumps(data[node+'out2']))
     r.set('global', '0')
 
 

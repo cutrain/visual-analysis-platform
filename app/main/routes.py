@@ -4,32 +4,44 @@ from ..models import Hello
 from flask import render_template, request
 
 from .analysis import analysis
-from .analysis import data
 
 import os
 import redis
 import pickle
+import multiprocessing
 import json as js
 import pandas as pd
 import numpy as np
 
+
 debug = True
 
-r = redis.StrictRedis(host='localhost', port=6379, charset='utf-8', decode_responses=True)
-r_data = redis.StrictRedis(host='localhost', port=6379)
-r.delete('status')
-r.delete('data')
+subprocess = multiprocessing.Process(name='empty')
+r = redis.StrictRedis(host='localhost', port=6379, db=0, charset='utf-8', decode_responses=True)
+r_data = redis.StrictRedis(host='localhost', db=0, port=6379)
 
-@main.route('/')
-def index():
-    return render_template("main/index.html")
+@main.route('/init', methods=['POST'])
+def init():
+    print('init start')
+    if subprocess.is_alive():
+        subprocess.terminate()
+    r.set('global', '1')
+    r.delete('status')
+    r.delete('data')
+    print('init finish')
+    tmp = {"status":0}
+    return js.dumps(tmp)
 
 @main.route('/run', methods=['POST'])
 def run():
     a = request.get_data().decode('utf-8')
     a = js.loads(a)
     print(a)
-    analysis(a)
+    global child_process
+    subprocess = multiprocessing.Process(name="analysis", target=analysis, args=(a,))
+    subprocess.daemon = True
+    subprocess.start()
+    print('running processing')
     tmp = {"status":0}
     return js.dumps(tmp)
 

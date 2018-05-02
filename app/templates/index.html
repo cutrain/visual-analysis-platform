@@ -155,6 +155,9 @@
   <script src="static/index.js"></script> -->
   <script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
   <script src="{{url_for('.static', filename='index.js')}}"></script>
+  <script>
+$.post('/main/init');
+  </script>
 </body>
 </html>
 

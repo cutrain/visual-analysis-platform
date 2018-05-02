@@ -147,7 +147,7 @@ function run_button() {
     JSON.stringify(data),
     function() {
       window.progress = 1;
-      setTimeout("check_progress()", 200);
+      setTimeout("check_progress()", 1000);
     }
     );
 }
@@ -171,7 +171,7 @@ function run_single(node_name) {
     JSON.stringify(data),
     function() {
       window.progress = 1;
-      setTimeout("check_progress()", 200);
+      setTimeout("check_progress()", 1000);
     }
     );
 }
