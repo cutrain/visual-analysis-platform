@@ -146,7 +146,7 @@
 }
 
 .component:active{
-  background:#f6f5ec;
+  background:#E67E22;
   transition:.1s;
 }
 
