@@ -6,54 +6,53 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 
-def training(data, label, func, params):
-    if len(data) != len(label):
-        return False, None
+def training(data, func, params):
+    cols = params.pop('label_columns').split(',')
     clf = func(**params)
-    clf = clf.fit(data, label)
+    clf = clf.fit(data.drop(cols, axis=1), data[cols])
     return True, clf
 
-def naive_bayes(in1, in2, **params):
-    return training(in1, in2, GaussianNB, params)
+def naive_bayes(in1, **params):
+    return training(in1, GaussianNB, params)
 
-def decision_tree(in1, in2, **params):
+def decision_tree(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
         func = DecisionTreeClassifier
     elif method == 'regress':
         func = DecisionTreeRegressor
-    return training(in1, in2, func, params)
+    return training(in1, func, params)
 
-def svm(in1, in2, **params):
+def svm(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
         func = NuSVC
     elif method == 'regress':
         func = NuSVR
-    return training(in1, in2, func, params)
+    return training(in1, func, params)
 
-def knn(in1, in2, **params):
+def knn(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
         func = KNeighborsClassifier
     elif method == 'regress':
         func = KNeighborsRegressor
-    return training(in1, in2, func, params)
+    return training(in1, func, params)
 
-def adaboost(in1, in2, **params):
+def adaboost(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
         func = AdaBoostClassifier
     elif method == 'regress':
         func = AdaBoostRegressor
-    return training(in1, in2, func, params)
+    return training(in1, func, params)
 
-def neural_network(in1, in2, **params):
+def neural_network(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
         func = MLPClassifier
     elif method == 'regress':
         func = MLPRegressor
-    return training(in1, in2, func, params)
+    return training(in1, func, params)
 
 

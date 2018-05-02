@@ -1,7 +1,7 @@
 {
   "name":"knn",
   "display":"k近邻",
-  "inout":"in2out1",
+  "inout":"in1out1",
   "attr": [
     {
       "name":"method",
@@ -9,6 +9,12 @@
       "type":"list",
       "default":"classify",
       "list":["classify", "regress"]
+    },
+    {
+      "name":"label_columns",
+      "display":"标签列",
+      "type":"text",
+      "default":"label"
     }
   ]
 }

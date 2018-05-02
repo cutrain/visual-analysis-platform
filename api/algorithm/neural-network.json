@@ -1,7 +1,7 @@
 {
   "name":"neural-network",
   "display":"神经网络",
-  "inout":"in2out1",
+  "inout":"in1out1",
   "attr": [
     {
       "name":"method",
@@ -29,6 +29,12 @@
       "display":"alpha",
       "type":"number",
       "default":"0.0001"
+    },
+    {
+      "name":"label_columns",
+      "display":"标签列",
+      "type":"text",
+      "default":"label"
     }
   ]
 }

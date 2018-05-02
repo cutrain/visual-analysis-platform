@@ -9,6 +9,12 @@ details = {
         "classify",
         "regress"
       ]
+    },
+    {
+      "name":"label_columns",
+      "display":"标签列",
+      "type":"text",
+      "default":"label"
     }
   ],
   "svm":[
@@ -21,6 +27,12 @@ details = {
         "classify",
         "regress"
       ]
+    },
+    {
+      "name":"label_columns",
+      "display":"标签列",
+      "type":"text",
+      "default":"label"
     }
   ],
   "neural-network":[
@@ -62,6 +74,12 @@ details = {
       "display":"alpha",
       "type":"number",
       "default":"0.0001"
+    },
+    {
+      "name":"label_columns",
+      "display":"标签列",
+      "type":"text",
+      "default":"label"
     }
   ],
   "knn":[
@@ -74,9 +92,22 @@ details = {
         "classify",
         "regress"
       ]
+    },
+    {
+      "name":"label_columns",
+      "display":"标签列",
+      "type":"text",
+      "default":"label"
     }
   ],
-  "naive-bayes":[],
+  "naive-bayes":[
+    {
+      "name":"label_columns",
+      "display":"标签列",
+      "type":"text",
+      "default":"label"
+    }
+  ],
   "decision-tree":[
     {
       "name":"method",
@@ -87,6 +118,12 @@ details = {
         "classify",
         "regress"
       ]
+    },
+    {
+      "name":"label_columns",
+      "display":"标签列",
+      "type":"text",
+      "default":"label"
     }
   ],
   "sql-instream":[
