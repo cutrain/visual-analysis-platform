@@ -12,7 +12,11 @@ def truepath(path, content=""):
 
 @err_wrap
 def data_instream(**params):
-    return True, pd.read_csv(truepath(params['path'], "data"))
+    df = pd.read_csv(truepath(params['path'], "data"))
+    num = int(params.pop('read_number', '0'))
+    if num != 0:
+        df = df[:num]
+    return True, df
 
 @err_wrap
 def sql_instream(**params):
@@ -56,6 +60,9 @@ def sql_instream(**params):
 
     df = pd.read_sql(params['command'], con)
     con.close()
+    num = int(params.pop('read_number', '0'))
+    if num != 0:
+        df = df[:num]
     return True, df
 
 @err_wrap

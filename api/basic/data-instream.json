@@ -4,6 +4,12 @@
   "inout":"in0out1",
   "attr": [
     {
+      "name":"read_number",
+      "display":"读入数量",
+      "type":"number",
+      "default":"0"
+    },
+    {
       "name":"path",
       "display":"文件名",
       "type":"text",

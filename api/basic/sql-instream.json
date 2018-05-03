@@ -4,6 +4,12 @@
   "inout":"in0out1",
   "attr": [
     {
+      "name":"read_number",
+      "display":"读入数量",
+      "type":"number",
+      "default":"0"
+    },
+    {
       "name":"database-type",
       "display":"数据库类型",
       "type":"list",
