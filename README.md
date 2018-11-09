@@ -30,8 +30,10 @@ pip install -r requirements.txt
 
 ## 运行
 ```bash
-python3 manage.py runserver
+python3 manage.py runserver -p 8080
 ```
+访问 http://localhost:8080 可以使用
+数据的输入和输出如果不给绝对地址则会在项目的data 文件夹下存储，建议将需要使用的数据放到data文件夹中
 
 ### 数据存放位置
 `./data/`
@@ -78,4 +80,6 @@ json格式如下,
 + *file* 指定文件位置,有选择文件的button
 + *text* 单行参数
 + *richtext* 多行参数
+
+bug反馈或其它问题请联系 duanyuge@qq.com 或 微信 cutrain_
 
