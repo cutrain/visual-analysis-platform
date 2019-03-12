@@ -1,0 +1,13 @@
+{
+  "name":"sql-execute",
+  "display":"SQL语句",
+  "inout":"in1out1",
+  "attr": [
+    {
+      "name":"sql_command",
+      "display":"SQL语句,用{this}指代该表",
+      "type":"richtext",
+      "default":"SELECT * \nFROM {this}"
+    }
+  ]
+}

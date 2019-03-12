@@ -1,4 +1,4 @@
-from flask import Flask, redirect
+from flask import Flask, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
 from config import config
 
@@ -13,12 +13,14 @@ def create_app(config_name):
 
     @app.route('/')
     def index():
-        return redirect('/index')
+        return render_template('index.html')
 
-    from .main import main as main_blueprint
-    app.register_blueprint(main_blueprint, url_prefix='/main')
-    from .index import main as index_blueprint
-    app.register_blueprint(index_blueprint, url_prefix='/index')
+    from .graph import graph as graph_blueprint
+    app.register_blueprint(graph_blueprint, url_prefix='/graphx')
+    from .data import data as data_blueprint
+    app.register_blueprint(data_blueprint, url_prefix='/data')
+    from .project import project as project_blueprint
+    app.register_blueprint(project_blueprint, url_prefix='/project')
 
 
     return app
