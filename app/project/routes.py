@@ -8,8 +8,8 @@ import time
 import json as js
 import pickle
 
+@project.route('/view', methods=['POST'])
 @msgwrap
-@project.route('/view')
 def view():
     ret = {}
     for root, dirs, files in os.walk('project'):
@@ -20,8 +20,8 @@ def view():
                 ret[file[:-7]] = pj
     return ret
 
+@project.route('/create', methods=['POST'])
 @msgwrap
-@project.route('/create')
 def create():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
@@ -33,9 +33,13 @@ def create():
     }
     with open(os.path.join('project', new_data['project_id'] + '.pickle')) as f:
         f.write(pickle.dumps(new_data))
+    ret = {
+        'project_id':new_data['project_id']
+    }
+    return ret
 
+@project.route('/change', methods=['POST'])
 @msgwrap
-@project.route('/change')
 def change():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
@@ -47,8 +51,8 @@ def change():
     with open(os.path.join('project', pid+'.pickle'), 'wb') as f:
         f.write(pickle.dumps(data))
 
+@project.route('/delete', methods=['POST'])
 @msgwrap
-@project.route('/delete')
 def delete():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)

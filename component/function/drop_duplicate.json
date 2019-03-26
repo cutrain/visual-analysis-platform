@@ -1,0 +1,29 @@
+{
+  "name": "drop_duplicate",
+  "display": "删除重复行",
+  "params": [
+    {
+      "name": "columns",
+      "display": "过滤列名",
+      "type": "text",
+      "default": ""
+    },
+    {
+      "name": "keep",
+      "display": "保留方式",
+      "type": "list",
+      "default": "first",
+      "list": [
+        "first",
+        "last",
+        "None"
+      ]
+    }
+  ],
+  "in-port": [
+    "DataFrame"
+  ],
+  "out-port": [
+    "DataFrame"
+  ]
+}

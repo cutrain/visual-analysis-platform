@@ -1,0 +1,12 @@
+{
+  "name": "merge-row",
+  "display": "合并行",
+  "params": [],
+  "in-port": [
+    "DataFrame",
+    "DataFrame"
+  ],
+  "out-port": [
+    "DataFrame"
+  ]
+}

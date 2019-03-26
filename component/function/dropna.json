@@ -1,0 +1,23 @@
+{
+  "name": "dropna",
+  "display": "丢弃缺失值",
+  "params": [
+    {
+      "name": "drop_type",
+      "display": "类型",
+      "type": "list",
+      "default": "row",
+      "list": [
+        "row",
+        "col",
+        "all"
+      ]
+    }
+  ],
+  "in-port": [
+    "DataFrame"
+  ],
+  "out-port": [
+    "DataFrame"
+  ]
+}

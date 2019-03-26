@@ -1,0 +1,16 @@
+{
+  "name": "model-instream",
+  "display": "导入模型",
+  "params": [
+    {
+      "name": "path",
+      "display": "文件名",
+      "type": "text",
+      "default": ""
+    }
+  ],
+  "in-port": [],
+  "out-port": [
+    "DataFrame"
+  ]
+}

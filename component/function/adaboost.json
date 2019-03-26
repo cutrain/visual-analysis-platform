@@ -1,0 +1,28 @@
+{
+  "name": "adaboost",
+  "display": "adaboost",
+  "params": [
+    {
+      "name": "method",
+      "display": "方法",
+      "type": "list",
+      "default": "classify",
+      "list": [
+        "classify",
+        "regress"
+      ]
+    },
+    {
+      "name": "label_columns",
+      "display": "标签列",
+      "type": "text",
+      "default": "label"
+    }
+  ],
+  "in-port": [
+    "DataFrame"
+  ],
+  "out-port": [
+    "DataFrame"
+  ]
+}

@@ -2,7 +2,10 @@ import time
 import random
 import string
 import json as js
+from functools import wraps
+
 def msgwrap(func):
+    @wraps(func)
     def wrap(*args, **kwargs):
         ret = {
             'succeed':1,

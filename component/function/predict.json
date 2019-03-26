@@ -1,0 +1,35 @@
+{
+  "name": "predict",
+  "display": "预测",
+  "params": [
+    {
+      "name": "label_columns",
+      "display": "非特征列名",
+      "type": "text",
+      "default": "label"
+    },
+    {
+      "name": "predict_labels",
+      "display": "预测结果列名",
+      "type": "text",
+      "default": "predict"
+    },
+    {
+      "name": "store_origin",
+      "display": "输出保留原数据",
+      "type": "list",
+      "default": "False",
+      "list": [
+        "True",
+        "False"
+      ]
+    }
+  ],
+  "in-port": [
+    "DataFrame",
+    "DataFrame"
+  ],
+  "out-port": [
+    "DataFrame"
+  ]
+}

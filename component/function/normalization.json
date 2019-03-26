@@ -1,0 +1,30 @@
+{
+  "name": "normalization",
+  "display": "标准化",
+  "params": [
+    {
+      "name": "method",
+      "display": "标准化方式",
+      "type": "list",
+      "default": "z-score",
+      "list": [
+        "z-score",
+        "min-max",
+        "log",
+        "atan"
+      ]
+    },
+    {
+      "name": "columns",
+      "display": "列",
+      "type": "text",
+      "default": ""
+    }
+  ],
+  "in-port": [
+    "DataFrame"
+  ],
+  "out-port": [
+    "DataFrame"
+  ]
+}

@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-graph = Blueprint('graph',
+component = Blueprint('component',
                  __name__,
                  static_folder='static'
                 )

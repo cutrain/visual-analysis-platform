@@ -3,7 +3,7 @@ from .. import db
 from ..tool import msgwrap
 from flask import render_template, request
 
-from .analysis import analysis
+# from .analysis import analysis
 
 import os
 import redis
@@ -20,8 +20,8 @@ subprocess = multiprocessing.Process(name='empty')
 r = redis.StrictRedis(host='localhost', port=6379, db=0, charset='utf-8', decode_responses=True)
 r_data = redis.StrictRedis(host='localhost', db=0, port=6379)
 
-@msgwrap
 @graph.route('/get', methods=['POST'])
+@msgwrap
 def get_graph():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
@@ -34,8 +34,8 @@ def get_graph():
     })
     return G
 
-@msgwrap
 @graph.route('/save', methods=['POST'])
+@msgwrap
 def save_graph():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
@@ -53,22 +53,22 @@ def save_graph():
         f.write(pickle.dumps(p_data))
 
 
-@msgwrap
 @graph.route('/run', methods=['POST'])
+@msgwrap
 def run():
     # TODO
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     print(req)
     global child_process
-    subprocess = multiprocessing.Process(name="analysis", target=analysis, args=(req,))
-    subprocess.daemon = True
-    subprocess.start()
+    # subprocess = multiprocessing.Process(name="analysis", target=analysis, args=(req,))
+    # subprocess.daemon = True
+    # subprocess.start()
 
 
 
-@msgwrap
 @graph.route('/progress', methods=['POST'])
+@msgwrap
 def progress():
     # TODO
     progress = r.hgetall('status')
@@ -84,8 +84,8 @@ def progress():
     }
     return tmp
 
-@msgwrap
 @graph.route('/stop', methods=['POST'])
+@msgwrap
 def stop():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
@@ -93,8 +93,8 @@ def stop():
     # TODO
 
 
-@msgwrap
 @graph.route('/sample', methods=['POST'])
+@msgwrap
 def sample():
     # TODO
     finish = False
@@ -152,8 +152,8 @@ def sample():
 
     return ret
 
-@msgwrap
 @graph.route('/init', methods=['POST'])
+@msgwrap
 def init():
     print('init start')
     if subprocess.is_alive():

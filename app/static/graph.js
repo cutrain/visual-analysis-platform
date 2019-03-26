@@ -1,14 +1,234 @@
+'use strict';
+class Graph {
+  constructor() {
+    this.node = new Map();
+    this.edge = new Map();
+    this.type_count = new Map();
+    this.type_detail = new Map();
+    $.post(
+      "/component/params",
+      function(data) {
+        data = JSON.parse(data).component;
+        // TODO: check response format is right
+        data.forEach(
+          a => this.type_count.set(a.name, 0)
+        );
+        data.forEach(
+          a => this.type_detail.set(a.name, a)
+        );
+      }
+    );
+  }
+
+  addNode(node_type) {
+    // check node type
+    if (!this.type_detail.has(node_type)) {
+      console.log(node_type + " not in component list");
+      return 0;
+    }
+
+    // create node
+    let itype = this.type_detail.get(node_type);
+    let params = {};
+    itype.params.forEach(
+      a => params[a.name]=a.default
+    );
+    let type_number = this.type_count.get(node_type);
+    let node_name = node_type + ':' + type_number;
+    let new_node = {
+      "name" : node_name,
+      "type" : node_type,
+      "position" : [0,0],
+      "params" : params,
+    };
+    this.type_count.set(node_type, type_number+1);
+    this.node.set(new_node.name, new_node);
+
+    // initialize edge
+    let in_port = itype.in_port;
+    for (let i = 0;i < in_port.length;++ i) {
+      this.edge.set(node_name + ':in:' + i, new Set());
+    }
+    let out_port = itype.out_port;
+    for (let i = 0;i < out_port.length;++ i) {
+      this.edge.set(node_name + ':out:' + i, new Set());
+    }
+    return 1;
+  }
+
+  addEdge(node_from, port_from, node_to, port_to) {
+    // check node exists
+    let node_out = node_from + ':out:' + port_from;
+    let node_in = node_to + ':in:' + port_to;
+    if (!this.edge.has(node_out)) {
+      console.log(node_out + " not in node list, please check code");
+      return 0;
+    }
+    if (!this.edge.has(node_in)) {
+      console.log(node_in + " not in node list, please check code");
+      return 0;
+    }
+
+    // check there is no duplicate edge
+    let node_out_set = this.edge.get(node_out);
+    let node_in_set = this.edge.get(node_in);
+    if (node_out_set.has(node_in)) {
+      console.log(node_in + " already in " + node_out);
+      return 0;
+    }
+    if (node_in_set.has(node_out)) {
+      console.log(node_out + " already in " + node_in);
+      return 0;
+    }
+
+    // check in port is unique
+    if (node_in_set.size >= 1) {
+      console.log(node_in + " already has input");
+      return 0;
+    }
+
+    // check port data type match
+    let out_data_type = this.type_detail.get(node_from.split(':')[0]).out_port[parseInt(port_from)];
+    let in_data_type = this.type_detail.get(node_to.split(':')[0]).in_port[parseInt(port_to)];
+    if (out_data_type != in_data_type) {
+      console.log('type not match : ' + out_data_type + ' & ' + in_data_type):
+      return 0;
+    }
+
+    // add edge
+    node_out_set.add(node_in);
+    node_in_set.add(node_out);
+    return 1;
+  }
+
+  delNode(node_name) {
+    // check node name
+    if (!this.node.has(node_name)) {
+      console.log(node_name + ' node exist, please check');
+      return 0;
+    }
+
+    // delete node
+    this.node.delete(node_name);
+
+    // delete edge
+    let node_type = node_name.split(':')[0];
+    let node_detail = this.type_detail.get(node_type);
+    // delete in edge
+    for (let i = 0;i < node_detail.in_port.length; ++ i) {
+      let this_in_port = node_name + ':in:' + i;
+      let in_edge_set = this.edge.get(this_in_port);
+      for (let x of in_edge_set) {
+        this.edge.get(x).delete(this_in_port);
+      }
+      this.edge.delete(this_in_port);
+    }
+    // delete out edge
+    for (let i = 0;i < node_deatil.out_port.length; ++ i) {
+      let this_out_port = node_name + ':out:' + i;
+      let out_edge_set = this.edge.get(this_out_port);
+      for (let x of out_edge_set) {
+        this.edge.get(x).delete(this_out_port);
+      }
+      this.edge.delete(this_out_port);
+    }
+    return 1;
+  }
+
+  delEdge(node_from, port_from, node_to, port_to) {
+    // check node exists
+    let node_out = node_from + ':out:' + port_from;
+    let node_in = node_to + ':in:' + port_to;
+    if (!this.edge.has(node_out)) {
+      console.log(node_out + " not in node list, please check code");
+      return 0;
+    }
+    if (!this.edge.has(node_in)) {
+      console.log(node_in + " not in node list, please check code");
+      return 0;
+    }
+
+    // check edge exist
+    let node_out_set = this.edge.get(node_out);
+    let node_in_set = this.edge.get(node_in);
+    let find = -1;
+    if (!node_in_set.has(node_out)) {
+      console.log('delete edge not match : ' + node_out + ' & ' + node_in);
+      return 0;
+    }
+    if (!node_out_set.has(node_in)) {
+      console.log("!!ERROR!! there is a bug in Graph class, edge not match");
+      return 0;
+    }
+
+    // delete edge
+    node_in_set.delete(node_out);
+    node_out_set.delete(node_in);
+    return 1;
+  }
+
+  setParam(node_name, params) {
+    // check node exist
+    if (!this.node.has(node_name)) {
+      console.log(node_name + ' not exist, please check'):
+      return 0;
+    }
+    let node_param = this.node.get(node_name).params;
+    for (let key in params) {
+      node_param[key] = params[key];
+    }
+    return 1;
+  }
+
+  setPosition(node_name, posiX, posiY) {
+    // check node exist
+    if (!this.node.has(node_name)) {
+      console.log(node_name + ' not exist, please check');
+      return 0;
+    }
+    let node_position = this.node.get(node_name).position;
+    node_position = [posiX, posiY];
+    return 1;
+  }
+
+  clear() {
+    this.node.clear();
+    this.edge.clear();
+    for (let key in this.type_count.keys()) {
+      this.type_count.set(key, 0);
+    }
+    return 1;
+  }
+
+  sample(node_name) {
+    // TODO
+    return 0;
+  }
+
+  save(project_id) {
+    // TODO
+    return 0;
+  }
+
+  load(project_id) {
+    // TODO
+    return 0;
+  }
+
+  render() {
+    // TODO
+    return 0;
+  }
+
+}
+
+
+
 // constant 
 // inout read from "inout.js" in "index.html"
 circle_radius = 8
 
 typeList = [];
-typeList = typeList.concat(in0out1);
-typeList = typeList.concat(in1out0);
-typeList = typeList.concat(in1out1);
-typeList = typeList.concat(in1out2);
-typeList = typeList.concat(in2out1);
-typeList = typeList.concat(in2out2);
 
 // initialize
 // count all type [type, num(int)]
@@ -130,7 +350,7 @@ function check_progress() {
         window.progress = 0;
       render_nodes(data["progress"]);
     }
-    );
+  );
 }
 
 function run_button() {
@@ -635,9 +855,7 @@ function nodes_build(paren, lis) {
     }
     else {
         var $new_type = $(
-            '<li><div class="component" id="' + 
-            key +
-            '">' + 
+            '<li><div class="component" id="' + key +'">' + 
             lis[key] + 
             '</div></li>');
         $new_lis.append($new_type);
@@ -646,18 +864,32 @@ function nodes_build(paren, lis) {
   paren.append($new_lis);
 }
 
-function nodes_init() {
-  var div = $("#navi");
-  nodes_build(div, type_id);
+function component_init() {
+  $.post(
+    "/component/list",
+    function(data) {
+      var div = $("#navi");
+      compo_list = JSON.parse(data)['structure'];
+      console.log(compo_list);
+      nodes_build(div, compo_list);
+      // component attr
+      var ele_components = $(".component");
+      ele_components.attr("draggable", "true");
+      ele_components.attr("ondragstart", "comp_dragstart(event)");
+      ele_components.attr("ondragend", "comp_dragend(event)");
+      $.post(
+        "/component/params",
+        function(data) {
+          data = JSON.parse(data);
+          // TODO: node params
+          
+        }
+    }
+  );
 }
 
-nodes_init();
+component_init();
 
-// component attr
-var ele_components = $(".component");
-ele_components.attr("draggable", "true");
-ele_components.attr("ondragstart", "comp_dragstart(event)");
-ele_components.attr("ondragend", "comp_dragend(event)");
 
 // canvas attr
 var ele_canvas = $("#svg");

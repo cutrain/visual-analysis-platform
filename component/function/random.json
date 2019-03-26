@@ -1,0 +1,11 @@
+{
+  "name": "random",
+  "display": "打乱数据",
+  "params": [],
+  "in-port": [
+    "DataFrame"
+  ],
+  "out-port": [
+    "DataFrame"
+  ]
+}

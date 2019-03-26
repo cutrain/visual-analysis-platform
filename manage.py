@@ -17,6 +17,8 @@ def init():
         os.mkdir("data")
     if not os.path.exists("model"):
         os.mkdir("model")
+    if not os.path.exists("project"):
+        os.mkdir("project")
 
 if __name__ == '__main__':
     path = os.path.split(os.path.realpath(__file__))[0]

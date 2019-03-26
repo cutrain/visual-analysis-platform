@@ -1,0 +1,16 @@
+{
+  "name": "data-outstream",
+  "display": "导出数据",
+  "params": [
+    {
+      "name": "path",
+      "display": "文件名",
+      "type": "text",
+      "default": ""
+    }
+  ],
+  "in-port": [
+    "DataFrame"
+  ],
+  "out-port": []
+}

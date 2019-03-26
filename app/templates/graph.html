@@ -5,9 +5,6 @@
   <link href="{{url_for('static', filename='graph.css')}}" rel="stylesheet" type="text/css"> 
   <link href="{{url_for('static', filename='index.css')}}" rel="stylesheet" type="text/css"> 
   <link href="{{url_for('static', filename='style.css')}}" rel="stylesheet" type="text/css"> 
-  <script src="{{url_for('static', filename='api/params.js')}}"></script>
-  <script src="{{url_for('static', filename='api/inout.js')}}"></script>
-  <script src="{{url_for('static', filename='api/nodes.js')}}"></script>
 </head>
 <body>
   <div class="root">
@@ -66,8 +63,5 @@
   </svg>
   <script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
   <script src="{{url_for('static', filename='graph.js')}}"></script>
-  <script>
-$.post('/main/init');
-  </script>
 </body>
 

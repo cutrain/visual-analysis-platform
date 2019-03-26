@@ -9,9 +9,6 @@
   <link href="{{url_for('static', filename='style.css')}}" rel="stylesheet" type="text/css"/>
   <link href="{{url_for('static', filename='graph.css')}}" rel="stylesheet" type="text/css"/>
   <link href="{{url_for('static', filename='database.css')}}" rel="stylesheet" type="text/css"/>
-  <script src="{{url_for('static', filename='api/params.js')}}"></script>
-  <script src="{{url_for('static', filename='api/inout.js')}}"></script>
-  <script src="{{url_for('static', filename='api/nodes.js')}}"></script>
 </head>
 <body>
   <div class='top-row noselect' id='catalogy-v'>
@@ -60,9 +57,11 @@
         </tbody>
       </table>
     </div>
+
     <div id="graph-page" v-if="visi==='graph'">
       <iframe id="graph-iframe" src="graph" scrolling="no" frameborder="0" onload="changeFrameSize()"></iframe>
     </div>
+
     <div id="database-page" v-if="visi==='database'">
       <div id="database-iframe">
         <table>
@@ -91,9 +90,11 @@
 </form>
       </div>
     </div>
+
     <div id="component-page" v-if="visi==='component'">
       component page
     </div>
+
     <div id="deeplearning-page" v-if="visi==='deeplearning'">
       deeplearning page
     </div>
