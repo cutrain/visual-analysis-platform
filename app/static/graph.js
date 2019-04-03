@@ -1,122 +1,330 @@
 'use strict';
-class Graph {
-  constructor() {
-    this.node = new Map();
-    this.edge = new Map();
-    this.type_count = new Map();
-    this.type_detail = new Map();
-    $.post(
-      "/component/params",
-      function(data) {
-        data = JSON.parse(data).component;
-        // TODO: check response format is right
-        data.forEach(
-          a => this.type_count.set(a.name, 0)
-        );
-        data.forEach(
-          a => this.type_detail.set(a.name, a)
-        );
-      }
-    );
+
+// ====================================================== global setting ===========================================
+const server = '';
+const routes = {
+  'component_list' : server + '/component/list',
+  'component_param' : server + '/component/param',
+  'graph_run' : server + '/graph/run',
+  'graph_progress' : server + '/graph/progress',
+  'graph_sample' : server + '/graph/sample',
+};
+const LINE_CIRCLE_X_BIAS = 8;
+const LINE_CIRCLE_Y_BIAS = 8;
+const CIRCLE_X_BIAS = -6;
+const CIRCLE_Y_BIAS = -6;
+const CIRCLE_Y_AWAY = 3;
+
+
+const type_detail = new Map(); // {param_name:param_value}
+const drag_data = new Map(); // replace default event dataTransfer
+var curr_id = null;
+var G = null;
+
+// ====================================================== Renderer class ============================================
+class Renderer{
+  constructor(container_selector = '.canvas') {
+    this.container = $(container_selector);
+    // TODO : change svg id
+    this.svg_selector = '#svg';
+    this.lines = [];
   }
 
-  addNode(node_type) {
+  addNode(node_id, posiX, posiY){
+    let node_type = node_id.split('-')[0];
+    let itype = type_detail.get(node_type);
+    let node_name = itype.display;
+    let in_port_num = itype.in_port.length;
+    let out_port_num = itype.out_port.length;
+    
+    // TODO : spec canvas id
+    let $node = $('<div></div>');
+    $node.attr("class", "node noselect");
+    $node.attr("id", node_id);
+    bind_node($node);
+    $node.css({"top":posiY, "left":posiX});
+    $node.text(node_name);
+    $node.click(node_click);
+
+    this.container.append($node);
+    let $circle = $('<div></div>');
+    $circle.attr('class', 'circle noselect');
+    bind_circle($circle);
+
+    function get_full_width(obj) {
+      return obj.width() + parseInt(obj.css('padding-left')) + parseInt(obj.css('padding-right'));
+    }
+    function get_full_height(obj) {
+      return obj.height() + parseInt(obj.css('padding-top')) + parseInt(obj.css('padding-bottom'));
+
+    }
+    let circle_width = get_full_width($node);
+    let circle_height = get_full_height($node);
+
+    // TODO: change x/y bias & check div relation
+    for (let i = 0;i < in_port_num; ++ i) {
+      let in_circle = $circle.clone();
+      in_circle.attr("id", node_id + "-in-" + i);
+      in_circle.css("top", CIRCLE_Y_BIAS - CIRCLE_Y_AWAY + 'px');
+      in_circle.css("left", Math.floor(circle_width/(1+in_port_num) * (i + 1) + CIRCLE_X_BIAS) + 'px');
+      $node.append(in_circle);
+    }
+
+    // TODO: change x/y bias & check div relation
+    for (let i = 0;i < out_port_num; ++ i) {
+      let out_circle = $circle.clone();
+      out_circle.attr("id", node_id + "-out-" + i);
+      out_circle.css("top", Math.floor(circle_height + CIRCLE_Y_BIAS + CIRCLE_Y_AWAY) + 'px');
+      out_circle.css("left", Math.floor(circle_width/(1+out_port_num) * (i + 1) + CIRCLE_X_BIAS) + 'px');
+      $node.append(out_circle);
+    }
+  }
+
+  addEdge(node_from, port_from, node_to, port_to) {
+    // TODO: check parseInt & x/y bias
+    let node_out = node_from + '-out-' + port_from;
+    let node_in = node_to + '-in-' + port_to;
+
+    let from = $("#" + node_out);
+    let to = $("#" + node_in);
+    let x1 = parseInt(from.css("left")) + LINE_CIRCLE_X_BIAS + parseInt(from.parent().css('left'));
+    let y1 = parseInt(from.css("top")) + LINE_CIRCLE_Y_BIAS + parseInt(from.parent().css('top'));
+    let x2 = parseInt(to.css("left")) + LINE_CIRCLE_X_BIAS + parseInt(to.parent().css('left'));
+    let y2 = parseInt(to.css("top")) + LINE_CIRCLE_Y_BIAS + parseInt(to.parent().css('top'));
+
+    let $line = $('<line/>');
+    $line.attr('class', 'line');
+    let id = node_out + "-" + node_in;
+    $line.attr("id", id);
+    $line.attr("x1", x1);
+    $line.attr("y1", y1);
+    $line.attr("x2", x2);
+    $line.attr("y2", y2);
+    let svg = $(this.svg_selector);
+    svg.append($line);
+    svg.html(svg.html());
+
+    this.lines.push(id);
+  }
+
+  delNode(node_id) {
+    let node = $("#"+node_id);
+    node.remove();
+    
+    // delete lines
+    let last_lines = [];
+    for (let line_id in this.lines) {
+      if (line_id.indexOf(node_id+'-') != -1) {
+        $("#"+line_id).remove();
+      }
+      else {
+        last_lines.push(line_id);
+      }
+    }
+    this.lines = last_lines;
+  }
+
+  delEdge(node_from, port_from, node_to, port_to) {
+    let node_out = node_from + '-out-' + port_from;
+    let node_in = node_to + '-in-' + port_to;
+    let line_id = node_out + '-' + node_in;
+    let last_lines = []
+    for (let i in this.lines) {
+      if (i == line_id) {
+        $('#'+line_id).remove();
+      }
+      else {
+        last_lines.push(i);
+      }
+    }
+    this.lines = last_lines;
+  }
+
+
+  setPosition(node_id, posiX, posiY) {
+    // TODO check paseInt
+    let node = $("#" + node_id);
+    node.css("top", posiY);
+    node.css("left", posiX);
+
+    this.lines.forEach((line_id) => {
+      if (line_id.indexOf(node_id+'-') != -1) {
+        let sp = line_id.split('-');
+        if (sp[0] + '-' + sp[1] == node_id) {
+          let line = $('#' + line_id);
+          let circle = $('#' + sp[0] + '-' + sp[1] + '-' + sp[2] + '-' + sp[3]);
+          line.attr('x1', parseInt(circle.css('left')) + LINE_CIRCLE_X_BIAS + posiX);
+          line.attr('y1', parseInt(circle.css('top')) + LINE_CIRCLE_Y_BIAS + posiY);
+        }
+        else if (sp[4] + '-' + sp[5] == node_id) {
+          let line = $('#' + line_id);
+          let circle = $('#' + sp[4] + '-' + sp[5] + '-' + sp[6] + '-' + sp[7]);
+          line.attr('x2', parseInt(circle.css('left')) + LINE_CIRCLE_X_BIAS + posiX);
+          line.attr('y2', parseInt(circle.css('top')) + LINE_CIRCLE_Y_BIAS + posiY); 
+        }
+        else {
+          alert('bug : Class Renderer : setPosition, node_id wrong');
+        }
+      }
+    });
+    let svg = $("#svg");
+    svg.html(svg.html());
+  }
+}
+
+// ======================================================= Graph class ===================================================
+class Graph {
+  constructor() {
+    console.log('Graph init');
+    this.node = new Map(); // {node_id: {'id':id, 'type':type, 'position':[1,1], 'param':{param_key:param_value} }}
+    this.edge = new Map(); // {(node_id-in|out-1):Set() }
+    this.type_count = new Map(); // {node_type:counter}
+    for (let key of type_detail.keys()) {
+      this.type_count.set(key, 0)
+    }
+    // TODO
+    this.isrender = false;
+    this.renderer = null;
+  }
+
+  addNode(node_type, posiX=0, posiY=0) {
+    console.log('Graph call : addNode');
     // check node type
-    if (!this.type_detail.has(node_type)) {
-      console.log(node_type + " not in component list");
-      return 0;
+    if (!type_detail.has(node_type)) {
+      alert(node_type + " not in component list");
+      return -1;
     }
 
     // create node
-    let itype = this.type_detail.get(node_type);
-    let params = {};
-    itype.params.forEach(
-      a => params[a.name]=a.default
-    );
+    let itype = type_detail.get(node_type);
+    let node_param = itype.params;
+    let param = {};
+    for (let key in node_param) {
+      let x = node_param[key];
+      param[x.name] = x.default;
+    }
     let type_number = this.type_count.get(node_type);
-    let node_name = node_type + ':' + type_number;
+    let node_id = node_type + '-' + type_number;
     let new_node = {
-      "name" : node_name,
+      "id" : node_id,
       "type" : node_type,
-      "position" : [0,0],
-      "params" : params,
+      "position" : [posiX, posiY],
+      "param" : param,
     };
     this.type_count.set(node_type, type_number+1);
-    this.node.set(new_node.name, new_node);
+    this.node.set(new_node.id, new_node);
 
     // initialize edge
     let in_port = itype.in_port;
     for (let i = 0;i < in_port.length;++ i) {
-      this.edge.set(node_name + ':in:' + i, new Set());
+      this.edge.set(node_id + '-in-' + i, new Set());
     }
     let out_port = itype.out_port;
     for (let i = 0;i < out_port.length;++ i) {
-      this.edge.set(node_name + ':out:' + i, new Set());
+      this.edge.set(node_id + '-out-' + i, new Set());
     }
-    return 1;
+
+    if (this.isrender)
+      this.renderer.addNode(node_id, posiX, posiY);
+    return node_id;
   }
 
-  addEdge(node_from, port_from, node_to, port_to) {
+  testEdge(node_from, port_from, node_to=null, port_to=null) {
+    console.log('Graph call : testEdge');
     // check node exists
-    let node_out = node_from + ':out:' + port_from;
-    let node_in = node_to + ':in:' + port_to;
+    let node_out = '';
+    let node_in = '';
+    if (node_to == null && port_to == null) {
+      node_out = node_from;
+      node_in = port_from;
+      node_from = node_out.split('-')[0] + '-' + node_out.split('-')[1];
+      port_from = node_out.split('-')[3];
+      node_to = node_in.split('-')[0] + '-' + node_in.split('-')[1];
+      port_to = node_in.split('-')[3];
+    }
+    else {
+      node_out = node_from + '-out-' + port_from;
+      node_in = node_to + '-in-' + port_to;
+    }
     if (!this.edge.has(node_out)) {
-      console.log(node_out + " not in node list, please check code");
-      return 0;
+      return node_out + " not in node list, please check code";
     }
     if (!this.edge.has(node_in)) {
-      console.log(node_in + " not in node list, please check code");
-      return 0;
+      return node_in + " not in node list, please check code";
     }
 
     // check there is no duplicate edge
     let node_out_set = this.edge.get(node_out);
     let node_in_set = this.edge.get(node_in);
     if (node_out_set.has(node_in)) {
-      console.log(node_in + " already in " + node_out);
-      return 0;
+      return node_in + " already in " + node_out;
     }
     if (node_in_set.has(node_out)) {
-      console.log(node_out + " already in " + node_in);
-      return 0;
+      return node_out + " already in " + node_in;
     }
 
     // check in port is unique
     if (node_in_set.size >= 1) {
-      console.log(node_in + " already has input");
-      return 0;
+      return node_in + " already has input";
     }
 
     // check port data type match
-    let out_data_type = this.type_detail.get(node_from.split(':')[0]).out_port[parseInt(port_from)];
-    let in_data_type = this.type_detail.get(node_to.split(':')[0]).in_port[parseInt(port_to)];
+    let out_data_type = type_detail.get(this.node.get(node_from).type).out_port[parseInt(port_from)];
+    let in_data_type = type_detail.get(this.node.get(node_to).type).in_port[parseInt(port_to)];
     if (out_data_type != in_data_type) {
-      console.log('type not match : ' + out_data_type + ' & ' + in_data_type):
-      return 0;
+      return 'type not match : ' + out_data_type + ' & ' + in_data_type;
+    }
+    return 0;
+  }
+
+  addEdge(node_from, port_from, node_to=null, port_to=null) {
+    console.log('Graph call : addEdge');
+    let node_out = '';
+    let node_in = '';
+    if (node_to == null && port_to == null) {
+      node_out = node_from;
+      node_in = port_from;
+      node_from = node_out.split('-')[0] + '-' + node_out.split('-')[1];
+      port_from = node_out.split('-')[3];
+      node_to = node_in.split('-')[0] + '-' + node_in.split('-')[1];
+      port_to = node_in.split('-')[3];
+    }
+    else {
+      node_out = node_from + '-out-' + port_from;
+      node_in = node_to + '-in-' + port_to;
+    }
+    let test_ret = this.testEdge(node_from, port_from, node_to, port_to);
+    if (test_ret != 0) {
+      alert(test_ret);
+      return -1;
     }
 
     // add edge
+    let node_out_set = this.edge.get(node_out);
+    let node_in_set = this.edge.get(node_in);
     node_out_set.add(node_in);
     node_in_set.add(node_out);
-    return 1;
+
+
+    if (this.isrender)
+      this.renderer.addEdge(node_from, port_from, node_to, port_to);
+    return 0;
   }
 
-  delNode(node_name) {
-    // check node name
-    if (!this.node.has(node_name)) {
-      console.log(node_name + ' node exist, please check');
-      return 0;
+  delNode(node_id) {
+    console.log('Graph call : delNode');
+    // check node id
+    if (!this.node.has(node_id)) {
+      alert(node_id + ' node exist, please check');
+      return -1;
     }
 
-    // delete node
-    this.node.delete(node_name);
-
     // delete edge
-    let node_type = node_name.split(':')[0];
-    let node_detail = this.type_detail.get(node_type);
+    let node_type = this.node.get(node_id).type;
+    let node_detail = type_detail.get(node_type);
     // delete in edge
     for (let i = 0;i < node_detail.in_port.length; ++ i) {
-      let this_in_port = node_name + ':in:' + i;
+      let this_in_port = node_id + '-in-' + i;
       let in_edge_set = this.edge.get(this_in_port);
       for (let x of in_edge_set) {
         this.edge.get(x).delete(this_in_port);
@@ -124,28 +332,56 @@ class Graph {
       this.edge.delete(this_in_port);
     }
     // delete out edge
-    for (let i = 0;i < node_deatil.out_port.length; ++ i) {
-      let this_out_port = node_name + ':out:' + i;
+    for (let i = 0;i < node_detail.out_port.length; ++ i) {
+      let this_out_port = node_id + '-out-' + i;
       let out_edge_set = this.edge.get(this_out_port);
       for (let x of out_edge_set) {
         this.edge.get(x).delete(this_out_port);
       }
       this.edge.delete(this_out_port);
     }
-    return 1;
+
+    // delete node
+    this.node.delete(node_id);
+
+    if (this.isrender)
+      this.renderer.delNode(node_id);
+    return 0;
   }
 
-  delEdge(node_from, port_from, node_to, port_to) {
+  delEdge(node_from, port_from=null, node_to=null, port_to=null) {
+    console.log('Graph call : delEdge');
+    let node_out = '';
+    let node_in = '';
+    if (node_to == null && port_to == null && port_from == null) {
+      let sp = node_from.split('-');
+      node_from = sp[0] + '-' + sp[1];
+      port_from = sp[3];
+      node_to = sp[4] + '-' + sp[5];
+      port_to = sp[7];
+      node_out = sp[0] + '-' + sp[1] + '-' + sp[2] + '-' + sp[3];
+      node_in = sp[4] + '-' + sp[5] + '-' + sp[6] + '-' + sp[7];
+    }
+    else if (node_to == null && port_to == null) {
+      node_out = node_from;
+      node_in = port_from;
+      node_from = node_out.split('-')[0] + '-' + node_out.split('-')[1];
+      port_from = node_out.split('-')[3];
+      node_to = node_in.split('-')[0] + '-' + node_in.split('-')[1];
+      port_to = node_in.split('-')[3];
+    }
+    else {
+      node_out = node_from + '-out-' + port_from;
+      node_in = node_to + '-in-' + port_to;
+    }
     // check node exists
-    let node_out = node_from + ':out:' + port_from;
-    let node_in = node_to + ':in:' + port_to;
     if (!this.edge.has(node_out)) {
-      console.log(node_out + " not in node list, please check code");
-      return 0;
+      alert(node_out + " not in node list, please check code");
+      return -1;
     }
     if (!this.edge.has(node_in)) {
-      console.log(node_in + " not in node list, please check code");
-      return 0;
+      alert(node_in + " not in node list, please check code");
+      return -1;
     }
 
     // check edge exist
@@ -153,111 +389,188 @@ class Graph {
     let node_in_set = this.edge.get(node_in);
     let find = -1;
     if (!node_in_set.has(node_out)) {
-      console.log('delete edge not match : ' + node_out + ' & ' + node_in);
-      return 0;
+      alert('delete edge not match : ' + node_out + ' & ' + node_in);
+      return -1;
     }
     if (!node_out_set.has(node_in)) {
-      console.log("!!ERROR!! there is a bug in Graph class, edge not match");
-      return 0;
+      alert("!!ERROR!! there is a bug in Graph class, edge not match");
+      return -1;
     }
 
     // delete edge
     node_in_set.delete(node_out);
     node_out_set.delete(node_in);
-    return 1;
+
+    if (this.isrender)
+      this.renderer.delEdge(node_from, port_from, node_to, port_to);
+    return 0;
   }
 
-  setParam(node_name, params) {
+  setParam(node_id, param) {
+    console.log('Graph call : setParam');
     // check node exist
-    if (!this.node.has(node_name)) {
-      console.log(node_name + ' not exist, please check'):
-      return 0;
+    if (!this.node.has(node_id)) {
+      alert(node_id + ' not exist, please check');
+      return -1;
     }
-    let node_param = this.node.get(node_name).params;
-    for (let key in params) {
-      node_param[key] = params[key];
+    let node_param = this.node.get(node_id).param;
+    for (let key in param) {
+      node_param[key] = param[key];
     }
-    return 1;
+
+    return 0;
   }
 
-  setPosition(node_name, posiX, posiY) {
+  getParam(node_id) {
+    console.log('Graph call : getParam');
     // check node exist
-    if (!this.node.has(node_name)) {
-      console.log(node_name + ' not exist, please check');
-      return 0;
+    if (!this.node.has(node_id)) {
+      alert(node_id + ' not exist, please check');
+      return {};
     }
-    let node_position = this.node.get(node_name).position;
+    let node_param = this.node.get(node_id).param;
+    return node_param;
+  }
+
+  setPosition(node_id, posiX, posiY) {
+    console.log('Graph call : setPosition');
+    // check node exist
+    if (!this.node.has(node_id)) {
+      alert(node_id + ' not exist, please check');
+      return -1;
+    }
+    let node_position = this.node.get(node_id).position;
     node_position = [posiX, posiY];
-    return 1;
+
+    if (this.isrender)
+      this.renderer.setPosition(node_id, posiX, posiY);
+    return 0;
   }
 
   clear() {
+    console.log('Graph call : clear');
     this.node.clear();
     this.edge.clear();
     for (let key in this.type_count.keys()) {
       this.type_count.set(key, 0);
     }
-    return 1;
-  }
 
-  sample(node_name) {
-    // TODO
+    if (this.isrender)
+      this.renderer.clear();
     return 0;
   }
 
-  save(project_id) {
-    // TODO
+  toJson() {
+    console.log('Graph call : toJson');
+    // nodes
+    let all_nodes = [];
+    for (let [key, value] of this.node) {
+      let detail = {
+        'node_name' : key,
+        'node_type' : value.type,
+        'node_position' : value.position,
+        'details' : value.param,
+      };
+      all_nodes.push(detail);
+    }
+
+    // lines
+    let all_lines = [];
+    for (let [key, value] of this.edge) {
+      if (key.indexOf('-out-') != -1) {
+        for (let item of value) {
+          let detail = {
+            'line_name' : key + '-' + item,
+            'line_from' : key.split('-')[0] + '-' + key.split('-')[1],
+            'line_from_port' : key.split('-')[3],
+            'line_to' : item.split('-')[0] + '-' + item.split('-')[1],
+            'line_to_port' : item.split('-')[3],
+          };
+          all_lines.push(detail);
+        }
+      }
+    }
+    let ret = {
+      all_nodes,
+      all_lines,
+    }
+    return JSON.stringify(ret);
+  }
+
+  loadJson(string_or_obj) {
+    console.log('Graph call : loadJson');
+    this.clear();
+    let obj = string_or_obj;
+    if (typeof(string_or_obj) == 'string')
+      obj = JSON.parse(string_or_obj);
+
+    // solve nodes
+    let nodes = obj.all_nodes;
+    for (let key in nodes) {
+      let x = nodes[key];
+      let node_id = this.addNode(x.node_type, x.node_position[0], x.node_position[1]);
+      if (node_id == -1) {
+        alert('bug in loadJson');
+        return -1;
+      }
+      this.setParam(node_id, x.details);
+    }
+
+    // solve lines
+    let lines = obj.all_lines;
+    lines.forEach((x) => {
+      this.addEdge(x.line_from, x.line_from_port, x.line_to, x.line_to_port);
+    });
     return 0;
   }
 
-  load(project_id) {
+  startRender(canvas_selector='.canvas') {
+    console.log('Graph call : startRender');
+    this.renderer = new Renderer(canvas_selector);
+    this.isrender = true;
     // TODO
+    return -1;
+  }
+
+  endRender() {
+    console.log('Graph call : endRender');
+    this.renderer.clear();
+    this.renderer = null;
+    this.isrender = false;
     return 0;
   }
 
-  render() {
-    // TODO
+  run(node_id=null, callback_func=null) {
+    console.log('Graph call : run');
+    if (typeof(node_id)=='function') {
+      callback_func = node_id;
+      node_id = null;
+    }
+    if (typeof(callback_func) != 'function')
+      callback_func = null;
+    if (node_id != null) {
+      if (!this.node.has(node_id)) {
+        alert(node_id + ' not exist, please check');
+        return -1;
+      }
+    }
+    // TODO : support single node
+    $.post(
+      routes['graph_run'],
+      this.toJson(),
+      (ret)=> {
+        if (callback_func != null)
+          callback_func(ret)
+      }
+    );
     return 0;
   }
-
 }
 
-
-
-// constant 
-// inout read from "inout.js" in "index.html"
-circle_radius = 8
-
-typeList = [];
-
-// initialize
-// count all type [type, num(int)]
-var typeCount = {};
-for (var i in typeList) {
-  typeCount[typeList[i]] = 0;
-}
-// *count all nodes with types [node_id, type]
-var all_nodes = {};
-
-// *count all lines [line_id, [out_circle_id, in_circle_id]]
-var all_lines = {};
-// node have lines [node_id, [line_id, dir]]
-var in_lines = {};
-// all line from the node [node_id, map:[line_id, out_circle_id]]
-var line_from = {};
-// all line to the node [node_id, map:[line_id, in_circle_id]]
-var line_to = {};
-
-var now_node_id= null;
-// *all nodes details [node_id, map:[detail_key, detail_value]]
-var nodes_details = {};
-//current node id
-var curr_id = '';
-
-// common functions
+// ====================================================== common functions =========================================
 function getX(obj) {
-  var parObj = obj;
-  var left = obj.offsetLeft;
+  let parObj = obj;
+  let left = obj.offsetLeft;
   while (parObj = parObj.offsetParent) {
     left += parObj.offsetLeft;
   }
@@ -265,66 +578,40 @@ function getX(obj) {
 }
 
 function getY(obj) {
-  var parObj = obj;
-  var top = obj.offsetTop;
+  let parObj = obj;
+  let top = obj.offsetTop;
   while (parObj = parObj.offsetParent) {
     top += parObj.offsetTop;
   }
   return top;
 }
 
-function in_array(ele, arr) {
-  for (var i=0;i < arr.length;++i) {
-    if (ele==arr[i])
-      return true;
-  }
-  return false;
-}
-
 function save_detail() {
-  if (now_node_id == null)
+  if (curr_id == null)
     return;
-  var node_details;
-  if (now_node_id in nodes_details)
-    node_details = nodes_details[now_node_id];
-  else {
-    alert("<function 'save_detail'>there is something wrong, node not found: " + now_node_id);
-    return;
-  }
 
+  let node_params = {};
   $(".param-value").each(function() {
-    var tnode = $(this);
-    var key = tnode.attr("name");
-    var value;
-    var type = tnode.attr("data-type");
+    let tnode = $(this);
+    let key = tnode.attr("name");
+    let type = tnode.attr("data-type");
 
-    if (type == "text") {
-      value = tnode.val();
-    }else if (type == "file") {
-      value = tnode.val();
-    }else if (type == "password") {
-      value = tnode.val();
-    }else if (type == "number") {
-      value = tnode.val();
-    }else if (type == "list") {
-      value = tnode.val();
-    }else if (type == "richtext") {
-      value = tnode.val();
-    }else {
+    if (!(['text', 'file', 'password', 'number', 'list', 'richtext'].includes(type))) {
       alert("<function 'save_detail'>there is something wrong, unknown type found : " + type);
+      return false;
     }
-    node_details[key] = value;
+    node_params[key] = tnode.val();
   });
-
+  G.setParam(curr_id, node_params);
 }
 
 function render_nodes(data) {
-  for (var key in all_nodes) {
+  for (let key in all_nodes) {
     $("#"+key).css("background", "#ffffff");
   }
-  for (var key in data) {
-    var node = $("#"+key);
-    var color;
+  for (let key in data) {
+    let node = $("#"+key);
+    let color;
     if (data[key] == '0')
       color = '#D5F5E3';
     else if (data[key] == '-1')
@@ -337,214 +624,254 @@ function render_nodes(data) {
   }
 }
 
-function check_progress() {
-  if (window.progress == 0)
-    return;
-  setTimeout("check_progress()", 1000);
-  $.post(
-    '/main/progress',
-    function(data) {
-      data = JSON.parse(data);
-      console.log(data);
-      if (data["status"] == "0")
-        window.progress = 0;
-      render_nodes(data["progress"]);
-    }
-  );
-}
-
 function run_button() {
-  if (window.progress == 1)
-    return;
   save_detail();
-  var data = {
-    "all_nodes":all_nodes,
-    "all_lines":all_lines,
-    "nodes_details":nodes_details
-  };
-  $.post(
-    '/main/run',
-    JSON.stringify(data),
-    function() {
-      window.progress = 1;
-      setTimeout("check_progress()", 1000);
-    }
-    );
+  G.run();
 }
 
 function run_single_button() {
-  run_single(curr_id);
-}
-
-function run_single(node_name) {
-  if (window.progress == 1)
-    return;
   save_detail();
-  var data = {
-    "all_nodes":all_nodes,
-    "all_lines":all_lines,
-    "nodes_details":nodes_details,
-    "run":[node_name]
-  };
-  $.post(
-    '/main/run',
-    JSON.stringify(data),
-    function() {
-      window.progress = 1;
-      setTimeout("check_progress()", 1000);
-    }
-    );
-}
-
-function circle2node(circle_name) {
-  while (circle_name[circle_name.length-1] >= '0' && circle_name[circle_name.length-1] <= '9')
-    circle_name = circle_name.substring(0, circle_name.length - 1);
-  if (circle_name.substring(circle_name.length-2, circle_name.length) == 'in')
-    circle_name = circle_name.substring(0, circle_name.length-2);
-  else
-    circle_name = circle_name.substring(0, circle_name.length-3);
-  return circle_name;
-}
-
-function delete_node(node_name) {
-  var node = $("#"+node_name);
-  if (!(node_name in all_nodes))
-    return;
-  for (var line_name in in_lines[node_name]) {
-    var line = all_lines[line_name];
-    var dir = in_lines[node_name][line_name];
-    var o_node_name = circle2node(line[1-dir]);
-    if (dir == 0)
-      delete line_to[o_node_name][line_name];
-    else
-      delete line_from[o_node_name][line_name];
-    delete all_lines[line_name];
-    delete in_lines[o_node_name][line_name];
-    $("#"+line_name).remove();
-  }
-  delete all_nodes[node_name];
-  delete nodes_details[node_name];
-  delete in_lines[node_name];
-  delete line_from[node_name];
-  delete line_to[node_name];
-  var circles = $(".circle[id^='"+node_name+"']");
-  circles.remove();
-  node.remove();
-  if (now_node_id == node_name)
-    now_node_id = null;
+  G.run(curr_id);
 }
 
 function delete_button(){
-  delete_node(curr_id);
-  var detailBox = $("#detail-box");
+  G.delNode(curr_id);
+  curr_id = null;
+  let detailBox = $("#detail-box");
   detailBox.css("display","none");
-  var dataBox = $("#data-box");
+  let dataBox = $("#data-box");
   dataBox.css("display","none");
 }
 
-// component event
+// ================================================= component event ================================================
 function comp_dragstart(e) {
+  let class_type = drag_data.get('class_type');
+  console.log('comp drag start :', class_type);
+
   e.dataTransfer.effectAllowed = "copy";
-  e.dataTransfer.setData("type", e.target.id);
-  e.dataTransfer.setData("text", e.target.innerHTML);
-  e.dataTransfer.setDragImage(e.target, 0, 0);
+  drag_data.set("class_type", "component");
+  drag_data.set("type", e.target.id);
+  drag_data.set("text", e.target.innerHTML);
+  let comp_scroll_y = $('#navi>ul')[0].scrollTop;
+  let bias_x = e.clientX - getX($('#'+e.target.id)[0]);
+  let bias_y = e.clientY - getY($('#'+e.target.id)[0]) + comp_scroll_y;
+  drag_data.set("bias_x", bias_x);
+  drag_data.set("bias_y", bias_y);
+  e.dataTransfer.setDragImage(e.target, bias_x, bias_y);
   return true;
 }
 function comp_dragend(e) {
-  e.dataTransfer.clearData("type");
-  e.dataTransfer.clearData("text");
+  drag_data.delete("class_type");
+  drag_data.delete("type");
+  drag_data.delete("text");
+  drag_data.delete("bias_x");
+  drag_data.delete("bias_y");
   return false;
 }
 
-// node event
+function comp_dragover(e) {
+  e.preventDefault();
+  return false;
+}
+
+function comp_drop(e) {
+  e.preventDefault();
+  return false;
+}
+
+// ================================================= node event ================================================
 function node_dragstart(e) {
+  let class_type = drag_data.get("class_type");
+  console.log('node drag start :', class_type);
+  if (drag_data.get('class_type') == 'circle') {
+    return true;
+  }
   e.dataTransfer.effectAllowed = "move";
-  e.dataTransfer.setData("type", "move");
-  e.dataTransfer.setData("text", e.target.id);
-  e.dataTransfer.setDragImage(e.target, 0, 0);
+  drag_data.set("class_type", "node");
+  drag_data.set("node_id", e.target.id);
+  drag_data.set("text", null);
+  let bias_x = e.clientX - getX($('#'+e.target.id)[0]);
+  let bias_y = e.clientY - getY($('#'+e.target.id)[0]);
+  drag_data.set("bias_x", bias_x);
+  drag_data.set("bias_y", bias_y);
+  e.dataTransfer.setDragImage(e.target, bias_x, bias_y);
   return true;
 }
 
-function node_click(e) {
-  var id = e.target.id;
-  curr_id = id;
-  var node = $("#"+id);
-  var type = node.attr("data-type");
-  var list = details[type];
-  console.log(list);
-  if (list == null) {
-    alert(type);
-  }
+function node_dragover(e) {
+  e.preventDefault();
+}
 
-  var detailBox = $("#detail-box");
+function node_dragend(e) {
+  drag_data.delete("class_type");
+  drag_data.delete("node_id");
+  drag_data.delete("text");
+  drag_data.delete("bias_x");
+  drag_data.delete("bias_y");
+  return false;
+}
+
+function node_dragenter(e) {
+  e.preventDefault();
+  let class_type = drag_data.get('class_type');
+  console.log('node drag enter:', class_type);
+  if (class_type == 'circle') {
+    if (drag_data.has('enter')) {
+      let id = drag_data.get('enter');
+      let temp = $('#' + id);
+      temp.css('border-width', '2px');
+      drag_data.delete('enter');
+    }
+    let id = e.target.id;
+    let temp = $('#'+id);
+    temp.css('border-width', '3px');
+    drag_data.set('enter', id);
+  }
+}
+
+function node_dragleave(e) {
+  e.preventDefault();
+  let class_type = drag_data.get('class_type');
+  console.log('node drag leave:', class_type);
+  if (class_type == 'circle') {
+    if (drag_data.has('enter')) {
+      let id = drag_data.get('enter');
+      if (e.target.id == id) {
+        let temp = $('#' + id);
+        temp.css('border-width', '2px');
+        drag_data.delete('enter');
+      }
+    }
+  }
+}
+
+function node_drop(e) {
+  e.preventDefault();
+  let class_type = drag_data.get("class_type");
+  console.log('node drop :', class_type);
+  if (class_type == 'circle') {
+    let id = e.target.id;
+    let from_id = drag_data.get('from_id');
+    if (id.split('-').length == 2) {
+      let itype = type_detail.get(id.split('-')[0]);
+      if (from_id.split('-')[2] == 'in') {
+        for (let i = 0;i < itype.out_port.length; ++ i) {
+          if (G.testEdge(id + '-out-' + i, from_id) == 0) {
+            G.addEdge(id + '-out-' + i, from_id);
+            return true;
+          }
+        }
+      } else {
+        for (let i = 0;i < itype.in_port.length; ++ i) {
+          if (G.testEdge(from_id, id + '-in-' + i) == 0) {
+            G.addEdge(from_id, id + '-in-' + i);
+            return true;
+          }
+        }
+      }
+    }
+    return false;
+  }
+  else if (class_type == 'node') {
+    let bias_x = parseInt(drag_data.get("bias_x"));
+    let bias_y = parseInt(drag_data.get("bias_y"));
+    let x = e.clientX - getX($(".canvas")[0]) + document.body.scrollLeft - bias_x;
+    let y = e.clientY - getY($(".canvas")[0]) + document.body.scrollTop - bias_y;
+    G.setPosition(drag_data.get('node_id'), x, y);
+  }
+}
+
+function node_click(e) {
+  let id = e.target.id;
+  let node = $("#"+id);
+
+  let detailBox = $("#detail-box");
   if(detailBox.css('display')=='none'){
     detailBox.css("display","flex");
     detailBox.css("flex-direction","column");
     detailBox.css("align-items","flex-start");
   }
-  var dataBox = $("#data-box");
+  let dataBox = $("#data-box");
   if(dataBox.css('display')=='none'){
     dataBox.css("display","block");
   }
-  var tableBox = $("#table-box");
+  let tableBox = $("#table-box");
   $("#button_run").css("display",'table-cell');
   $("#button_single_run").css("display",'table-cell');
   $("#button_delete").css("display",'table-cell');
   save_detail();
-  now_node_id = id;
+
+  curr_id = id;
   detailBox.empty();
   tableBox.empty();
-  var saved = nodes_details[id];
 
+  let params = G.getParam(id);
+  let itype = type_detail.get(id.split('-')[0]);
+  let iparams = itype.params;
 
-  for (var i=0;i < list.length; ++i) {
-    var $border = $('<div class="param-border"></div>');
-    var $name = $('<div class="param-key"></div>');
-    var $param;
+  for (let i = 0;i < iparams.length; ++ i) {
+    let param_detail = iparams[i];
+    let key = param_detail.name;
+    let value = params[key];
+    let param_type = param_detail.type;
 
-    var ele = list[i];
-    $name.text(ele['display']);
+    let $border = $('<div class="param-border"></div>');
+    let $name = $('<div class="param-key"></div>');
+    let $param;
 
-    if (ele["type"] == "text") {
-      $param = $('<input></input>');
-      $param.attr("type", "text");
-    }else if (ele["type"] == "file") {
-      $param = $('<input></input>');
-      $param.attr("type", "text");
-      $param.attr("id", "path");
-    }else if (ele["type"] == "password") {
-      $param = $('<input></input>');
-      $param.attr("type", "password");
-    }else if (ele["type"] == "list") {
-      $param = $('<select></select>');
-      for (var j=0;j < ele["list"].length; ++j) {
-        var $tmp = $('<option></option>');
-        $tmp.attr("value", ele["list"][j]);
-        $tmp.text(ele["list"][j]);
-        $param.append($tmp);
-      }
-    }else if (ele["type"] == "number") {
-      $param = $('<input></input>');
-      $param.attr("type", "number");
-    }else if (ele["type"] == "richtext") {
-      $param = $('<textarea rows="10" cols="30"></textarea>');
-      $param.attr("type", "richtext");
-    }else {
-      alert("there is something wrong, unknown type found : " + ele["type"]);
+    $name.text(param_detail.display);
+
+    let choice = {
+      'text' : () => {
+        $param = $('<input></input>');
+        $param.attr("type", "text");
+      },
+      'file' : () => {
+        $param = $('<input></input>');
+        $param.attr("id", "path");
+        $param.attr("type", "text");
+      },
+      'password' : () => {
+        $param = $('<input></input>');
+        $param.attr("type", "password");
+      },
+      'list' : () => {
+        $param = $('<select></select>');
+        for (let j=0;j < param_detail.list.length; ++j) {
+          let $tmp = $('<option></option>');
+          $tmp.attr("value", param_detail.list[j]);
+          $tmp.text(param_detail.list[j]);
+          $param.append($tmp);
+        }
+      },
+      'number' : () => {
+        $param = $('<input></input>');
+        $param.attr("type", "number");
+      },
+      'richtext' : () => {
+        $param = $('<textarea rows="10" cols="30"></textarea>');
+        $param.attr("type", "richtext");
+      },
+    };
+
+    if (!(param_type in choice)) {
+      alert("there is something wrong, unknown type found : " + param_type);
+      return false;
     }
+    choice[param_type]();
 
     $param.attr("class", "param-value");
-    $param.attr("name", ele["name"]);
-    $param.val(saved[ele["name"]]);
-    $param.attr("data-type", ele["type"]);
+    $param.attr("name", key);
+    $param.val(value);
+    $param.attr("data-type", param_type);
     $name.css("order", "1");
     $param.css("order", "2");
     $border.css("order", i);
     $border.prepend($name);
     $border.prepend($param);
 
-    if (ele["type"] == "file") {
-      var $bt = $('<input></input>');
+    if (param_type == "file") {
+      let $bt = $('<input></input>');
       $bt.attr("type", "file");
       $bt.attr("id", "pathbt");
       $bt.attr("onchange", 'file_name()');
@@ -553,80 +880,101 @@ function node_click(e) {
     }
 
     detailBox.prepend($border);
-  }  
-  var $detail_top = $("<div class='detail-top'style='order:0;'>属性</div>")
-  detailBox.prepend($detail_top);
+  }
+  let $detail_top = $("<div class='detail-top' style='order:0;'>属性</div>")
   var data = {
     "number":10,
     "node_name":id
   };
   $.post(
-    '/main/sample',
+    routes['graph_sample'],
     JSON.stringify(data),
-    function(reData) {
-      reData = JSON.parse(reData);
-      if (reData.row > 0) {
-        var table = $('<table class="table" border="1"></table>');
-        var row = reData.row;
-        var col = reData.col;
-        var tr = $('<tr></tr>');
-        reData.index.forEach(function (value) {
-          var th = $('<th>'+value+'</th>');
-          tr.append(th);
-        });
-        table.append(tr);
-        reData.data.forEach(function (rowValue) {
-          var tr = $('<tr></tr>');
-          rowValue.forEach(function (value) {
-            var td = $('<td>'+value+'</td>');
-            tr.append(td);
-          });
-          table.append(tr);
-        });
-        tableBox.append(table);
+    function(ret) {
+      ret = JSON.parse(ret);
+      if (ret.succeed == 0) {
+        if (ret.type == 'DataFrame') {
+          if (ret.row_num > 0) {
+            let table = $('<table class="table" border="1"></table>');
+            let row = ret.row_num;
+            let col = ret.col_num;
+            let tr = $('<tr></tr>');
+            ret.col_index.forEach(function (value) {
+              let th = $('<th>'+value+'</th>');
+              tr.append(th);
+            });
+            table.append(tr);
+            ret.data.forEach(function (rowValue) {
+              let tr = $('<tr></tr>');
+              rowValue.forEach(function (value) {
+                let td = $('<td>'+value+'</td>');
+                tr.append(td);
+              });
+              table.append(tr);
+            });
+            tableBox.append(table);
+          }
+        }
+        else {
+          alert('type ' + ret.type + ' not implemented');
+        }
       }
     }
-    );
+  );
 }
 
 function file_name(){
-  var file = document.getElementById('pathbt');
+  let file = document.getElementById('pathbt');
   $("#path").val(file.name);
 }
 
-// circle event
+// ================================================= circle event ================================================
 function circle_dragstart(e) {
-  e.dataTransfer.effectAllowed = "all";
-  e.dataTransfer.setData("from", e.target.id);
-  var circle = $("#" + e.target.id);
-  var x1 = parseInt(circle.css("left")) + 8;
-  var y1 = parseInt(circle.css("top")) + 8;
+  let class_type = drag_data.get("class_type");
+  console.log('circle drag start :', class_type);
+  if (class_type == null) {
+    e.dataTransfer.effectAllowed = "all";
+    drag_data.set("from_id", e.target.id);
+    drag_data.set("class_type", "circle");
 
-  var $line = $('<line id="line"/>');
-  $line.css("stroke", "rgb(99,99,99)");
-  $line.css("stroke-width", "2");
-  $line.attr("x1", x1);
-  $line.attr("y1", y1);
-  $line.attr("x2", x1);
-  $line.attr("y2", y1);
-  $("#svg").append($line);
+    let circle = $("#" + e.target.id);
+    let x1 = parseInt(circle.css("left")) + LINE_CIRCLE_X_BIAS + parseInt(circle.parent().css('left'));
+    let y1 = parseInt(circle.css("top")) + LINE_CIRCLE_Y_BIAS + parseInt(circle.parent().css('top'));
+
+    let $line = $('<line id="line"/>');
+    $line.css("stroke", "rgb(99,99,99)");
+    $line.css("stroke-width", "2");
+    $line.attr("x1", x1);
+    $line.attr("y1", y1);
+    $line.attr("x2", x1);
+    $line.attr("y2", y1);
+    $("#svg").append($line);
+  }
 }
 
 function circle_drag(e) {
-  var x = e.clientX - getX($(".canvas")[0]) + document.body.scrollLeft;
-  var y = e.clientY - getY($(".canvas")[0]) + document.body.scrollTop;
+  // TODO: drag on node, auto link
+  let x = e.clientX - getX($(".canvas")[0]) + document.body.scrollLeft;
+  let y = e.clientY - getY($(".canvas")[0]) + document.body.scrollTop;
   $("#line").attr("x2", x);
   $("#line").attr("y2", y);
-  var svg = $("#svg");
+  let svg = $("#svg");
   svg.html(svg.html());
 }
 
 function circle_dragend(e) {
-  e.dataTransfer.clearData("from");
+  drag_data.delete("from_id");
+  drag_data.delete("class_type");
+  if (drag_data.has('enter')) {
+    let id = drag_data.get('enter');
+    let temp = $('#'+id);
+    temp.css('border-width', '2px');
+    drag_data.delete('enter');
+  }
   $("#line").remove();
 }
 
 function circle_dragenter(e) {
+  // TODO: check fit
 }
 
 function circle_dragover(e) {
@@ -634,231 +982,116 @@ function circle_dragover(e) {
 }
 
 function circle_drop(e) {
-  var from_id = e.dataTransfer.getData("from");
-  if (from_id == null)
+  e.preventDefault();
+  let class_type = drag_data.get('class_type');
+  console.log('circle drop :', class_type);
+  if (class_type != 'circle')
     return false;
-  var to_id = e.target.id;
-  var id = from_id + to_id;
-  var from_type = from_id;
-  var to_type = to_id;
-  while (from_type[from_type.length-1] >= '0' && from_type[from_type.length-1] <= '9')
-    from_type = from_type.substring(0, from_type.length - 1);
-  while (to_type[to_type.length-1] >= '0' && to_type[to_type.length-1] <= '9')
-    to_type = to_type.substring(0, to_type.length - 1);
-  if (from_type.substring(from_type.length-2, from_type.length) == "in") {
-    var temp = from_id;
-    from_id = to_id;
-    to_id = temp
-    temp = from_type;
-    from_type = to_type;
-    to_type = temp;
+  let from_id = drag_data.get("from_id");
+  let to_id = e.target.id;
+  if ((from_id.split('-')[2] == 'in') ^ (to_id.split('-')[2] == 'in')) {
+    if (from_id.split('-')[2] == 'out') {
+      let ret = G.addEdge(from_id, to_id);
+      console.log('create edge', ret);
+    }
+    else {
+      G.addEdge(to_id, from_id);
+    }
   }
-  var from_node_id = from_type.substring(0, from_type.length - 3);
-  var to_node_id = to_type.substring(0, to_type.length - 2);
-
-  var from = $("#" + from_id);
-  var to = $("#" + to_id);
-  var x1 = parseInt(from.css("left")) + 8;
-  var y1 = parseInt(from.css("top")) + 8;
-  var x2 = parseInt(to.css("left")) + 8;
-  var y2 = parseInt(to.css("top")) + 8;
-
-  var from_list = line_from[from_node_id];
-  var to_list = line_to[to_node_id];;
-  from_list[id] = from_id;
-  to_list[id] = to_id;
-  all_lines[id] = [from_id, to_id];
-  in_lines[from_node_id][id] = 0;
-  in_lines[to_node_id][id] = 1;
-
-
-  var $line = $('<line class="line"/>');
-  $line.attr("id", id);
-  $line.attr("x1", x1);
-  $line.attr("y1", y1);
-  $line.attr("x2", x2);
-  $line.attr("y2", y2);
-  var svg = $("#svg");
-  svg.append($line);
-  svg.html(svg.html());
+  return true;
 }
 
-// canvas event
+// ================================================= canvas event ================================================
 function canvas_dragover(e) {
   e.preventDefault();
 }
 
-function canvas_dragenter(e) {
-}
+function canvas_dragenter(e) {}
 
 function canvas_drop(e) {
-  var type = e.dataTransfer.getData("type");
-  if (!(type in typeCount) && type != "move") {
+  e.preventDefault();
+  let class_type = drag_data.get('class_type');
+  console.log('canvas drop :', class_type);
+  if (!(['node', 'component'].includes(class_type))) {
     return false;
   }
-  var x = e.clientX - getX($(".canvas")[0]) + document.body.scrollLeft;
-  var y = e.clientY - getY($(".canvas")[0]) + document.body.scrollTop;
-  if (type != "move") {
-    var num = typeCount[type] + 1;
-    var id = type + num;
-    typeCount[type] = num;
-    var $node = $('<div></div>');
-    $node.attr("class", "node noselect");
-    $node.attr("id", id);
-    $node.attr("ondragstart", "node_dragstart(event)");
-    $node.attr("ondragend", "comp_dragend(event)"); // use component's dragend
-    $node.attr("draggable", "true");
-    $node.attr("data-type",type);
-    $node.css({"top":y, "left":x});
-    $node.text(e.dataTransfer.getData("text"));
-    $node.click(node_click);
-
-    $(".canvas").append($node);
-    line_from[id] = {};
-    line_to[id] = {};
-    in_lines[id] = {};
-    all_nodes[id] = type;
-    var list = details[type];
-    if (!(id in nodes_details)) {
-      var tmp = {};
-      nodes_details[id] = tmp;
-      for (var i=0;i < list.length; ++i)
-        tmp[list[i]["name"]] = list[i]["default"];
-    }
-
-    var node = $('#'+id).append(out1);
-    var $circle = $('<div class="circle noselect" ' +
-      'draggable="true"' +
-      'ondragstart="circle_dragstart(event)" ' +
-      'ondrag="circle_drag(event)" ' +
-      'ondragend="circle_dragend(event)" ' +
-      'ondragenter="circle_dragenter(event)" ' +
-      'ondragover="circle_dragover(event)" ' +
-      'ondrop="circle_drop(event)" ' +
-      '></div>');
-
-    if (in_array(type,in0out1)) {
-      var out1 = $circle.clone();
-      out1.attr("id", id + "out1");
-      out1.css("top", y + node[0].clientHeight);
-      out1.css("left", x + node[0].clientWidth/2 - 4);
-      node.after(out1);
-
-    }else if (in_array(type,in1out0)) {
-      var in1 = $circle.clone();
-      in1.attr("id", id + "in1");
-      in1.css("top", y - 8);
-      in1.css("left", x + node[0].clientWidth/2 - 4);
-      node.after(in1);
-
-    }else if (in_array(type,in1out1)) {
-      var in1 = $circle.clone();
-      in1.attr("id", id + "in1");
-      in1.css("top", y - 8);
-      in1.css("left", x + node[0].clientWidth/2 - 4);
-      node.after(in1);
-
-      var out1 = $circle.clone();
-      out1.attr("id", id + "out1");
-      out1.css("top", y + node[0].clientHeight);
-      out1.css("left", x + node[0].clientWidth/2 - 4);
-      node.after(out1);
-
-    }else if (in_array(type,in1out2)) {
-      var in1 = $circle.clone();
-      in1.attr("id", id + "in1");
-      in1.css("top", y - 8);
-      in1.css("left", x + node[0].clientWidth/2 - 4);
-      node.after(in1);
-
-      var out1 = $circle.clone();
-      out1.attr("id", id + "out1");
-      out1.css("top", y + node[0].clientHeight);
-      out1.css("left", x + node[0].clientWidth/3 - 3);
-      node.after(out1);
-
-      var out2 = $circle.clone();
-      out2.attr("id", id + "out2");
-      out2.css("top", y + node[0].clientHeight);
-      out2.css("left", x + node[0].clientWidth*2/3 - 3);
-      node.after(out2);
-
-    }else if (in_array(type,in2out1)) {
-      var in1 = $circle.clone();
-      in1.attr("id", id + "in1");
-      in1.css("top", y - 8);
-      in1.css("left", x + node[0].clientWidth/3 - 3);
-      node.after(in1);
-
-      var in2 = $circle.clone();
-      in2.attr("id", id + "in2");
-      in2.css("top", y - 8);
-      in2.css("left", x + node[0].clientWidth*2/3 - 3);
-      node.after(in2);
-
-      var out1 = $circle.clone();
-      out1.attr("id", id + "out1");
-      out1.css("top", y + node[0].clientHeight);
-      out1.css("left", x + node[0].clientWidth/2 - 4);
-      node.after(out1);
-    }
-
-  }else {
-    // node move
-    var id = e.dataTransfer.getData("text");
-    var node = $("#"+e.dataTransfer.getData("text"));
-    var circles = $(".circle[id^='"+id+"']");
-    var offy = y - parseInt(node.css('top'));
-    var offx = x - parseInt(node.css('left'));
-    node.css("top", y);
-    node.css("left", x);
-
-    for (var i=0;i < circles.length; ++i) {
-      var t = parseInt(circles[i].style.top);
-      var l = parseInt(circles[i].style.left);
-      circles[i].style.top = (t + offy) + "px";
-      circles[i].style.left = (l + offx) + "px";
-    }
-
-    var from_list = line_from[id];
-    var to_list = line_to[id];
-    for (var line_name in from_list) {
-      var circle_name = from_list[line_name];
-      console.log("get " + line_name + " " + circle_name);
-      var line = $("#"+line_name);
-      var circle = $("#"+circle_name);
-      line.attr("x1", parseInt(circle.css("left"))+8);
-      line.attr("y1", parseInt(circle.css("top"))+8);
-    }
-    for (var line_name in to_list) {
-      var circle_name = to_list[line_name];
-      console.log("get " + line_name + " " + circle_name);
-      var line = $("#"+line_name);
-      var circle = $("#"+circle_name);
-      line.attr("x2", parseInt(circle.css("left"))+8);
-      line.attr("y2", parseInt(circle.css("top"))+8);
-    }
-    var svg = $("#svg");
-    svg.html(svg.html());
-    console.log("end");
+  let bias_x = parseInt(drag_data.get("bias_x"));
+  let bias_y = parseInt(drag_data.get("bias_y"));
+  let x = e.clientX - getX($(".canvas")[0]) + document.body.scrollLeft - bias_x;
+  let y = e.clientY - getY($(".canvas")[0]) + document.body.scrollTop - bias_y;
+  if (class_type == "component") {
+    let type = drag_data.get('type');
+    let ret = G.addNode(type, x, y);
+    console.log('add node', ret);
+  } else if (class_type == "node") {
+    G.setPosition(drag_data.get('node_id'), x, y);
   }
   return false;
 }
 
+// ================================================= bind canvas drag drop event ======================================
+function bind_canvas(selector_or_obj) {
+  let obj = selector_or_obj;
+  if (typeof(selector_or_obj) == 'string')
+    obj = $(selector_or_obj);
+  obj.attr("ondragover", "canvas_dragover(event)");
+  obj.attr("ondragenter", "canvas_dragenter(event)");
+  obj.attr('ondragover', 'canvas_dragover(event)');
+  obj.attr("ondrop", "canvas_drop(event)");
+}
+
+function bind_component(selector_or_obj) {
+  let obj = selector_or_obj;
+  if (typeof(selector_or_obj) == 'string')
+    obj = $(selector_or_obj);
+  obj.attr("draggable", "true");
+  obj.attr("ondragstart", "comp_dragstart(event)");
+  obj.attr("ondragend", "comp_dragend(event)");
+  obj.attr('ondragover', 'comp_dragover(event)');
+  obj.attr('ondrop', 'comp_drop(event)');
+}
+
+function bind_circle(selector_or_obj) {
+  let obj = selector_or_obj;
+  if (typeof(selector_or_obj) == 'string')
+    obj = $(selector_or_obj);
+  obj.attr('draggable', 'true');
+  obj.attr('ondragstart', 'circle_dragstart(event)');
+  obj.attr('ondrag', 'circle_drag(event)');
+  obj.attr('ondragend', 'circle_dragend(event)');
+  obj.attr('ondragenter', 'circle_dragenter(event)');
+  obj.attr('ondragover', 'circle_dragover(event)');
+  obj.attr('ondrop', 'circle_drop(event)');
+}
+
+function bind_node(selector_or_obj) {
+  let obj = selector_or_obj;
+  if (typeof(selector_or_obj) == 'string')
+    obj = $(selector_or_obj);
+  obj.attr('draggable', 'true');
+  obj.attr('ondragstart', 'node_dragstart(event)');
+  obj.attr('ondragend', 'node_dragend(event)');
+  obj.attr('ondragover', 'node_dragover(event)');
+  obj.attr('ondragenter', 'node_dragenter(event)');
+  obj.attr('ondragleave', 'node_dragleave(event)');
+  obj.attr('ondrop', 'node_drop(event)');
+}
+
+// ================================================= component sizebar =========================================
 function nodes_build(paren, lis) {
-  var $new_lis = $('<ul></ul>');
-  for (var key in lis) {
+  let $new_lis = $('<ul></ul>');
+  for (let key in lis) {
     if (typeof(lis[key]) == 'object') {
-      var $new_sublis = $('<li><a><b>'+key+'</b></a></li>');
+      let $new_sublis = $('<li><a><b>'+key+'</b></a></li>');
       nodes_build($new_sublis, lis[key]);
       $new_lis.append($new_sublis);
     }
     else {
-        var $new_type = $(
-            '<li><div class="component" id="' + key +'">' + 
-            lis[key] + 
-            '</div></li>');
-        $new_lis.append($new_type);
+      let $new_type = $(
+        '<li><div class="component" id="' + key +'">' + 
+        lis[key] + 
+        '</div></li>');
+      $new_lis.append($new_type);
     }
   }
   paren.append($new_lis);
@@ -866,34 +1099,34 @@ function nodes_build(paren, lis) {
 
 function component_init() {
   $.post(
-    "/component/list",
-    function(data) {
-      var div = $("#navi");
-      compo_list = JSON.parse(data)['structure'];
+    routes['component_list'],
+    (data) => {
+      let div = $("#navi");
+      let compo_list = JSON.parse(data)['structure'];
       console.log(compo_list);
       nodes_build(div, compo_list);
       // component attr
-      var ele_components = $(".component");
-      ele_components.attr("draggable", "true");
-      ele_components.attr("ondragstart", "comp_dragstart(event)");
-      ele_components.attr("ondragend", "comp_dragend(event)");
-      $.post(
-        "/component/params",
-        function(data) {
-          data = JSON.parse(data);
-          // TODO: node params
-          
-        }
+      bind_component('.component');
     }
   );
 }
 
-component_init();
+// =================================================== init all ====================================================
+$.post(
+  routes['component_param'],
+  (data) => {
+    data = JSON.parse(data).component;
+    // TODO: check response format is right
+    data.forEach(
+      a => type_detail.set(a.name, a)
+    );
+    console.log(data);
 
+    G = new Graph();
+    G.startRender();
 
-// canvas attr
-var ele_canvas = $("#svg");
-ele_canvas.attr("ondragover", "canvas_dragover(event)");
-ele_canvas.attr("ondragenter", "canvas_dragenter(event)");
-ele_canvas.attr("ondrop", "canvas_drop(event)");
-
+    component_init();
+    bind_canvas('#svg');
+    console.log('READY');
+  }
+);

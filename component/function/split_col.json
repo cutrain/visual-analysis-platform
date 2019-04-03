@@ -1,0 +1,19 @@
+{
+  "name":"split_col",
+  "display":"拆分列",
+  "params":[
+    {
+      "name":"columns",
+      "display":"列名",
+      "type":"text",
+      "default":""
+    }
+  ],
+  "in_port":[
+    "DataFrame"
+  ],
+  "out_port":[
+    "DataFrame",
+    "DataFrame"
+  ]
+}

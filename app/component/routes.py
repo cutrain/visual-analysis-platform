@@ -17,10 +17,10 @@ def compo_list():
     ret['structure'].update(structure)
     return ret
 
-@component.route('/params', methods=['POST'])
+@component.route('/param', methods=['POST'])
 @msgwrap
 def compo_params():
-    fields = ['name', 'display', 'in-port', 'out-port', 'params']
+    fields = ['name', 'display', 'in_port', 'out_port', 'params']
     ret = {
         'component':[],
     }

@@ -1,0 +1,19 @@
+{
+  "name":"split_row",
+  "display":"拆分行",
+  "params":[
+    {
+      "name":"ratio",
+      "display":"拆分比例(0-100%)",
+      "type":"number",
+      "default":"75"
+    }
+  ],
+  "in_port":[
+    "DataFrame"
+  ],
+  "out_port":[
+    "DataFrame",
+    "DataFrame"
+  ]
+}

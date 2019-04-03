@@ -1,29 +1,29 @@
 {
-  "name": "fillna",
-  "display": "填充缺失值",
-  "params": [
+  "name":"fillna",
+  "display":"填充缺失值",
+  "params":[
     {
-      "name": "fill_type",
-      "display": "填充方式",
-      "type": "list",
-      "default": "all",
-      "list": [
+      "name":"fill_type",
+      "display":"填充方式",
+      "type":"list",
+      "default":"all",
+      "list":[
         "all",
         "specific",
         "ffill"
       ]
     },
     {
-      "name": "value",
-      "display": "值(all,specific)",
-      "type": "text",
-      "default": "0"
+      "name":"value",
+      "display":"值(all,specific)",
+      "type":"text",
+      "default":"0"
     }
   ],
-  "in-port": [
+  "in_port":[
     "DataFrame"
   ],
-  "out-port": [
+  "out_port":[
     "DataFrame"
   ]
 }

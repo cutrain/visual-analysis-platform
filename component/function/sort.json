@@ -1,38 +1,38 @@
 {
-  "name": "sort",
-  "display": "排序",
-  "params": [
+  "name":"sort",
+  "display":"排序",
+  "params":[
     {
-      "name": "columns",
-      "display": "列名",
-      "type": "text",
-      "default": ""
+      "name":"columns",
+      "display":"列名",
+      "type":"text",
+      "default":""
     },
     {
-      "name": "ascending",
-      "display": "升序",
-      "type": "list",
-      "default": "True",
-      "list": [
+      "name":"ascending",
+      "display":"升序",
+      "type":"list",
+      "default":"True",
+      "list":[
         "True",
         "False"
       ]
     },
     {
-      "name": "na_position",
-      "display": "Nan所在位置",
-      "type": "list",
-      "default": "last",
-      "list": [
+      "name":"na_position",
+      "display":"Nan所在位置",
+      "type":"list",
+      "default":"last",
+      "list":[
         "first",
         "last"
       ]
     }
   ],
-  "in-port": [
+  "in_port":[
     "DataFrame"
   ],
-  "out-port": [
+  "out_port":[
     "DataFrame"
   ]
 }

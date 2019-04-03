@@ -1,31 +1,31 @@
 {
   "数据输入输出": {
-    "data-instream": "导入csv数据",
-    "data-outstream": "导出csv数据",
-    "sql-instream": "导入SQL数据",
-    "sql-outstream": "导出SQL数据",
-    "model-instream": "导入模型",
-    "model-outstream": "导出模型",
-    "image-instream": "导入图像数据",
-    "image-outstream": "导出图像数据",
-    "video-instream": "导入视频数据",
-    "video-outstream": "导出视频数据",
-    "graph-instream": "导入图数据",
-    "graph-outstream": "导出图数据"
+    "data_instream": "导入csv数据",
+    "data_outstream": "导出csv数据",
+    "sql_instream": "导入SQL数据",
+    "sql_outstream": "导出SQL数据",
+    "model_instream": "导入模型",
+    "model_outstream": "导出模型",
+    "image_instream": "导入图像数据",
+    "image_outstream": "导出图像数据",
+    "video_instream": "导入视频数据",
+    "video_outstream": "导出视频数据",
+    "graph_instream": "导入图数据",
+    "graph_outstream": "导出图数据"
   },
   "关系表": {
     "机器学习": {
       "adaboost": "adaboost",
       "svm": "支持向量机",
-      "neural-network": "神经网络",
+      "neural_network": "神经网络",
       "knn": "k近邻",
-      "naive-bayes": "朴素贝叶斯",
-      "decision-tree": "决策树"
+      "naive_bayes": "朴素贝叶斯",
+      "decision_tree": "决策树"
     },
     "数值处理": {
       "sort": "排序",
       "random": "打乱数据",
-      "sql-execute": "SQL语句",
+      "sql_execute": "SQL语句",
       "normalization": "标准化",
       "fillna": "填充缺失值",
       "drop_duplicate": "删除重复行",
@@ -33,10 +33,10 @@
     },
     "其它": {
       "predict": "预测",
-      "split-col": "拆分列",
-      "split-row": "拆分行",
-      "merge-row": "合并行",
-      "merge-col": "合并列"
+      "split_col": "拆分列",
+      "split_row": "拆分行",
+      "merge_row": "合并行",
+      "merge_col": "合并列"
     }
   },
   "图像": {
@@ -58,7 +58,7 @@
       "noiseness": "噪声化"
     },
     "机器学习": {
-      "image-svm": "SVM"
+      "image_svm": "SVM"
     },
     "深度学习": {
       "cnn": "CNN",
@@ -76,13 +76,13 @@
     }
   },
   "视频": {
-    "video-reso": "改变分辨率",
-    "video-cut": "剪切",
-    "video-size": "裁剪大小",
-    "video-mono": "物体提取",
-    "video-frame": "截取帧",
-    "video-iframe": "条件截取帧",
-    "video-merge": "合并视频"
+    "video_reso": "改变分辨率",
+    "video_cut": "剪切",
+    "video_size": "裁剪大小",
+    "video_mono": "物体提取",
+    "video_frame": "截取帧",
+    "video_iframe": "条件截取帧",
+    "video_merge": "合并视频"
   },
   "图": {}
 }

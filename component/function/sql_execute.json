@@ -1,0 +1,18 @@
+{
+  "name":"sql_execute",
+  "display":"SQL语句",
+  "params":[
+    {
+      "name":"sql_command",
+      "display":"SQL语句,用{this}指代该表",
+      "type":"richtext",
+      "default":"SELECT * \nFROM {this}"
+    }
+  ],
+  "in_port":[
+    "DataFrame"
+  ],
+  "out_port":[
+    "DataFrame"
+  ]
+}

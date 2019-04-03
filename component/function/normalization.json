@@ -1,13 +1,13 @@
 {
-  "name": "normalization",
-  "display": "标准化",
-  "params": [
+  "name":"normalization",
+  "display":"标准化",
+  "params":[
     {
-      "name": "method",
-      "display": "标准化方式",
-      "type": "list",
-      "default": "z-score",
-      "list": [
+      "name":"method",
+      "display":"标准化方式",
+      "type":"list",
+      "default":"z-score",
+      "list":[
         "z-score",
         "min-max",
         "log",
@@ -15,16 +15,16 @@
       ]
     },
     {
-      "name": "columns",
-      "display": "列",
-      "type": "text",
-      "default": ""
+      "name":"columns",
+      "display":"列",
+      "type":"text",
+      "default":""
     }
   ],
-  "in-port": [
+  "in_port":[
     "DataFrame"
   ],
-  "out-port": [
+  "out_port":[
     "DataFrame"
   ]
 }

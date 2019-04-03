@@ -1,6 +1,6 @@
 {
-  "name":"knn",
-  "display":"k近邻",
+  "name":"decision_tree",
+  "display":"决策树",
   "params":[
     {
       "name":"method",

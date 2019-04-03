@@ -1,0 +1,26 @@
+{
+  "name":"merge_col",
+  "display":"合并列",
+  "params":[
+    {
+      "name":"how",
+      "display":"合并方式",
+      "type":"list",
+      "default":"concat",
+      "list":[
+        "concat",
+        "inner",
+        "left",
+        "right",
+        "outer"
+      ]
+    }
+  ],
+  "in_port":[
+    "DataFrame",
+    "DataFrame"
+  ],
+  "out_port":[
+    "DataFrame"
+  ]
+}

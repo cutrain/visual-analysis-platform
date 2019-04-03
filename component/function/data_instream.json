@@ -1,0 +1,22 @@
+{
+  "name":"data_instream",
+  "display":"导入csv数据",
+  "params":[
+    {
+      "name":"read_number",
+      "display":"读入数量",
+      "type":"number",
+      "default":"0"
+    },
+    {
+      "name":"path",
+      "display":"文件名",
+      "type":"text",
+      "default":""
+    }
+  ],
+  "in_port":[],
+  "out_port":[
+    "DataFrame"
+  ]
+}

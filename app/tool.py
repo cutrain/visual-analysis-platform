@@ -8,16 +8,16 @@ def msgwrap(func):
     @wraps(func)
     def wrap(*args, **kwargs):
         ret = {
-            'succeed':1,
+            'succeed':0,
             'message':'succeed',
         }
         try:
             result = func(*args, **kwargs)
-            if result is not None:
+            if type(result) is dict:
                 ret.update(result)
         except Exception as e:
             ret = {
-                'succeed':0,
+                'succeed':1,
                 'message':str(e),
             }
         return js.dumps(ret).encode('utf-8')
