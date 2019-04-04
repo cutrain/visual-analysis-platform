@@ -16,9 +16,10 @@ import numpy as np
 
 debug = True
 
-subprocess = multiprocessing.Process(name='empty')
 r = redis.StrictRedis(host='localhost', port=6379, db=0, charset='utf-8', decode_responses=True)
 r_data = redis.StrictRedis(host='localhost', db=0, port=6379)
+
+processing_manager = {}
 
 @graph.route('/get', methods=['POST'])
 @msgwrap
@@ -29,8 +30,8 @@ def get_graph():
     with open(os.path.join('project', pid+'.pickle'), 'rb') as f:
         p_data = pickle.load(f)
     G = p_data.pop('graph', {
-        'all_nodes':'',
-        'all_lines':'',
+        'all_nodes':[],
+        'all_lines':[],
     })
     return G
 
@@ -56,33 +57,44 @@ def save_graph():
 @graph.route('/run', methods=['POST'])
 @msgwrap
 def run():
-    # TODO
+    # TODO: check format & create Graph as parameter
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    print(req)
-    global child_process
-    # subprocess = multiprocessing.Process(name="analysis", target=analysis, args=(req,))
-    # subprocess.daemon = True
-    # subprocess.start()
+    pid = req.pop('project_id')
+    global processing_manager
+    # check the project not running yet
+    if pid in processing_manager:
+        return {
+            "succeed": 1,
+            "message": "this project is running now",
+        }
+    process = multiprocessing.Process(name=pid, target=analysis, args=(req,))
+    process.daemon = True
+    process.start()
+    processing_manager.update({
+        pid: process
+    })
 
 
 
 @graph.route('/progress', methods=['POST'])
 @msgwrap
 def progress():
-    # TODO
-    progress = r.hgetall('status')
-    print(progress)
-    status = r.get('global')
-    print(status)
-    if status != '0':
-        status = '1'
+    req = request.get_data().decode('utf-8')
+    req = js.loads(req)
+    pid = req.pop('project_id')
+    global processing_manager
+    status = 0
+    if pid in processing_manager:
+        status = 1
+    progress = r.get('progress' + str(pid))
+    print(pid + " nodes' status : ", status)
 
-    tmp = {
+    ret = {
         "status":status,
         "progress":progress
     }
-    return tmp
+    return ret
 
 @graph.route('/stop', methods=['POST'])
 @msgwrap
@@ -90,75 +102,44 @@ def stop():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     pid = req.pop('project_id')
-    # TODO
+    global processing_manager
+    if pid not in processing_manager:
+        return {
+            "succeed": 1,
+            "message": str(pid) + " not running",
+        }
+    processing_manager[pid].terminate()
+    processing_manager.pop(pid)
 
 
 @graph.route('/sample', methods=['POST'])
 @msgwrap
 def sample():
     # TODO
-    finish = False
-    try:
-        a = request.get_data().decode('utf-8')
-        a = js.loads(a)
-        df = pickle.loads(r_data.hget('data', a['node_name']+'out1'))
-        num = max(a['number'], 0)
-        num = min(num, len(df))
-        index = df.columns.tolist()
-        df = df[0:num]
-        df = df.round(3)
-        for i in range(len(index)):
-            index[i] += '\n(' + str(df[index[i]].dtype) + ')'
-        df = df.fillna('NaN')
-        df = np.array(df).tolist()
+    a = request.get_data().decode('utf-8')
+    a = js.loads(a)
+    df = pickle.loads(r_data.hget('data', a['node_name']+'out1'))
+    num = max(int(a['number']), 0)
+    num = min(num, len(df))
+    index = df.columns.tolist()
+    df = df[0:num]
+    df = df.round(3)
+    types = [str(df[index[i]].dtype) for i in range(len(index))]
+    df = df.fillna('NaN')
+    df = np.array(df).tolist()
 
-        ret = {}
-        ret = {
-            'col':len(index),
-            'index':index,
-            'row':num,
-            'data': df
-        }
-        finish = True
-
-    except AttributeError as e:
-        print('Error in route : sapmle Attribute')
-        print(e)
-        if type(df) is "list":
-            df = df[0]
-        ret = {
-            'col':1,
-            'index':['ErrorMessage'],
-            'row':1,
-            'data':[[str(df[0])]]
-        }
-    except Exception as e:
-        print('Error in route : sapmle Exception')
-        print(e)
-        ret = {
-            'col':1,
-            'index':['ErrorMessage'],
-            'row':1,
-            'data':[[str(e)]]
-        }
-    if not finish and not debug:
-        ret = {
-            'col':0,
-            'index':[],
-            'row':0,
-            'data':[],
-            'message':ret['data']
-        }
+    ret = {
+        'col_num':len(index),
+        'col_index':index,
+        'col_type':types,
+        'row_num':num,
+        'data': df
+    }
 
     return ret
 
 @graph.route('/init', methods=['POST'])
 @msgwrap
 def init():
-    print('init start')
-    if subprocess.is_alive():
-        subprocess.terminate()
-    r.set('global', '1')
-    r.delete('status')
-    r.delete('data')
-
+    # TODO
+    pass
