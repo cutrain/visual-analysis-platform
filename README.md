@@ -6,7 +6,7 @@
 ### 运行环境要求
 ```
 redis
-python3
+python >= 3.4
 *MySQL # "SQL-command" require
 ```
 

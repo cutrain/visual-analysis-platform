@@ -1,6 +1,7 @@
 import time
 import random
 import string
+import filetype
 import json as js
 from functools import wraps
 
@@ -36,5 +37,21 @@ def gen_random_string(length=8, *, number=True, abc=True, upper_case=False, lowe
             charset += string.ascii_lowercase
     return ''.join(random.choice(charset) for _ in range(length))
 
+def get_type(filepath=None, data=None):
+    if filepath is not None:
+        ans = filetype.guess(filepath)
+        if 'image' in ans:
+            return "Image"
+        if 'video' in ans:
+            return 'Video'
+        if 'audio' in ans:
+            return 'Audio'
+        # TODO : more type
+    return "DataFrame"
+
+def safepath(path):
+    path = path.replace('..', '')
+    path = path.lstrip('/')
+    return path
 
 

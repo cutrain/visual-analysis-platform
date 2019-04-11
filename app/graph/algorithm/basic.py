@@ -12,10 +12,10 @@ def truepath(path, content=""):
 
 @err_wrap
 def data_instream(**params):
-    df = pd.read_csv(truepath(params['path'], "data"))
     num = int(params.pop('read_number', '0'))
-    if num != 0:
-        df = df[:num]
+    if num == 0:
+        num = None
+    df = pd.read_csv(truepath(params['path'], "data"), nrows=num)
     return True, df
 
 @err_wrap

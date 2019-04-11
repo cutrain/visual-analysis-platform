@@ -1,10 +1,3 @@
-from . import graph
-from .. import db
-from ..tool import msgwrap
-from flask import render_template, request
-
-# from .analysis import analysis
-
 import os
 import redis
 import pickle
@@ -13,11 +6,16 @@ import json as js
 import pandas as pd
 import numpy as np
 
+from flask import render_template, request
 
-debug = True
+from . import graph
+from .. import db
+from .graph import Graph
+from tool import msgwrap, safepath
+from config import cache_dir, redis_host, redis_db, redis_port
 
-r = redis.StrictRedis(host='localhost', port=6379, db=0, charset='utf-8', decode_responses=True)
-r_data = redis.StrictRedis(host='localhost', db=0, port=6379)
+
+r = redis.StrictRedis(host=redis_host, port=redis_port, db=redis_db, charset='utf-8', decode_responses=True)
 
 processing_manager = {}
 
@@ -68,7 +66,17 @@ def run():
             "succeed": 1,
             "message": "this project is running now",
         }
-    process = multiprocessing.Process(name=pid, target=analysis, args=(req,))
+
+    G = Graph(pid)
+    all_nodes = req.pop('all_nodes')
+    all_lines = req.pop('all_lines')
+    for node in all_nodes:
+        G.add_node(node['node_name'], node['node_type'], node['details'])
+    for line in all_lines:
+        G.add_line(line['line_from'], line['port_from'], line['line_to'], line['port_to'])
+    G.load_cache()
+
+    process = multiprocessing.Process(name=pid, target=G)
     process.daemon = True
     process.start()
     processing_manager.update({
@@ -87,8 +95,8 @@ def progress():
     status = 0
     if pid in processing_manager:
         status = 1
-    progress = r.get('progress' + str(pid))
-    print(pid + " nodes' status : ", status)
+    progress = r.hgetall(pid)
+    print(pid, "nodes' status :", progress)
 
     ret = {
         "status":status,
@@ -118,7 +126,6 @@ def sample():
     # TODO
     a = request.get_data().decode('utf-8')
     a = js.loads(a)
-    df = pickle.loads(r_data.hget('data', a['node_name']+'out1'))
     num = max(int(a['number']), 0)
     num = min(num, len(df))
     index = df.columns.tolist()
@@ -141,5 +148,11 @@ def sample():
 @graph.route('/init', methods=['POST'])
 @msgwrap
 def init():
-    # TODO
-    pass
+    global cache_dir
+    req = request.get_data().decode('utf-8')
+    req = js.loads(req)
+    pid = req.pop('project_id')
+    r.hdel(pid)
+    for root, dirs, files in os.walk(os.path.join(cache_dir, pid)):
+        for file in files:
+            os.remove(os.path.join(root, file))
