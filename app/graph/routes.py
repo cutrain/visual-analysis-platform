@@ -12,10 +12,10 @@ from . import graph
 from .. import db
 from .graphclass import Graph
 from tool import msgwrap, safepath
-from config import cache_dir, redis_host, redis_db, redis_port
+from config import CACHE_DIR, REDIS_HOST, REDIS_DB, REDIS_PORT
 
 
-r = redis.StrictRedis(host=redis_host, port=redis_port, db=redis_db, charset='utf-8', decode_responses=True)
+r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, charset='utf-8', decode_responses=True)
 
 processing_manager = {}
 
@@ -148,11 +148,11 @@ def sample():
 @graph.route('/init', methods=['POST'])
 @msgwrap
 def init():
-    global cache_dir
+    global CACHE_DIR
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     pid = req.pop('project_id')
     r.hdel(pid)
-    for root, dirs, files in os.walk(os.path.join(cache_dir, pid)):
+    for root, dirs, files in os.walk(os.path.join(CACHE_DIR, pid)):
         for file in files:
             os.remove(os.path.join(root, file))

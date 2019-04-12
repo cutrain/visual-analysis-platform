@@ -7,7 +7,7 @@ import multiprocessing
 from multiprocessing import queues
 from collections import defaultdict
 
-from config import cache_dir, redis_port, redis_db, redis_host
+from config import CACHE_DIR, REDIS_PORT, REDIS_DB, REDIS_HOST
 from .algorithm import *
 
 fields = ['name', 'display', 'in_port', 'out_port', 'params']
@@ -187,9 +187,9 @@ class Graph:
 
     def load_cache(self):
         try:
-            global cache_dir
+            global CACHE_DIR
             for node in self.nodes:
-                node.load_cache(os.path.join(cache_dir, self.pid))
+                node.load_cache(os.path.join(CACHE_DIR, self.pid))
             changed = True
             while changed:
                 changed = False
@@ -207,8 +207,8 @@ class Graph:
         return False
 
     def __call__(self):
-        global redis_host, redis_port, redis_db
-        self.r = redis.StrictRedis(host=redis_host, port=redis_port, db=redis_db, charset='utf-8', decode_responses=True)
+        global REDIS_HOST, REDIS_PORT, REDIS_DB
+        self.r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, charset='utf-8', decode_responses=True)
         for key, val in self.nodes.items():
             self.r.hset(self.pid, key, val.status)
         last = {}

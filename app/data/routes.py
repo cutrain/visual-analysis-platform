@@ -2,7 +2,7 @@ import os
 from flask import render_template, request
 import pandas as pd
 
-from config import data_dir
+from config import DATA_DIR
 from . import data
 from .. import db
 from tool import msgwrap, get_type, safepath
@@ -12,12 +12,12 @@ from tool import msgwrap, get_type, safepath
 @msgwrap
 def upload():
     # TODO
-    global data_dir
+    global DATA_DIR
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     get_f = request['file']
     path = safepath(req.pop('dataset'))
-    path = os.path.join(data_dir, path)
+    path = os.path.join(DATA_DIR, path)
     with open(path, 'wb') as f:
         f.write(get_f)
 
@@ -29,7 +29,7 @@ def upload():
 @data.route('/view', methods=['POST'])
 @msgwrap
 def view():
-    global data_dir
+    global DATA_DIR
     def oswalk(obj, path):
         dirs = sorted(os.listdir())
         for i in dirs:
@@ -42,16 +42,16 @@ def view():
             if os.path.isfile(new_path):
                 obj[i] = os.path.getsize(new_path) // 1024
     structure = {}
-    oswalk(structure, data_dir)
+    oswalk(structure, DATA_DIR)
 
 @data.route('/get', methods=['POST'])
 @msgwrap
 def get():
-    global data_dir
+    global DATA_DIR
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     path = safepath(req.pop('path'))
-    path = os.path.join(data_dir, path)
+    path = os.path.join(DATA_DIR, path)
     if not os.path.exists(path):
         return {
             'succeed':0,
@@ -91,23 +91,23 @@ def get():
 @data.route('/move', methods=['POST'])
 @msgwrap
 def move():
-    global data_dir
+    global DATA_DIR
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     src = safepath(req.pop('src'))
     dest = safepath(req.pop('dest'))
-    src = os.path.join(data_dir, src)
-    dest = os.path.join(data_dir, dest)
+    src = os.path.join(DATA_DIR, src)
+    dest = os.path.join(DATA_DIR, dest)
     os.rename(src, dest)
 
 @data.route('/delete', methods=['POST'])
 @msgwrap
 def delete():
-    global data_dir
+    global DATA_DIR
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     path = safepath(req.pop('path'))
-    path = os.path.join(data_dir, path)
+    path = os.path.join(DATA_DIR, path)
     if os.path.isdir(path):
         for root, dirs, files in os.walk(path, topdown=False):
             for file in files:
