@@ -1,5 +1,6 @@
 import os
 import time
+import json
 import pickle
 
 import multiprocessing
@@ -7,7 +8,6 @@ from multiprocessing import queues
 from collections import defaultdict
 
 from config import cache_dir, redis_port, redis_db, redis_host
-from .. import function_map
 from .algorithm import *
 
 fields = ['name', 'display', 'in_port', 'out_port', 'params']
@@ -58,10 +58,10 @@ class Graph:
             self.status = 1
             self._name = node_name
             self._detail = component[node_type]
-            self._in_port_name = [None] for i in self._detail['in_port']
-            self._in_port = [None] for i in self._detail['in_port']
-            self._in = [Port(self, i)] for i in self._detail['in_port'] # will not use it, just for type check
-            self._out = [Port(self, i)] for i in self._detail['out_port']
+            self._in_port_name = [None for i in self._detail['in_port'] ]
+            self._in_port = [None for i in self._detail['in_port'] ]
+            self._in = [Port(self, i) for i in self._detail['in_port'] ] # will not use it, just for type check
+            self._out = [Port(self, i) for i in self._detail['out_port'] ]
             self._param = param
             # TODO : check param avaliable
             print('node :', self._name, 'function :', node_type, eval(node_type))

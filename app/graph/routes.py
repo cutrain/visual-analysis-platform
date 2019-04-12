@@ -10,7 +10,7 @@ from flask import render_template, request
 
 from . import graph
 from .. import db
-from .graph import Graph
+from .graphclass import Graph
 from tool import msgwrap, safepath
 from config import cache_dir, redis_host, redis_db, redis_port
 

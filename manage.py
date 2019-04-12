@@ -1,5 +1,5 @@
 import os
-from config import data_dir, model_dir, project_dir
+from config import data_dir, model_dir, project_dir, cache_dir
 from app import create_app, db
 from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand

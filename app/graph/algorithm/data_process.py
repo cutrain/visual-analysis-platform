@@ -1,15 +1,12 @@
 import time
 import pandas as pd
 import numpy as np
-from .error import err_wrap
 
-@err_wrap
 def random(in1, **params):
     df = in1
     df = df.sample(frac=1, random_state=int(time.time())).reset_index(drop=True)
     return True, df
 
-@err_wrap
 def sql_execute(in1, **params):
     user = 'root'
     password = '123'
@@ -29,14 +26,12 @@ def sql_execute(in1, **params):
     df = pd.read_sql('select * from ' + database + ';', con)
     return True, df
 
-@err_wrap
 def sort(in1, **params):
     params.pop('in2')
     cols = params.pop('columns').split(',')
     asc = True if params.pop('ascending') == "True" else False
     return True, in1.sort_values(by=cols, ascending=asc, kind='mergesort', **params)
 
-@err_wrap
 def dropna(in1, **params):
     t = params.pop("drop_type")
     if t == "row":
@@ -47,7 +42,6 @@ def dropna(in1, **params):
         ret = in1.dropna(how="all")
     return True, ret
 
-@err_wrap
 def fillna(in1, **params):
     t = params.pop("fill_type")
     value = params.pop("value")
@@ -63,7 +57,6 @@ def fillna(in1, **params):
             args.update({v[0]:v[1]})
         return True, in1.fillna(args)
 
-@err_wrap
 def drop_duplicate(in1, **params):
     keep = params.pop("keep", "first")
     if keep == 'None':
@@ -78,7 +71,6 @@ def drop_duplicate(in1, **params):
     a = pd.DataFrame([1,2,3])
     return True, in1.drop_duplicates(subset=cols, keep=keep)
 
-@err_wrap
 def normalization(in1, **params):
     ret = in1.copy()
     method = params.pop("method", "z-score")

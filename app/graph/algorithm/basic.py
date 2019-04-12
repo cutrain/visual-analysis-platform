@@ -1,7 +1,6 @@
 import pandas as pd
 import sqlite3
 
-from .error import err_wrap
 
 def truepath(path, content=""):
     import os
@@ -10,7 +9,6 @@ def truepath(path, content=""):
     return os.path.join(os.getcwd(), content, path)
 
 
-@err_wrap
 def data_instream(**params):
     num = int(params.pop('read_number', '0'))
     if num == 0:
@@ -18,7 +16,6 @@ def data_instream(**params):
     df = pd.read_csv(truepath(params['path'], "data"), nrows=num)
     return True, df
 
-@err_wrap
 def sql_instream(**params):
     dbtype = params['database-type']
     if dbtype == 'MySQL':
@@ -65,19 +62,16 @@ def sql_instream(**params):
         df = df[:num]
     return True, df
 
-@err_wrap
 def model_instream(**params):
     from sklearn.externals import joblib
     model = joblib.load(truepath(params['path'], "model"))
     return True, model
 
-@err_wrap
 def data_outstream(in1, **params):
     df = in1
     df.to_csv(truepath(params['path'], "data"), encoding='utf-8', index=False)
     return True, None
 
-@err_wrap
 def sql_outstream(in1, **params):
     df = in1
     dbtype = params['database-type']
@@ -123,7 +117,6 @@ def sql_outstream(in1, **params):
     con.close()
     return True, None
 
-@err_wrap
 def model_outstream(in1, **params):
     model = in1
     from sklearn.externals import joblib

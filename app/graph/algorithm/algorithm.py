@@ -6,7 +6,6 @@ from sklearn.neighbors import KNeighborsClassifier, KNeighborsRegressor
 from sklearn.ensemble import AdaBoostClassifier, AdaBoostRegressor
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 
-from .error import err_wrap
 
 def training(data, func, params):
     params.pop('in2')
@@ -15,11 +14,9 @@ def training(data, func, params):
     clf = clf.fit(data.drop(cols, axis=1), data[cols])
     return True, clf
 
-@err_wrap
 def naive_bayes(in1, **params):
     return training(in1, GaussianNB, params)
 
-@err_wrap
 def decision_tree(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
@@ -28,7 +25,6 @@ def decision_tree(in1, **params):
         func = DecisionTreeRegressor
     return training(in1, func, params)
 
-@err_wrap
 def svm(in1, **params):
     method = params.pop('method', None)
     kernel = params.pop('kernel', 'linear')
@@ -45,7 +41,6 @@ def svm(in1, **params):
             func = LinearSVR
     return training(in1, func, params)
 
-@err_wrap
 def knn(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
@@ -54,7 +49,6 @@ def knn(in1, **params):
         func = KNeighborsRegressor
     return training(in1, func, params)
 
-@err_wrap
 def adaboost(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':
@@ -63,7 +57,6 @@ def adaboost(in1, **params):
         func = AdaBoostRegressor
     return training(in1, func, params)
 
-@err_wrap
 def neural_network(in1, **params):
     method = params.pop('method', None)
     if method == 'classify':

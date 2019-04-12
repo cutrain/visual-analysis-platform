@@ -72,7 +72,7 @@ def get():
         ret['data'] = {
             'col_num':len(data.columns),
             'col_ndex':data.columns,
-            'col_type':list(map(str,list(data.dtypes)))
+            'col_type':list(map(str,list(data.dtypes))),
             'row_num':len(data),
             'data':list(map(list, data.values))
         }
