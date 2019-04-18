@@ -98,7 +98,7 @@ def compo_modify():
                 obj[id] = display
             return True
         for key, val in obj.items():
-            ret = ret and walk(val, id, new_id, display)
+            ret = ret or walk(val, id, new_id, display)
         return ret
 
     ret = walk(structure, component_id, detail['name'], detail['display'])
