@@ -84,6 +84,32 @@ def compo_modify():
         if ret is not None:
             return ret
 
+    with open(os.path.join(COMPONENT_DIR, 'structure.json'), 'rb') as f:
+        structure = json.load(f)
+    def walk(obj, id, new_id, display):
+        if type(obj) != dict:
+            return False
+        ret = False
+        if id in obj:
+            if id != new_id:
+                obj.pop(id)
+                obj.update({new_id:display})
+            else:
+                obj[id] = display
+            return True
+        for key, val in obj.items():
+            ret = ret and walk(val, id, new_id, display)
+        return ret
+
+    ret = walk(structure, component_id, detail['name'], detail['display'])
+    if not ret:
+        return {
+            'succeed':1,
+            'message': component_id + ' not found',
+        }
+    with open(os.path.join(COMPONENT_DIR, 'structure.json'), 'w') as f:
+        f.write(json.dumps(structure, ensure_ascii=False, indent=2))
+
     with open(os.path.join(COMPONENT_DIR, 'function', detail['name']+'.json'), 'w') as f:
         f.write(json.dumps(detail, ensure_ascii=False, indent=2))
     if detail['name'] != component_id:

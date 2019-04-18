@@ -147,6 +147,7 @@ var type_detail = new Map();
 var selected = null;
 var new_compo = null;
 var new_compo_class = '';
+var file_type = ['DataFrame', 'Image', 'Graph', 'Video', 'skModel'];
 
 function calc_id(posi_str) {
   return posi_str;
@@ -368,7 +369,7 @@ function data_num_onchange(type) {
   let dataBox = new ParamBox('#'+typeid, 'data_' + type + '_');
   for (let i = children.length; i < num; ++ i) {
     console.log('add', type, i + '/'+num);
-    dataBox.addAttr(i, type+i, 'DataFrame', '', 'list', ['DataFrame', 'Image', 'Graph', 'skModel']);
+    dataBox.addAttr(i, type+i, file_type[0], '', 'list', file_type);
   }
 }
 
