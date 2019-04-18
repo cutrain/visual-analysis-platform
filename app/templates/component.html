@@ -1,0 +1,427 @@
+<!DOCTYPE HTML5>
+<html>
+<head>
+  <script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
+</head>
+<style type='text/css'>
+.compo_list{
+  position:absolute;
+  width:200px;
+  height:100%;
+  left:0px;
+}
+.code_box{
+  position:absolute;
+  width:100%;
+  height:100%;
+  margin-left:200px;
+  background:#FFFFE0;
+}
+.param_box{
+  position:absolute;
+  right:0px;
+  width:200px;
+  height:100%;
+  background:#F5F5DC;
+}
+.param_box div{
+  font-weight:bold;
+}
+.param_box div div div{
+  padding-left:2px;
+  font-weight:normal;
+}
+.compo:hover{
+  cursor:pointer;
+  background:#0080ff;
+}
+.noselect{
+  -webkit-touch-callout: none;
+  -webkit-user-select:none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select:none;
+}
+</style>
+<body>
+  <div class="compo_list" id='compo_list'>
+  </div>
+  <div class="code_box" id='code_box'>
+  </div>
+  <div class="param_box" id='param_box'>
+  </div>
+</body>
+<script>
+'use strict';
+const server = '';
+const routes = {
+  'list': server + '/component/list',
+  'param': server + '/component/param',
+  'modify': server + '/component/modify',
+  'create': server + '/component/create',
+  'getcode': server + '/component/getcode',
+  'modifycode': server + '/component/modifycode',
+};
+
+class ParamBox{
+  constructor(box_selector, id_prefix='', other='') {
+    if (typeof(box_selector) == 'object') {
+      // other -> id_prefix, id_prefix -> box_selector, box_selector -> jquery object
+
+      this.container = box_selector.container.find(id_prefix);
+      this.id_prefix = box_selector.id_prefix + other;
+    }
+    else {
+      this.container = $(box_selector);
+      this.id_prefix = id_prefix;
+    }
+    this.accept_type = {
+      'text':()=>{
+        let $param = $('<input></input>');
+        return $param;
+      },
+      'list':(list_choice)=>{
+        let $param = $('<select></select>');
+        for (let i = 0;i < list_choice.length;++ i) {
+          let $tmp = $('<option></option>');
+          $tmp.attr('value', list_choice[i]);
+          $tmp.text(list_choice[i]);
+          $param.append($tmp);
+        }
+        return $param;
+      },
+      'number':()=>{
+        let $param = $('<input></input>');
+        $param.attr('type', 'number');
+        return $param;
+      },
+      'div':()=>{
+        let $param = $('<div></div>');
+        return $param;
+      },
+      'button':()=>{
+        let $param = $('<button></button>');
+        return $param;
+      },
+    }
+  }
+
+  addAttr(id, text, default_val, hover_text, type, list_choice, onchange_func) {
+    console.log('add attr', id, text, default_val, hover_text, type, list_choice, onchange_func);
+    console.log('real id', this.id_prefix+id);
+    let real_id = this.id_prefix + id;
+    let $new_div = $('<div></div>');
+    if (text != null) {
+      let $text_box = $('<div>' + text + '</div>');
+      $text_box.attr('title', hover_text);
+      $new_div.append($text_box);
+    }
+    let $value_box = this.accept_type[type](list_choice);
+    $value_box.attr('id', real_id);
+    if (typeof(onchange_func) == 'string') {
+      if (onchange_func.indexOf('=') != -1) {
+        let condition = onchange_func.split('=')[0];
+        let func = onchange_func.split('=')[1];
+        $value_box.attr(condition, func);
+      }
+      else
+        $value_box.attr('onchange', onchange_func);
+    }
+    if (type == 'button')
+      $value_box.text(default_val);
+    else
+      $value_box.val(default_val);
+    $new_div.append($value_box);
+    console.log('add', this.container);
+    this.container.append($new_div);
+  }
+
+  clear() {
+    this.container.children().remove();
+  }
+}
+
+var paramBox = new ParamBox('#param_box');
+var type_detail = new Map();
+var selected = null;
+var new_compo = null;
+var new_compo_class = '';
+
+function calc_id(posi_str) {
+  return posi_str;
+
+}
+
+function add_compo(posi_str, posi_id) {
+  console.log('click');
+  console.log(posi_str);
+  console.log(posi_id);
+  console.log($('#'+posi_id));
+  if (new_compo != null) {
+    new_compo.remove();
+  }
+  let paren = $('#'+posi_id+'>ul');
+  let $new_type = $(
+    '<li><div class="noselect compo" onclick="select_component(this)" id="new_compo">' + 
+    '新建组件' + 
+    '</div></li>');
+  new_compo = $new_type;
+  new_compo_class = posi_str;
+  paren.append($new_type);
+}
+
+function select_component(obj) {
+  console.log('select', obj);
+  selected = obj.id;
+  if (new_compo != null && selected != 'new_compo') {
+    new_compo.remove();
+  }
+  let detail = type_detail.get(obj.id);
+  if (detail == undefined) {
+    detail = {
+      'name':'',
+      'display':'',
+      'in_port':[],
+      'out_port':[],
+      'params':[],
+    };
+  }
+  paramBox.clear();
+  // addAttr(id, text, default_val, hover_text, type, list_choice, onchange_func) {
+  paramBox.addAttr('save', '', '保存', '', 'button', null, 'onclick=saving()');
+  paramBox.addAttr('name', '组件名', detail.name, '符合变量命名规范，与后台函数名相同', 'text');
+  paramBox.addAttr('display', '组件显示名', detail.display, '组件在组件表显示的名称', 'text');
+  paramBox.addAttr('input_num', '输入数量', detail.in_port.length, '', 'number', null, 'data_num_onchange("input")');
+  paramBox.addAttr('input_types', '', '', '', 'div');
+  paramBox.addAttr('output_num', '输出数量', detail.out_port.length, '', 'number', null, 'data_num_onchange("output")');
+  paramBox.addAttr('output_types', '', '', '', 'div');
+  paramBox.addAttr('param_num', '参数数量', detail.params.length, '', 'number', null, 'param_num_onchange()');
+  paramBox.addAttr('params', '', '', '', 'div');
+  data_num_onchange("input");
+  data_num_onchange("output");
+  param_num_onchange();
+  load_data('input', detail.in_port);
+  load_data('output', detail.out_port);
+  load_param(detail.params);
+}
+
+function load_data(id, types) {
+  let data_box = $('#' + id + '_types');
+  let boxes = data_box.find('select');
+  for (let i = 0;i < boxes.length; ++ i) {
+    $(boxes[i]).val(types[i]);
+  }
+}
+
+function load_param(params) {
+  // TODO
+  let param_box = $('#params');
+  let boxes = param_box.children();
+  for (let i = 0;i < boxes.length; ++ i) {
+    let this_param = params[i];
+    if (this_param['note'] == undefined)
+      this_param['note'] = '';
+    $(boxes[i]).find('[id$="name"]').val(this_param.name);
+    $(boxes[i]).find('[id$="display"]').val(this_param.display);
+    $(boxes[i]).find('[id$="type"]').val(this_param.type);
+    $(boxes[i]).find('[id$="default"]').val(this_param.default);
+    $(boxes[i]).find('[id$="note"]').val(this_param.note);
+    param_type_onchange($(boxes[i]).children()[1].id+'_');
+    if (this_param['type'] == 'list') {
+      $(boxes[i]).find('[id$="value"]').val(this_param.list.toString());
+    }
+  }
+}
+
+function saving() {
+  // TODO : distinguish new_compo
+  console.log('saving');
+  let detail = {
+    'name':$('#name').val(),
+    'display':$('#display').val(),
+    'in_port':[],
+    'out_port':[],
+    'params':[],
+  };
+  let input = $('#input_types').find('select');
+  for (let i = 0; i < input.length; ++ i) {
+    detail.in_port.push($(input[i]).val());
+  }
+  let output = $('#output_types').find('select');
+  for (let i = 0;i < output.length; ++ i) {
+    detail.out_port.push($(output[i]).val());
+  }
+  let params = $('#params').children('div');
+  console.log(params);
+  for (let i = 0;i < params.length; ++ i) {
+    let this_param = $(params[i]);
+    let param = {
+      'name':this_param.find('[id$="name"]').val(),
+      'display':this_param.find('[id$="display"]').val(),
+      'type':this_param.find('[id$="type"]').val(),
+      'default':this_param.find('[id$="default"]').val(),
+      'note':this_param.find('[id$="note"]').val(),
+    };
+    if (param.type == 'list') {
+      param['list'] = this_param.find('[id$="value"]').val().split(',');
+    }
+    detail.params.push(param);
+  }
+  if (selected == null) {
+    alert('error!! no component selected');
+    return;
+  }
+  // let comp_keys = ['name', 'display', 'in_port', 'out_port', 'params', 'default', 'type', 'note', 'list'];
+  // let comp1 = type_detail.get(selected);
+  // comp1 = JSON.stringify(comp1, comp_keys);
+
+  // let comp2 = detail;
+  // comp2 = JSON.stringify(comp2, comp_keys);
+  let route = routes.modify;
+  let req = {
+    'detail':detail,
+  };
+  if (new_compo != null) {
+    route = routes.create;
+    req['class'] = new_compo_class;
+  }
+  else {
+    req['component_id'] = selected;
+  }
+
+  $.post(
+    route,
+    JSON.stringify(req),
+    (data) => {
+      data = JSON.parse(data);
+      if (data.succeed == '1')
+        alert('failed : ' + data.message);
+      else {
+        alert('succeed');
+        $('#'+selected).text(detail['display']);
+        $('#'+selected).attr('id', detail['name']);
+        if (selected != detail['name'] && type_detail.has(selected))
+          type_detail.delete(selected);
+        type_detail.set(detail['name'], detail);
+        new_compo = null;
+        selected = detail['name'];
+      }
+    }
+  );
+}
+
+function param_type_onchange(id_prefix) {
+  // TODO : add list click
+  let typeobj = $('#'+id_prefix + 'type');
+  let listobj = $('#'+id_prefix + 'list');
+  console.log('param type obj', id_prefix, typeobj);
+  let listBox = new ParamBox('#'+id_prefix+'list', id_prefix+'list_');
+  if (typeobj.val() == 'list' && listobj.find('input').length == 0) {
+    listBox.addAttr('value', 'list可选值', '', '用,分隔不同选项', 'text');
+  }
+  else if (typeobj.val() != 'list' && listobj.find('input').length > 0) {
+    listBox.clear();
+  }
+}
+
+function param_num_onchange() {
+  let num = parseInt($('#param_num').val());
+  let obj = $('#params');
+  let children = obj.children();
+  console.log('param num change', num, obj);
+  for (let i = children.length; i > num; --i) {
+    console.log('del param', i + '/' + num);
+    console.log(children);
+    children[i-1].remove();
+  }
+  let box = new ParamBox('#params', 'param_');
+  for (let i = children.length; i < num;++ i) {
+    console.log('add param', i + '/' + num);
+    box.addAttr(i, 'param'+i, '', '', 'div');
+    let subBox = new ParamBox(box, '#param_'+i, i+'_');
+    subBox.addAttr('name', '参数名', '', '符合变量命名规范，与函数运行时获取的参数名相同', 'text');
+    subBox.addAttr('display', '显示名称', '', '用户看到的参数名称', 'text');
+    subBox.addAttr('type', '参数类型', 'text', '', 'list', ['text', 'file', 'number', 'float', 'list', 'richtext', 'password'], 'param_type_onchange("' + subBox.id_prefix + '")');
+    subBox.addAttr('list', '', '', '', 'div');
+    subBox.addAttr('default', '参数默认值', '0', '', 'text');
+    subBox.addAttr('note', '参数注释', '', '用户鼠标悬浮在参数名上方时显示的内容', 'text');
+  }
+}
+
+function data_num_onchange(type) {
+  let numid = type + '_num';
+  let typeid = type + '_types';
+  console.log('num change', numid);
+  let numobj = $('#'+numid);
+  let num = parseInt(numobj.val());
+  let typesobj = $('#'+typeid);
+  let children = typesobj.children();
+  console.log(typesobj);
+  console.log(children);
+  console.log('have', children.length, 'need', num);
+  for (let i = children.length; i > num; -- i) {
+    console.log('del', type, i + '/'+num);
+    console.log(children);
+    children[i-1].remove();
+  }
+  let dataBox = new ParamBox('#'+typeid, 'data_' + type + '_');
+  for (let i = children.length; i < num; ++ i) {
+    console.log('add', type, i + '/'+num);
+    dataBox.addAttr(i, type+i, 'DataFrame', '', 'list', ['DataFrame', 'Image', 'Graph', 'skModel']);
+  }
+}
+
+function nodes_build(paren, lis, posi_str) {
+  let $new_lis = $('<ul></ul>');
+  for (let key in lis) {
+    if (typeof(lis[key]) == 'object') {
+      let now_posi_str = posi_str + '-' + key;
+      let now_posi_id = calc_id(now_posi_str);
+      let $new_sublis = $(
+        '<li id="' + now_posi_id + '"><a><b>' + key + '</b></a>' + 
+        '<button onclick="add_compo(\'' + now_posi_str + '\',\'' + now_posi_id + '\')">+</button>' +
+        '</li>'
+      );
+      nodes_build($new_sublis, lis[key], now_posi_str);
+      $new_lis.append($new_sublis);
+    }
+    else {
+      let $new_type = $(
+        '<li><div class="noselect compo" onclick="select_component(this)" id="' + key +'">' + 
+        lis[key] + 
+        '</div></li>');
+      $new_lis.append($new_type);
+    }
+  }
+  paren.append($new_lis);
+}
+
+function component_init() {
+  $.post(
+    routes['list'],
+    (data) => {
+      let div = $("#compo_list");
+      let compo_list = JSON.parse(data)['structure'];
+      console.log(compo_list);
+      nodes_build(div, compo_list, '');
+    }
+  );
+}
+
+$.post(
+  routes['param'],
+  (data) => {
+    data = JSON.parse(data).component;
+    console.log(data);
+    data.forEach(
+      a => type_detail.set(a.name, a)
+    );
+    console.log(data);
+
+    component_init();
+  }
+);
+</script>
+</html>
+

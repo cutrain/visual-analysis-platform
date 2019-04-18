@@ -1,6 +1,6 @@
 from flask import Flask, redirect, render_template
 from flask_sqlalchemy import SQLAlchemy
-from config import config
+from config import config, DEVELOP
 
 db = SQLAlchemy()
 
@@ -17,6 +17,13 @@ def create_app(config_name):
     @app.route('/graph')
     def graph_index():
         return render_template('graph.html')
+
+    @app.route('/component')
+    def component_index():
+        global DEVELOP
+        if DEVELOP:
+            return render_template('component.html')
+        return redirect('/')
 
     from .graph import graph as graph_blueprint
     app.register_blueprint(graph_blueprint, url_prefix='/graph')

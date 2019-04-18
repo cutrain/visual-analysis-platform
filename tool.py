@@ -17,6 +17,7 @@ def msgwrap(func):
             if type(result) is dict:
                 ret.update(result)
         except Exception as e:
+            print('error', e, flush=True)
             ret = {
                 'succeed':1,
                 'message':str(e),
@@ -53,5 +54,4 @@ def safepath(path):
     path = path.replace('..', '')
     path = path.lstrip('/')
     return path
-
 
