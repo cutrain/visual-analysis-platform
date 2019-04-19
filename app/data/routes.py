@@ -12,23 +12,15 @@ from tool import msgwrap, get_type, safepath
 @data.route('/upload', methods=['POST'])
 @msgwrap
 def upload():
-    # TODO
+    # TODO : return message
     global DATA_DIR
-    req = request.get_data()
-    print(req, flush=True)
+    name = request.form.get('dataset')
+    file = request.files['file']
+    path = os.path.join(DATA_DIR, name)
+    file.save(path)
     return {
-        'message':'haha',
-    }
-    req = json.loads(req)
-    get_f = request['file']
-    path = safepath(req.pop('dataset'))
-    path = os.path.join(DATA_DIR, path)
-    with open(path, 'wb') as f:
-        f.write(get_f)
-
-    return {
-        "size":213,
-        'type':get_type(path)
+        "size":os.path.getsize(path),
+        'type':file_type(path),
     }
 
 @data.route('/view', methods=['POST'])
