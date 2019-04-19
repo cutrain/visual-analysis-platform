@@ -1,0 +1,17 @@
+{
+  "name": "image_outstream",
+  "display": "导出图像数据",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [],
+  "params": [
+    {
+      "name": "file",
+      "display": "文件名",
+      "type": "file",
+      "default": "0",
+      "note": ""
+    }
+  ]
+}

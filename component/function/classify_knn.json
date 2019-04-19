@@ -1,0 +1,19 @@
+{
+  "name": "classify_knn",
+  "display": "k近邻",
+  "in_port": [
+    "DataFrame"
+  ],
+  "out_port": [
+    "skModel"
+  ],
+  "params": [
+    {
+      "name": "label_columns",
+      "display": "标签列",
+      "type": "text",
+      "default": "label",
+      "note": ""
+    }
+  ]
+}

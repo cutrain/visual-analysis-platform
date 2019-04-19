@@ -1,0 +1,40 @@
+{
+  "name": "image_cut",
+  "display": "裁剪",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "left",
+      "display": "left",
+      "type": "number",
+      "default": "0",
+      "note": ""
+    },
+    {
+      "name": "width",
+      "display": "width",
+      "type": "number",
+      "default": "0",
+      "note": ""
+    },
+    {
+      "name": "top",
+      "display": "top",
+      "type": "number",
+      "default": "0",
+      "note": ""
+    },
+    {
+      "name": "height",
+      "display": "height",
+      "type": "number",
+      "default": "0",
+      "note": ""
+    }
+  ]
+}

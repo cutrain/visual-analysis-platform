@@ -1,9 +1,5 @@
 {
-  "数据输入输出": {
-    "data_instream": "导入csv数据",
-    "data_outstream": "导出csv数据",
-    "sql_instream": "导入SQL数据",
-    "sql_outstream": "导出SQL数据",
+  "源/目标": {
     "model_instream": "导入模型",
     "model_outstream": "导出模型",
     "image_instream": "导入图像数据",
@@ -11,78 +7,89 @@
     "video_instream": "导入视频数据",
     "video_outstream": "导出视频数据",
     "graph_instream": "导入图数据",
-    "graph_outstream": "导出图数据"
+    "graph_outstream": "导出图数据",
+    "sql_outstream": "导出SQL数据",
+    "sql_instream": "导入SQL数据",
+    "data_outstream": "导出结构化数据",
+    "data_instream": "导入结构化数据"
   },
-  "关系表": {
+  "结构化数据": {
     "机器学习": {
-      "adaboost": "adaboost",
-      "svm": "支持向量机",
-      "neural_network": "神经网络",
-      "knn": "k近邻",
-      "naive_bayes": "朴素贝叶斯",
-      "decision_tree": "决策树"
+      "多分类": {
+        "classify_adaboost": "adaboost",
+        "classify_svm": "支持向量机",
+        "classify_neural_network": "神经网络",
+        "classify_knn": "k近邻",
+        "classify_naive_bayes": "朴素贝叶斯",
+        "classify_decision_tree": "决策树"
+      },
+      "聚类": {},
+      "回归": {
+        "regression_adaboost": "adaboost",
+        "regression_svm": "支持向量机",
+        "regression_neural_network": "神经网络",
+        "regression_naive_bayes": "朴素贝叶斯",
+        "regression_decision_tree": "决策树"
+      },
+      "评估": {},
+      "predict": "预测"
     },
-    "数值处理": {
+    "数据预处理": {
       "sort": "排序",
       "random": "打乱数据",
-      "sql_execute": "SQL语句",
       "normalization": "标准化",
-      "fillna": "填充缺失值",
       "drop_duplicate": "删除重复行",
-      "dropna": "丢弃缺失值"
-    },
-    "其它": {
-      "predict": "预测",
+      "fillna": "填充缺失值",
+      "dropna": "丢弃缺失值",
       "split_col": "拆分列",
       "split_row": "拆分行",
       "merge_row": "合并行",
-      "merge_col": "合并列"
+      "merge_col": "合并列",
+      "sql_execute": "SQL语句"
     }
   },
-  "图像": {
-    "图像处理": {
-      "resolution": "指定分辨率",
-      "channel": "改变通道",
-      "large": "放大",
-      "small": "缩小",
-      "cut": "裁剪",
-      "blur": "模糊化",
-      "shapeness": "锐化",
-      "dilate": "膨胀",
-      "erode": "腐蚀",
-      "close": "闭操作",
-      "open": "开操作",
-      "filler": "滤波",
-      "contrast": "对比度",
-      "brightness": "亮度",
-      "noiseness": "噪声化"
+  "非结构化数据": {
+    "图像": {
+      "图像处理": {
+        "image_resolution": "指定分辨率",
+        "image_channel": "改变通道",
+        "image_large": "上采样",
+        "image_small": "下采样",
+        "image_cut": "裁剪",
+        "image_blur": "滤波",
+        "image_dilate": "膨胀",
+        "image_erode": "腐蚀",
+        "image_close": "闭操作",
+        "image_open": "开操作",
+        "image_brightness": "亮度",
+        "image_noiseness": "噪声化",
+        "image_contrast": "对比度",
+        "image_blend": "图片混合"
+      },
+      "机器学习": {
+        "image_svm": "svm",
+        "image_predict": "预测"
+      },
+      "深度学习": {
+        "image_cnn": "CNN",
+        "image_resnet": "ResNet",
+        "image_yolo": "YOLO",
+        "image_vgg": "VGG",
+        "image_alexnet": "AlexNet",
+        "image_squeezenet": "SqueezeNet",
+        "image_pytorch_predict": "预测"
+      },
+      "其它": {
+        "image_edge": "边缘检测",
+        "image_monorec": "物体识别",
+        "image_gen_noise": "生成噪音"
+      }
     },
-    "机器学习": {
-      "image_svm": "SVM"
+    "视频": {
+      "video_reso": "改变分辨率",
+      "video_cut": "剪切",
+      "video_size": "裁剪大小"
     },
-    "深度学习": {
-      "cnn": "CNN",
-      "resnet": "ResNet",
-      "yolo": "yolo",
-      "vgg": "VGG",
-      "alexnet": "AlexNet",
-      "squeezenet": "SqueezeNet"
-    },
-    "其它": {
-      "noise": "生成噪声",
-      "edge": "边缘检测",
-      "monorec": "物体识别",
-      "labelize": "标签映射"
-    }
-  },
-  "视频": {
-    "video_reso": "改变分辨率",
-    "video_cut": "剪切",
-    "video_size": "裁剪大小",
-    "video_mono": "物体提取",
-    "video_frame": "截取帧",
-    "video_iframe": "条件截取帧",
-    "video_merge": "合并视频"
-  },
-  "图": {}
+    "图": {}
+  }
 }

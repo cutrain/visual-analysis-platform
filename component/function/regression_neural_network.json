@@ -1,0 +1,19 @@
+{
+  "name": "regression_neural_network",
+  "display": "神经网络",
+  "in_port": [
+    "DataFrame"
+  ],
+  "out_port": [
+    "skModel"
+  ],
+  "params": [
+    {
+      "name": "label",
+      "display": "标签列",
+      "type": "text",
+      "default": "label",
+      "note": ""
+    }
+  ]
+}

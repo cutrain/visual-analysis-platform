@@ -1,0 +1,12 @@
+{
+  "name": "image_vgg",
+  "display": "VGG",
+  "in_port": [
+    "Image",
+    "DataFrame"
+  ],
+  "out_port": [
+    "pytorchModel"
+  ],
+  "params": []
+}

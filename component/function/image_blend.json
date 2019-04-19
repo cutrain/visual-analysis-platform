@@ -1,0 +1,31 @@
+{
+  "name": "image_blend",
+  "display": "图片混合",
+  "in_port": [
+    "Image",
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "method",
+      "display": "方法",
+      "type": "list",
+      "default": "linear",
+      "note": "",
+      "list": [
+        "linear",
+        "add"
+      ]
+    },
+    {
+      "name": "gamma",
+      "display": "百分比",
+      "type": "number",
+      "default": "50",
+      "note": "0~100"
+    }
+  ]
+}

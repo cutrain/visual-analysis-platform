@@ -1,0 +1,11 @@
+{
+  "name": "image_large",
+  "display": "上采样",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": []
+}

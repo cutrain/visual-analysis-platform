@@ -1,0 +1,11 @@
+{
+  "name": "regression_adaboost",
+  "display": "adaboost",
+  "in_port": [
+    "DataFrame"
+  ],
+  "out_port": [
+    "skModel"
+  ],
+  "params": []
+}

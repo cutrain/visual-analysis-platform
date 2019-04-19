@@ -1,0 +1,19 @@
+{
+  "name": "image_close",
+  "display": "闭运算",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "kernel_size",
+      "display": "kernel size",
+      "type": "number",
+      "default": "3",
+      "note": ""
+    }
+  ]
+}

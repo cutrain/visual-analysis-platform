@@ -1,0 +1,11 @@
+{
+  "name": "image_edge",
+  "display": "边缘检测",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": []
+}

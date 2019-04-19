@@ -1,0 +1,11 @@
+{
+  "name": "video_reso",
+  "display": "改变分辨率",
+  "in_port": [
+    "Video"
+  ],
+  "out_port": [
+    "Video"
+  ],
+  "params": []
+}

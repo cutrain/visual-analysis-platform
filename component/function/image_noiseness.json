@@ -1,0 +1,26 @@
+{
+  "name": "image_noiseness",
+  "display": "噪声化",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "mean",
+      "display": "均值",
+      "type": "number",
+      "default": "0",
+      "note": "-255~255"
+    },
+    {
+      "name": "std",
+      "display": "标准差",
+      "type": "number",
+      "default": "10",
+      "note": "0~255"
+    }
+  ]
+}

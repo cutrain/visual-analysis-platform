@@ -1,16 +1,17 @@
 {
-  "name":"data_outstream",
-  "display":"导出数据",
-  "params":[
-    {
-      "name":"path",
-      "display":"文件名",
-      "type":"text",
-      "default":""
-    }
-  ],
-  "in_port":[
+  "name": "data_outstream",
+  "display": "导出结构化数据",
+  "in_port": [
     "DataFrame"
   ],
-  "out_port":[]
+  "out_port": [],
+  "params": [
+    {
+      "name": "path",
+      "display": "文件名",
+      "type": "text",
+      "default": "",
+      "note": ""
+    }
+  ]
 }

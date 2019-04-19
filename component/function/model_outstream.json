@@ -1,16 +1,17 @@
 {
-  "name":"model_outstream",
-  "display":"导出模型",
-  "params":[
-    {
-      "name":"path",
-      "display":"文件名",
-      "type":"text",
-      "default":""
-    }
-  ],
-  "in_port":[
+  "name": "model_outstream",
+  "display": "导出模型",
+  "in_port": [
     "skModel"
   ],
-  "out_port":[]
+  "out_port": [],
+  "params": [
+    {
+      "name": "path",
+      "display": "文件名",
+      "type": "text",
+      "default": "",
+      "note": ""
+    }
+  ]
 }

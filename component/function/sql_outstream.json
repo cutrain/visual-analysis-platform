@@ -1,13 +1,18 @@
 {
-  "name":"sql_outstream",
-  "display":"导出SQL数据",
-  "params":[
+  "name": "sql_outstream",
+  "display": "导出SQL数据",
+  "in_port": [
+    "DataFrame"
+  ],
+  "out_port": [],
+  "params": [
     {
-      "name":"database_type",
-      "display":"数据库类型",
-      "type":"list",
-      "default":"MySQL",
-      "list":[
+      "name": "database_type",
+      "display": "数据库类型",
+      "type": "list",
+      "default": "MySQL",
+      "note": "",
+      "list": [
         "MySQL",
         "sqlite",
         "oracle",
@@ -16,55 +21,58 @@
       ]
     },
     {
-      "name":"address",
-      "display":"地址",
-      "type":"text",
-      "default":"localhost"
+      "name": "address",
+      "display": "地址",
+      "type": "text",
+      "default": "localhost",
+      "note": ""
     },
     {
-      "name":"port",
-      "display":"端口",
-      "type":"text",
-      "default":"3306"
+      "name": "port",
+      "display": "端口",
+      "type": "text",
+      "default": "3306",
+      "note": ""
     },
     {
-      "name":"user",
-      "display":"账号",
-      "type":"text",
-      "default":"root"
+      "name": "user",
+      "display": "账号",
+      "type": "text",
+      "default": "root",
+      "note": ""
     },
     {
-      "name":"password",
-      "display":"密码",
-      "type":"password",
-      "default":"root"
+      "name": "password",
+      "display": "密码",
+      "type": "password",
+      "default": "root",
+      "note": ""
     },
     {
-      "name":"database_name",
-      "display":"数据库名",
-      "type":"text",
-      "default":""
+      "name": "database_name",
+      "display": "数据库名",
+      "type": "text",
+      "default": "",
+      "note": ""
     },
     {
-      "name":"table_name",
-      "display":"表名",
-      "type":"text",
-      "default":""
+      "name": "table_name",
+      "display": "表名",
+      "type": "text",
+      "default": "",
+      "note": ""
     },
     {
-      "name":"if_exists",
-      "display":"冲突解决方式",
-      "type":"list",
-      "default":"fail",
-      "list":[
+      "name": "if_exists",
+      "display": "冲突解决方式",
+      "type": "list",
+      "default": "fail",
+      "note": "",
+      "list": [
         "replace",
         "append",
         "fail"
       ]
     }
-  ],
-  "in_port":[
-    "DataFrame"
-  ],
-  "out_port":[]
+  ]
 }

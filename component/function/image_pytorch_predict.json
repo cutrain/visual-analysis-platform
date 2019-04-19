@@ -1,0 +1,12 @@
+{
+  "name": "image_pytorch_predict",
+  "display": "预测",
+  "in_port": [
+    "Image",
+    "pytorchModel"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": []
+}

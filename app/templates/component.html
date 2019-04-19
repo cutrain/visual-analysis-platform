@@ -4,6 +4,9 @@
   <script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
 </head>
 <style type='text/css'>
+ul {
+  padding-left:10px;
+}
 .compo_list{
   position:absolute;
   width:200px;
@@ -147,7 +150,7 @@ var type_detail = new Map();
 var selected = null;
 var new_compo = null;
 var new_compo_class = '';
-var file_type = ['DataFrame', 'Image', 'Graph', 'Video', 'skModel'];
+var file_type = ['DataFrame', 'Image', 'Graph', 'Video', 'skModel', 'pytorchModel'];
 
 function calc_id(posi_str) {
   return posi_str;

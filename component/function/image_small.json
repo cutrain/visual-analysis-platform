@@ -1,0 +1,11 @@
+{
+  "name": "image_small",
+  "display": "下采样",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": []
+}

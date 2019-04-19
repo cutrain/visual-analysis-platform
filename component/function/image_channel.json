@@ -1,0 +1,25 @@
+{
+  "name": "image_channel",
+  "display": "改变通道",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "method",
+      "display": "通道改变方式",
+      "type": "list",
+      "default": "BGR2GRAY",
+      "note": "",
+      "list": [
+        "BGR2GRAY",
+        "BGR2RGB",
+        "HSV2BGR",
+        "BGR2HSV"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "video_outstream",
+  "display": "导入视频数据",
+  "in_port": [
+    "Video"
+  ],
+  "out_port": [],
+  "params": [
+    {
+      "name": "file",
+      "display": "文件名",
+      "type": "file",
+      "default": "0",
+      "note": ""
+    }
+  ]
+}

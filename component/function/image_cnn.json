@@ -1,0 +1,12 @@
+{
+  "name": "image_cnn",
+  "display": "CNN",
+  "in_port": [
+    "Image",
+    "DataFrame"
+  ],
+  "out_port": [
+    "pytorchModel"
+  ],
+  "params": []
+}

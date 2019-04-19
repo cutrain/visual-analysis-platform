@@ -1,0 +1,19 @@
+{
+  "name": "video_size",
+  "display": "裁剪大小",
+  "in_port": [
+    "Video"
+  ],
+  "out_port": [
+    "Video"
+  ],
+  "params": [
+    {
+      "name": "size",
+      "display": "大小",
+      "type": "text",
+      "default": "1280x720",
+      "note": ""
+    }
+  ]
+}

@@ -1,0 +1,23 @@
+{
+  "name": "image_monorec",
+  "display": "物体识别",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "class_",
+      "display": "类别",
+      "type": "list",
+      "default": "person",
+      "note": "",
+      "list": [
+        "person",
+        "car"
+      ]
+    }
+  ]
+}

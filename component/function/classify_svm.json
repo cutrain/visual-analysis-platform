@@ -1,0 +1,33 @@
+{
+  "name": "classify_svm",
+  "display": "支持向量机",
+  "in_port": [
+    "DataFrame"
+  ],
+  "out_port": [
+    "skModel"
+  ],
+  "params": [
+    {
+      "name": "kernel",
+      "display": "核函数",
+      "type": "list",
+      "default": "linear",
+      "note": "",
+      "list": [
+        "linear",
+        "poly",
+        "rbf",
+        "sigmoid",
+        "precomputed"
+      ]
+    },
+    {
+      "name": "label_columns",
+      "display": "标签列",
+      "type": "text",
+      "default": "label",
+      "note": ""
+    }
+  ]
+}

@@ -1,22 +1,24 @@
 {
-  "name":"data_instream",
-  "display":"导入csv数据",
-  "params":[
+  "name": "data_instream",
+  "display": "导入结构化数据",
+  "in_port": [],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": [
     {
-      "name":"read_number",
-      "display":"读入数量",
-      "type":"number",
-      "default":"0"
+      "name": "read_number",
+      "display": "读入数量",
+      "type": "number",
+      "default": "0",
+      "note": ""
     },
     {
-      "name":"path",
-      "display":"文件名",
-      "type":"text",
-      "default":""
+      "name": "path",
+      "display": "文件名",
+      "type": "text",
+      "default": "",
+      "note": ""
     }
-  ],
-  "in_port":[],
-  "out_port":[
-    "DataFrame"
   ]
 }

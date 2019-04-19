@@ -1,0 +1,19 @@
+{
+  "name": "regression_svm",
+  "display": "支持向量机",
+  "in_port": [
+    "DataFrame"
+  ],
+  "out_port": [
+    "skModel"
+  ],
+  "params": [
+    {
+      "name": "label",
+      "display": "标签列",
+      "type": "text",
+      "default": "label",
+      "note": ""
+    }
+  ]
+}

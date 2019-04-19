@@ -1,0 +1,19 @@
+{
+  "name": "image_resolution",
+  "display": "指定分辨率",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "reso",
+      "display": "分辨率",
+      "type": "text",
+      "default": "1280x760",
+      "note": "用x分隔，如1960x1080，640x480"
+    }
+  ]
+}

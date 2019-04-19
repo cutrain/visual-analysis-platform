@@ -1,0 +1,26 @@
+{
+  "name": "image_dilate",
+  "display": "膨胀",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "kernel_size",
+      "display": "kernel size",
+      "type": "number",
+      "default": "3",
+      "note": ""
+    },
+    {
+      "name": "iterations",
+      "display": "迭代次数",
+      "type": "number",
+      "default": "1",
+      "note": ""
+    }
+  ]
+}

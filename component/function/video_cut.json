@@ -1,0 +1,19 @@
+{
+  "name": "video_cut",
+  "display": "剪切",
+  "in_port": [
+    "Video"
+  ],
+  "out_port": [
+    "Video"
+  ],
+  "params": [
+    {
+      "name": "length",
+      "display": "长度(帧)",
+      "type": "number",
+      "default": "",
+      "note": ""
+    }
+  ]
+}

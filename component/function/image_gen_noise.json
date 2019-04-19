@@ -1,0 +1,17 @@
+{
+  "name": "image_gen_noise",
+  "display": "生成噪音",
+  "in_port": [],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "gen_num",
+      "display": "生成数量",
+      "type": "number",
+      "default": "1",
+      "note": ""
+    }
+  ]
+}

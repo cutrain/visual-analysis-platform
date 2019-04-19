@@ -1,0 +1,17 @@
+{
+  "name": "graph_outstream",
+  "display": "导出图数据",
+  "in_port": [
+    "Graph"
+  ],
+  "out_port": [],
+  "params": [
+    {
+      "name": "file",
+      "display": "文件名",
+      "type": "file",
+      "default": "0",
+      "note": ""
+    }
+  ]
+}

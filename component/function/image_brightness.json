@@ -1,0 +1,19 @@
+{
+  "name": "image_brightness",
+  "display": "亮度",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "shift",
+      "display": "变化值",
+      "type": "number",
+      "default": "1",
+      "note": "-100~100"
+    }
+  ]
+}

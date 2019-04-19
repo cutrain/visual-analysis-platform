@@ -1,0 +1,31 @@
+{
+  "name": "image_blur",
+  "display": "滤波",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "method",
+      "display": "方式",
+      "type": "list",
+      "default": "gaussian",
+      "note": "",
+      "list": [
+        "gaussian",
+        "linear",
+        "median"
+      ]
+    },
+    {
+      "name": "kernel_size",
+      "display": "kernel size",
+      "type": "number",
+      "default": "3",
+      "note": ""
+    }
+  ]
+}

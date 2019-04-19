@@ -1,0 +1,12 @@
+{
+  "name": "image_svm",
+  "display": "svm",
+  "in_port": [
+    "Image",
+    "DataFrame"
+  ],
+  "out_port": [
+    "skModel"
+  ],
+  "params": []
+}

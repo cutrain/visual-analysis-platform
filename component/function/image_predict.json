@@ -1,0 +1,12 @@
+{
+  "name": "image_predict",
+  "display": "预测",
+  "in_port": [
+    "Image",
+    "skModel"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": []
+}
