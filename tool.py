@@ -41,11 +41,13 @@ def gen_random_string(length=8, *, number=True, abc=True, upper_case=False, lowe
 def get_type(filepath=None, data=None):
     if filepath is not None:
         ans = filetype.guess(filepath)
-        if 'image' in ans:
+        if ans is None:
+            return 'DataFrame'
+        if ans.find('image') != -1:
             return "Image"
-        if 'video' in ans:
+        if ans.find('video') != -1:
             return 'Video'
-        if 'audio' in ans:
+        if ans.find('audio') != -1:
             return 'Audio'
         # TODO : more type
     return "DataFrame"
