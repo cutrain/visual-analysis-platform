@@ -16,7 +16,7 @@ component = {}
 for root, dirs, files in os.walk('component'):
     for file in files:
         if file is not 'structure.json' and file[-5:] == '.json':
-            with open(os.path.join(root, file), 'r') as f:
+            with open(os.path.join(root, file), 'rb') as f:
                 data = json.load(f)
                 if all([field in data for field in fields]):
                     component.update({data['name']:data})
