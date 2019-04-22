@@ -22,11 +22,12 @@ def msgwrap(func):
                 'succeed':1,
                 'message':str(e),
             }
+        print(ret, flush=True)
         return js.dumps(ret).encode('utf-8')
     return wrap
 
 def gen_random_string(length=8, *, number=True, abc=True, upper_case=False, lower_case=False):
-    charset = 0
+    charset = ''
     if number:
         charset += string.digits
     if abc:

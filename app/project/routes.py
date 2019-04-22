@@ -34,7 +34,7 @@ def create():
         'project_name':pname,
         'create_time':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
     }
-    with open(os.path.join(PROJECT_DIR, new_data['project_id'] + '.pickle')) as f:
+    with open(os.path.join(PROJECT_DIR, new_data['project_id'] + '.pickle'), 'wb') as f:
         f.write(pickle.dumps(new_data))
     ret = {
         'project_id':new_data['project_id']
