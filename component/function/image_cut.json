@@ -11,28 +11,28 @@
     {
       "name": "left",
       "display": "left",
-      "type": "number",
+      "type": "int",
       "default": "0",
       "note": ""
     },
     {
       "name": "width",
       "display": "width",
-      "type": "number",
+      "type": "int",
       "default": "0",
       "note": ""
     },
     {
       "name": "top",
       "display": "top",
-      "type": "number",
+      "type": "int",
       "default": "0",
       "note": ""
     },
     {
       "name": "height",
       "display": "height",
-      "type": "number",
+      "type": "int",
       "default": "0",
       "note": ""
     }

@@ -11,14 +11,14 @@
     {
       "name": "kernel_size",
       "display": "kernel size",
-      "type": "number",
+      "type": "int",
       "default": "3",
       "note": ""
     },
     {
       "name": "iterations",
       "display": "迭代次数",
-      "type": "number",
+      "type": "int",
       "default": "1",
       "note": ""
     }

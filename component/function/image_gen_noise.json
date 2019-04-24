@@ -9,7 +9,7 @@
     {
       "name": "gen_num",
       "display": "生成数量",
-      "type": "number",
+      "type": "int",
       "default": "1",
       "note": ""
     }

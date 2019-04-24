@@ -36,7 +36,7 @@
     {
       "name": "alpha",
       "display": "alpha",
-      "type": "number",
+      "type": "float",
       "default": "0.0001",
       "note": ""
     },

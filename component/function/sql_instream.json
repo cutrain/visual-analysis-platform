@@ -9,7 +9,7 @@
     {
       "name": "read_number",
       "display": "读入数量",
-      "type": "number",
+      "type": "int",
       "default": "0",
       "note": ""
     },

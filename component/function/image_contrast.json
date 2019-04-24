@@ -11,7 +11,7 @@
     {
       "name": "shift",
       "display": "变化值",
-      "type": "number",
+      "type": "float",
       "default": "1",
       "note": "-100~100"
     }

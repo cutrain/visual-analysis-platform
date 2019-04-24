@@ -66,6 +66,12 @@ const routes = {
   'getcode': server + '/component/getcode',
   'modifycode': server + '/component/modifycode',
 };
+var type_detail = new Map();
+var selected = null;
+var new_compo = null;
+var new_compo_class = '';
+var file_type = ['DataFrame', 'Image', 'Graph', 'Video', 'skModel', 'pytorchModel'];
+var param_type = ['text', 'int', 'float', 'list', 'richtext', 'password', 'file', 'model'];
 
 class ParamBox{
   constructor(box_selector, id_prefix='', other='') {
@@ -144,13 +150,7 @@ class ParamBox{
     this.container.children().remove();
   }
 }
-
 var paramBox = new ParamBox('#param_box');
-var type_detail = new Map();
-var selected = null;
-var new_compo = null;
-var new_compo_class = '';
-var file_type = ['DataFrame', 'Image', 'Graph', 'Video', 'skModel', 'pytorchModel'];
 
 function calc_id(posi_str) {
   return posi_str;
@@ -346,7 +346,7 @@ function param_num_onchange() {
     let subBox = new ParamBox(box, '#param_'+i, i+'_');
     subBox.addAttr('name', '参数名', '', '符合变量命名规范，与函数运行时获取的参数名相同', 'text');
     subBox.addAttr('display', '显示名称', '', '用户看到的参数名称', 'text');
-    subBox.addAttr('type', '参数类型', 'text', '', 'list', ['text', 'file', 'number', 'float', 'list', 'richtext', 'password'], 'param_type_onchange("' + subBox.id_prefix + '")');
+    subBox.addAttr('type', '参数类型', 'text', '', 'list', param_type, 'param_type_onchange("' + subBox.id_prefix + '")');
     subBox.addAttr('list', '', '', '', 'div');
     subBox.addAttr('default', '参数默认值', '0', '', 'text');
     subBox.addAttr('note', '参数注释', '', '用户鼠标悬浮在参数名上方时显示的内容', 'text');

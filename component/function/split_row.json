@@ -1,19 +1,20 @@
 {
-  "name":"split_row",
-  "display":"拆分行",
-  "params":[
-    {
-      "name":"ratio",
-      "display":"拆分比例(0-100%)",
-      "type":"number",
-      "default":"75"
-    }
-  ],
-  "in_port":[
+  "name": "split_row",
+  "display": "拆分行",
+  "in_port": [
     "DataFrame"
   ],
-  "out_port":[
+  "out_port": [
     "DataFrame",
     "DataFrame"
+  ],
+  "params": [
+    {
+      "name": "ratio",
+      "display": "拆分比例(0-100%)",
+      "type": "float",
+      "default": "75",
+      "note": ""
+    }
   ]
 }

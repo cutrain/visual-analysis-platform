@@ -11,7 +11,7 @@
     {
       "name": "length",
       "display": "长度(帧)",
-      "type": "number",
+      "type": "int",
       "default": "",
       "note": ""
     }

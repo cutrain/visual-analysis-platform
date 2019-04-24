@@ -23,7 +23,7 @@
     {
       "name": "gamma",
       "display": "百分比",
-      "type": "number",
+      "type": "float",
       "default": "50",
       "note": "0~100"
     }
