@@ -9,7 +9,6 @@ import numpy as np
 from flask import render_template, request
 
 from . import graph
-from .. import db
 from .graphclass import Graph
 from tool import msgwrap, safepath
 from config import CACHE_DIR, REDIS_HOST, REDIS_DB, REDIS_PORT

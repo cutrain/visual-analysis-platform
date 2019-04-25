@@ -1,17 +1,10 @@
 import os
 from config import DATA_DIR, MODEL_DIR, PROJECT_DIR, CACHE_DIR
-from app import create_app, db
+from app import create_app
 from flask_script import Manager
-from flask_migrate import Migrate, MigrateCommand
-
-import pymysql
-pymysql.install_as_MySQLdb()
 
 app = create_app('default')
 manager = Manager(app)
-migrate = Migrate(app, db)
-
-manager.add_command('db', MigrateCommand)
 
 def init():
     if not os.path.exists(DATA_DIR):

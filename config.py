@@ -8,10 +8,6 @@ REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
 REDIS_DB = 0
 
-ACCOUNT = 'root'
-PASSWD = '123'
-DATABASE = 'test'
-
 DATA_DIR= 'data'
 MODEL_DIR= 'model'
 COMPONENT_DIR= 'component'
@@ -33,7 +29,6 @@ class Config:
 
 class DevelopmentConfig(Config):
     global ACCOUNT, PASSWD, DATABASE
-    SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://' + ACCOUNT + ':' + PASSWD + '@localhost/' + DATABASE
     DEBUG = True
 
 

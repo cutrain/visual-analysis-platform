@@ -1,6 +1,5 @@
 from config import COMPONENT_DIR
 from . import component
-from .. import db
 from tool import msgwrap
 from flask import render_template, request
 

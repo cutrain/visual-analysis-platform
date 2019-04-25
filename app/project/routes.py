@@ -1,6 +1,5 @@
 from config import PROJECT_DIR
 from . import project
-from .. import db
 from tool import msgwrap, gen_random_string
 from flask import render_template, request
 

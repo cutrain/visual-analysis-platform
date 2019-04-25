@@ -5,7 +5,6 @@ import pandas as pd
 
 from config import DATA_DIR
 from . import data
-from .. import db
 from tool import msgwrap, get_type, safepath
 
 
