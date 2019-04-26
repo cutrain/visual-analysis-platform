@@ -1,0 +1,11 @@
+{
+  "name": "graph_line",
+  "display": "LINE",
+  "in_port": [
+    "Graph"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": []
+}

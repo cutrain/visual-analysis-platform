@@ -90,6 +90,8 @@
       "video_cut": "剪切",
       "video_size": "裁剪大小"
     },
-    "图": {}
+    "图": {
+      "graph_line": "LINE"
+    }
   }
 }

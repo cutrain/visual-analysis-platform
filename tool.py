@@ -54,7 +54,7 @@ def get_type(filepath=None, data=None):
     return "DataFrame"
 
 def safepath(path):
+    # TODO : change replace
     path = path.replace('..', '')
     path = path.lstrip('/')
     return path
-
