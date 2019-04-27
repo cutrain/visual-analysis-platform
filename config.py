@@ -14,6 +14,8 @@ COMPONENT_DIR= 'component'
 PROJECT_DIR= 'project'
 CACHE_DIR = 'cache'
 
+STATIC_PATH = ''
+
 
 class Config:
     SECRET_KEY = "" # TODO: set the key

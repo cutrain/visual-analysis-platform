@@ -10,8 +10,9 @@ from flask import render_template, request
 
 from . import graph
 from .graphclass import Graph
-from tool import msgwrap, safepath
-from config import CACHE_DIR, REDIS_HOST, REDIS_DB, REDIS_PORT
+from tool import msgwrap, safepath, gen_random_string
+from config import CACHE_DIR, REDIS_HOST, REDIS_DB, REDIS_PORT, PROJECT_DIR, STATIC_PATH, DEBUG
+from common import component_detail
 
 
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, charset='utf-8', decode_responses=True)
@@ -24,7 +25,7 @@ def get_graph():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     pid = req.pop('project_id')
-    with open(os.path.join('project', pid+'.pickle'), 'rb') as f:
+    with open(os.path.join(PROJECT_DIR, pid+'.pickle'), 'rb') as f:
         p_data = pickle.load(f)
     G = p_data.pop('graph', {
         'all_nodes':[],
@@ -37,17 +38,21 @@ def get_graph():
 def save_graph():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    pid = req.pop('project_id')
+    global DEBUG
+    if DEBUG:
+        pid = 'temp'
+    else:
+        pid = req.pop('project_id')
     all_nodes = req.pop('all_nodes')
     all_lines = req.pop('all_lines')
     nodes_details = req.pop('nodes_details')
-    with open(os.path.join('project', pid+'.pickle'), 'rb') as f:
+    with open(os.path.join(PROJECT_DIR, pid+'.pickle'), 'rb') as f:
         p_data = pickle.load(f)
     p_data.update({
         'all_nodes':all_nodes,
         'all_lines':all_lines,
     })
-    with open(os.path.join('project', pid+'.pickle'), 'wb') as f:
+    with open(os.path.join(PROJECT_DIR, pid+'.pickle'), 'wb') as f:
         f.write(pickle.dumps(p_data))
 
 
@@ -55,25 +60,47 @@ def save_graph():
 @msgwrap
 def run():
     # TODO: check format & create Graph as parameter
+    fail = {
+        'succeed': 1,
+        'message': '',
+    }
+
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    pid = req.pop('project_id')
+    global DEBUG
+    if DEBUG:
+        pid = 'temp'
+    else:
+        pid = req.pop('project_id')
     global processing_manager
     # check the project not running yet
     if pid in processing_manager:
-        return {
-            "succeed": 1,
-            "message": "this project is running now",
-        }
+        if not processing_manager[pid].is_alive():
+            processing_manager.pop(pid)
+        else:
+            fail['message'] = "this project is running now"
+            return fail
 
     G = Graph(pid)
     all_nodes = req.pop('all_nodes')
     all_lines = req.pop('all_lines')
     for node in all_nodes:
-        G.add_node(node['node_name'], node['node_type'], node['details'])
+        ret = G.add_node(node['node_name'], node['node_type'], node['details'])
+        if not ret:
+            message = 'add node fail ' + node['node_name'] + ' ' +  node['node_type'] + ' ' + node['details']
+            fail['message'] = message
+            return fail
     for line in all_lines:
-        G.add_line(line['line_from'], line['port_from'], line['line_to'], line['port_to'])
-    G.load_cache()
+        ret = G.add_line(line['line_from'], line['port_from'], line['line_to'], line['port_to'])
+        if not ret:
+            message = 'add line fail' + line['line_from'] + ' ' + line['port_from'] + ' ' + line['line_to'] + ' ' + line['port_to']
+            fail['message'] = message
+            return fail
+    ret = G.load_cache()
+    if not ret:
+        message = 'local cache fail'
+        fail['message'] = message
+        return fail
 
     process = multiprocessing.Process(name=pid, target=G)
     process.daemon = True
@@ -89,7 +116,11 @@ def run():
 def progress():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    pid = req.pop('project_id')
+    global DEBUG
+    if DEBUG:
+        pid = 'temp'
+    else:
+        pid = req.pop('project_id')
     global processing_manager
     status = 0
     if pid in processing_manager:
@@ -108,7 +139,11 @@ def progress():
 def stop():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    pid = req.pop('project_id')
+    global DEBUG
+    if DEBUG:
+        pid = 'temp'
+    else:
+        pid = req.pop('project_id')
     global processing_manager
     if pid not in processing_manager:
         return {
@@ -123,24 +158,65 @@ def stop():
 @msgwrap
 def sample():
     # TODO
-    a = request.get_data().decode('utf-8')
-    a = js.loads(a)
-    num = max(int(a['number']), 0)
-    num = min(num, len(df))
-    index = df.columns.tolist()
-    df = df[0:num]
-    df = df.round(3)
-    types = [str(df[index[i]].dtype) for i in range(len(index))]
-    df = df.fillna('NaN')
-    df = np.array(df).tolist()
+    global CACHE_DIR
+    global component_detail
+    req = request.get_data().decode('utf-8')
+    req = js.loads(req)
+    num = int(req.pop('number', 10))
+    global DEBUG
+    if DEBUG:
+        pid = 'temp'
+    else:
+        pid = req.pop('project_id')
+    nid = req.pop('node_id')
 
+    # get pid/nid's data
+    with open(os.path.join(CACHE_DIR, pid, nid+'.pickle'), 'rb') as f:
+        data = pickle.load(f)
+
+    type_ = nid.split('-')[0]
+    icomp = component_detail[type_]
+    out = icomp['out_port']
     ret = {
-        'col_num':len(index),
-        'col_index':index,
-        'col_type':types,
-        'row_num':num,
-        'data': df
+        'data':[],
     }
+    retdata = ret['data']
+    for i in range(len(out)):
+        outtype = out[i]
+        idata = data[i]
+        if outtype == 'DataFrame':
+            num = max(num, 0)
+            num = min(num, len(idata))
+            index = idata.columns.tolist()
+            df = idata[0:num]
+            df = df.round(3)
+            types = [str(df[index[j]].dtype) for j in range(len(index))]
+            df = df.fillna('NaN')
+            df = np.array(df).tolsit()
+            retdata.append({
+                'type':'DataFrame',
+                'col_num':len(index),
+                'col_index':index,
+                'col_type':types,
+                'row_num':num,
+                'data': df
+            })
+        elif outtype == 'Image':
+            savename = CACHE_DIR + pid + nid + gen_random_string() + '.png'
+            savedir = os.path('app', 'static', 'cache')
+            if not os.path.exists(savedir):
+                os.mkdir(savedir)
+            cv2.imwrite(os.path.join(savedir, savename), idata)
+            retdata.append({
+                'type':'Image',
+                "url":'static/cache/'+savename,
+            })
+        elif outtype == 'Graph':
+            pass
+        elif outtype == 'Video':
+            pass
+        else:
+            raise NotImplementedError
 
     return ret
 
@@ -150,7 +226,11 @@ def init():
     global CACHE_DIR
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    pid = req.pop('project_id')
+    global DEBUG
+    if DEBUG:
+        pid = 'temp'
+    else:
+        pid = req.pop('project_id')
     r.hdel(pid)
     for root, dirs, files in os.walk(os.path.join(CACHE_DIR, pid)):
         for file in files:

@@ -4,123 +4,41 @@
   <meta charset='utf-8'>
   <title> visual data analysis platform </title>
   <script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
-  <script src="{{url_for('static', filename='vue/vue.js')}}"></script>
   <link href="{{url_for('static', filename='index.css')}}" rel="stylesheet" type="text/css"/>
-  <link href="{{url_for('static', filename='style.css')}}" rel="stylesheet" type="text/css"/>
-  <link href="{{url_for('static', filename='graph.css')}}" rel="stylesheet" type="text/css"/>
-  <link href="{{url_for('static', filename='database.css')}}" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-  <div class='top-row noselect' id='catalogy-v'>
-    <div class='catalogy' id='index-v' @click='click'>
-      主页
+  <nav class='primnav' id='navi'>
+  </nav>
+  <div class='main-scope'>
+    <div class='canvas'>
+      <svg id="svg" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" ></svg>
+      <img src="static/bg.png" alt="" draggable="false">
     </div>
-    <div class='catalogy' id='database-v' @click='click'>
-      数据
-    </div>
-    <div class='catalogy' id='component-v' @click='click'>
-      组件
-    </div>
-    <div class='catalogy' id='deeplearning-v' @click='click'>
-      深度学习
-    </div>
-    <user id='user'>
-      <section>
-        <img src="{{url_for('static', filename='logo.jpg')}}" />
-        <section>
-          <name align='right'>可视化数据分析平台</name>
-          <actions><a>Visual Analysis Platform</a></actions>
-        </section>
-      </section>
-    </user>
   </div>
-  <div id="content-box">
-
-    <div id="index-page" v-if="visi==='index'">
-      <table>
-        <tbody>
-        <tr>
-          <td>项目名</td>
-          <td>创建时间</td>
-        </tr>
-        <tr is="index-row" 
-          v-for="col in cols" 
-          :key="col.gid"
-          :gid="col.gid" 
-          :gname="col.gname" 
-          :create_time="col.create_time"
-          @enter_graph="show_graph(col.gid)"
-          ></tr>
-        <tr><td>
-          <button @click="new_graph">创建新项目</button>
-        </td></tr>
-        </tbody>
-      </table>
+  <div class="detail-bound">
+    <!--<div class='button-single-div' style="display:none" id='button_single_run'>-->
+      <!--<button class="bubbly-button" onclick="run_single_button()">运行节点</button>-->
+    <!--</div>-->
+    <div class='button-div' style="display:none" id='button_stop'>
+      <button onclick="stop_button()">STOP</button>
     </div>
-
-    <div id="graph-page" v-if="visi==='graph'">
-      <iframe id="graph-iframe" src="graph" scrolling="no" frameborder="0" onload="changeFrameSize()"></iframe>
+    <div class='button-div' style="display:block" id='button_run'>
+      <button class="bubbly-button" onclick="run_button()">运行全部</button>
     </div>
-
-    <div id="database-page" v-if="visi==='database'">
-      <div id="database-iframe">
-        <table>
-          <tbody>
-            <tr>
-              <td>数据名称</td>
-              <td>导入时间</td>
-              <td>数据大小</td>
-            </tr>
-            <tr is="database-row"
-                v-for="col in cols"
-                :key="col.dataid"
-                :dataid="col.dataid"
-                :dataname="col.dataname"
-                :create_time="col.create_time"
-                @view_data="show_data(col.dataid)"
-                ></tr>
-          </tbody>
-        </table>
-        <b>
-          导入数据
-        </b>
-<form id="upload-form" action="/upload" method="post" enctype="multipart/form-data" >
-　　　<input type="file" id="upload" name="upload" /> <br />
-　　　<input type="submit" value="Upload" />
-</form>
-      </div>
+    <div class='delete-div' style="display:none" id='button_delete'>
+      <button class="bubbly-button-delete" onclick="delete_button()">删除节点</button>
     </div>
-
-    <div id="component-page" v-if="visi==='component'">
-      component page
+    <div class="detail-view"  >
+      <div class="detail-top">param</div>
+      <div class="detail-table" id="detail-box"></div>
     </div>
-
-    <div id="deeplearning-page" v-if="visi==='deeplearning'">
-      deeplearning page
+    <div class="data-view"  id="data-box">
+      <div class='data-top'>数据</div>
+      <div class="data-table" id="table-box"></div>
     </div>
-
-
   </div>
 </body>
-  <script>
-function changeFrameSize(){
-    var ifm= document.getElementById("graph-iframe"); 
-    ifm.height=document.documentElement.clientHeight;
-    ifm.width=document.documentElement.clientWidth;
-
-}
-
-window.onresize=function(){  
-     changeFrameSize();  
-
-} 
-  </script>
-  <script src="{{url_for('static', filename='index.js')}}"></script>
-  <script src="{{url_for('static', filename='graph.js')}}"></script>
-  <script src="{{url_for('static', filename='database.js')}}"></script>
-  <script src="{{url_for('static', filename='component.js')}}"></script>
-  <script src="{{url_for('static', filename='deeplearning.js')}}"></script>
-  <script src="{{url_for('static', filename='common.js')}}"></script>
+<script src="{{url_for('static', filename='graph.js')}}"></script>
 </html>
 
 

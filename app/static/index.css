@@ -1,146 +1,110 @@
-body{
-  margin:0,
-  padding:0,
+html {
+  font-family: 'Roboto', sans-serif;
 }
-iframe{
-  margin:0,
-  padding:0,
+
+body {
+  margin: 0;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 100vh;
+  width: 100vw;
 }
-.root{
-  position:absolute;
-  width:100%;
+ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.primnav{
   height:100%;
-  min-height:500px;
-  min-width:700px;
-  margin:0 auto;
-  top:0;
-  left:0;
-  overflow:hidden;
-}
-
-.top-row{
-  position:relative;
-  width:100%;
-  height:58px;
-  background:#0070cc;
-  top:0;
-  left:0;
-
-  display: -webkit-flex;
-  display: flex;
-  align-items: center;
-}
-.main-scope{
-  position:absolute;
-  width:100%;
-  min-height:500px;
-  top:0;
-  bottom:0;
-}
-
-.function-view{
-  position:absolute;
-  padding-left:20px;
-  width:180px;
-  height:100%;
-  background:#f6f5ec;
-  top:0;
-  left:0;
-
-  display: -webkit-flex;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  /*align-items: flex-start;*/
-}
-.canvas{
-  position:relative;
-  /*margin:0 200px;*/
-  height:100%;
-  overflow:hidden;
-}
-.detail-bound{
-  flex:auto;
   position:absolute;
   width:200px;
-  height:1000px;
+  background-color:#007ee6;
+}
+
+.primnav > ul {
+  height:100%;
+  overflow-x:hidden;
+  overflow-y:auto;
+}
+.primnav li .tag{
+  background-color:#005aa3;
+  background-color:rgba(0,112,204,0.8);
+  color:rgba(255,255,255,0.8);
+  color:#e6e6e6;
+  border-radius:2em;
+}
+.primnav li a {
+  position:relative;
+  display:-webkit-box;
+  display:flex;
+  display:-ms-flexbox;
+  -webkit-box-align:center;
+  align-items:center;
+  white-space:nowrap;
+  color:white;
+  color:rgba(255,255,255,0.8);
+  text-decoration:none;
+}
+.primnav li:hover, .primnav expand:hover {
+  background-color:#66a9e0;
+  background-color:rgba(0,112,204,0.6);
+}
+
+
+.main-scope{
+  margin-left:200px;
+}
+.canvas{
+  position:absolute;
+}
+#svg{
+  opacity:1;
+  position:absolute;
+}
+
+/*--------- detail -------------------*/
+.detail-bound{
+  position:absolute;
   right:0px;
-  top:0px;
-  background:#ffffff;
+  width:200px;
+  height:100%;
+  background:white;
 }
 .detail-view{
-  /*position:absolute;*/
-  /*width:160px;*/
-  height:auto;
-  background:#ffffff;
-  border: 1px solid;
-  border-color: rgb(129, 179, 224);
-  padding: 2px;
-  margin-bottom:10px;
+  position:relative;
+  width:200px;
+  min-height:100px;
+  top:0px;
+  border-style:double;
+  border-width:3px;
+  border-color:black;
 }
 .detail-top{
-  width: 100%;
-  height:25px;
-  background: rgb(21,129,227);
-  color: #ffffff;
-  margin-bottom: 2px;
+  border-style:solid;
+  border-width:1px;
+  border-color:black;
+}
+.detail-table{
 }
 .data-view{
-  /*position:absolute;*/
-  /*width:16%;*/
-  height:auto;
-  background:#ffffff;
-  border: 1px solid;
-  border-color: rgb(129, 179, 224);
-  padding: 2px;
-  margin-top:10px;
-  /*top:350px;*/
-  /*right:50px;*/
+  position:relative;
+  width:200px;
+  min-height:100px;
+  bottom:0px;
+  border-style:double;
+  border-width:3px;
+  border-color:black;
 }
-.table-div{
-  width: 100%;
-  height: auto;
-  max-height:350px; 
-  overflow: auto;
+.data-top{
+  border-style:solid;
+  border-width:1px;
+  border-color:black;
+}
+.data-table{
 }
 
-.delete-div{
-  position:absolute;
-  width:80px;
-  height:80px;
-  bottom:5%;
-  right:14.5%;
-  display:table-cell;
-  vertical-align:middle;
-  text-align:center;
-}
 
-.button-single-div{
-  position:absolute;
-  width:80px;
-  height:80px;
-  bottom:5%;
-  right:8.5%;
-  display:table-cell;
-  vertical-align:middle;
-  text-align:center;
-}
 
-.button-div{
-  position:absolute;
-  width:80px;
-  height:80px;
-  bottom:5%;
-  right:2.5%;
-  display:table-cell;
-  vertical-align:middle;
-  text-align:center;
-}
-
-.table{
-  width: 100%;
-  text-align: center;
-}
 
 /*------------------------------------*/
 ul b{
@@ -180,6 +144,7 @@ ul ul b{
 }
 
 .node{
+  background-color:rgb(255,255,255);
   position:absolute;
   padding-left: 5px;
   padding-right: 5px;
@@ -190,12 +155,7 @@ ul ul b{
 }
 
 .node:hover{
-  background:#faa755;
-  transition:.3s;
-}
-
-.node:active{
-  background:#f6f5ec;
+  border-width:3px;
   transition:.1s;
 }
 
@@ -242,10 +202,6 @@ ul ul b{
   margin: 2px;
 }
 
-.button{
-  width:50px;
-  height:20px;
-}
 /*-------------------*/
 .noselect{
   -webkit-touch-callout: none;
@@ -256,11 +212,3 @@ ul ul b{
   user-select:none;
 }
 
-.catalogy{
-  margin:10px;
-  padding:10px;
-}
-.catalogy:hover{
-  background:#0080ff;
-  cursor:pointer;
-}
