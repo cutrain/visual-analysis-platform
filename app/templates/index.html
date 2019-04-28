@@ -1,48 +1,51 @@
 <!DOCTYPE HTML5>
 <html>
-<head>
-  <meta charset='utf-8'>
-  <title> visual data analysis platform </title>
-  <script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
-  <link href="{{url_for('static', filename='index.css')}}" rel="stylesheet" type="text/css"/>
-</head>
-<body>
-  <nav class='primnav' id='navi'>
-  </nav>
-  <div class='main-scope'>
-    <div class='canvas'>
-      <svg id="svg" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" ></svg>
-      <img src="static/bg.png" alt="" draggable="false">
+  <head>
+    <meta charset='utf-8'>
+    <title> visual data analysis platform </title>
+    <script src="{{url_for('static', filename='jquery/jquery.min.js')}}"></script>
+    <link href="{{url_for('static', filename='index.css')}}" rel="stylesheet" type="text/css"/>
+  </head>
+  <body>
+    <nav class='primnav' id='navi'>
+    </nav>
+    <div class='main-scope'>
+      <div class='canvas'>
+        <svg id="svg" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg" ></svg>
+        <img src="static/bg.png" alt="" draggable="false">
+      </div>
+      <div class="data-view"  id="data-box">
+        <div class='data-top'>数据</div>
+        <div class="data-table" id="table-box"></div>
+      </div>
     </div>
-  </div>
-  <div class="detail-bound">
-    <!--<div class='button-single-div' style="display:none" id='button_single_run'>-->
+    <div class="detail-bound">
+      <!--<div class='button-single-div' style="display:none" id='button_single_run'>-->
       <!--<button class="bubbly-button" onclick="run_single_button()">运行节点</button>-->
-    <!--</div>-->
-    <div class='button-div'>
-      <button onclick="save_button()">保存流程图</button>
-      <button onclick="load_button()">读取流程图</button>
+      <!--</div>-->
+      <div class='button-div'>
+        <button onclick="save_button()">保存流程图</button>
+        <button onclick="load_button()">读取流程图</button>
+      </div>
+      <div class='button-div' style="display:none" id='button_stop'>
+        <button onclick="stop_button()">停止运行</button>
+      </div>
+      <div class='button-div' id='button_clean'>
+        <button onclick="clean_button()">清除缓存数据</button>
+      </div>
+      <div class='button-div' style="display:block" id='button_run'>
+        <button class="bubbly-button" onclick="run_button()">运行全部</button>
+      </div>
+      <div class='delete-div' style="display:none" id='button_delete'>
+        <button class="bubbly-button-delete" onclick="delete_button()">删除节点</button>
+      </div>
+      <div class="detail-view"  >
+        <div class="detail-top">param</div>
+        <div class="detail-table" id="detail-box"></div>
+      </div>
     </div>
-    <div class='button-div' style="display:none" id='button_stop'>
-      <button onclick="stop_button()">停止运行</button>
-    </div>
-    <div class='button-div' style="display:block" id='button_run'>
-      <button class="bubbly-button" onclick="run_button()">运行全部</button>
-    </div>
-    <div class='delete-div' style="display:none" id='button_delete'>
-      <button class="bubbly-button-delete" onclick="delete_button()">删除节点</button>
-    </div>
-    <div class="detail-view"  >
-      <div class="detail-top">param</div>
-      <div class="detail-table" id="detail-box"></div>
-    </div>
-    <div class="data-view"  id="data-box">
-      <div class='data-top'>数据</div>
-      <div class="data-table" id="table-box"></div>
-    </div>
-  </div>
-</body>
-<script src="{{url_for('static', filename='graph.js')}}"></script>
+  </body>
+  <script src="{{url_for('static', filename='graph.js')}}"></script>
 </html>
 
 

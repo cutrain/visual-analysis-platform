@@ -11,6 +11,7 @@ const routes = {
   'graph_stop' : server + '/graph/stop',
   'graph_save' : server + '/graph/save',
   'graph_load' : server + '/graph/get',
+  'graph_clean' : server + '/graph/init',
 };
 const LINE_CIRCLE_X_BIAS = 8;
 const LINE_CIRCLE_Y_BIAS = 8;
@@ -614,7 +615,7 @@ function save_detail() {
 }
 
 function render_nodes(data) {
-  // $('.canvas>.node').css('background-color', '#ffffff');
+  $('.canvas>.node').css('background-color', '#ffffff');
   for (let i in data) {
     let node = data[i];
     let key = node.node_name;
@@ -689,9 +690,10 @@ function save_button() {
 
 function load_button() {
   G.clear();
+  // NOTE : temp
   let req = {
     'project_id' : 'temp',
-  }
+  };
   $.post(
     routes['graph_load'],
     JSON.stringify(req),
@@ -704,9 +706,31 @@ function load_button() {
           console.log('load failed:');
           console.log(ret);
         }
+        curr_id = null;
+        delete_button(); // clean param and data table
       }
       else {
         alert('load failed at getting graph');
+      }
+    }
+  );
+}
+
+function clean_button() {
+  // NOTE : temp
+  let req = {
+    'project_id' : 'temp',
+  };
+  $.post(
+    routes['graph_clean'],
+    JSON.stringify(req),
+    (ret) => {
+      ret = JSON.parse(ret);
+      if (ret.succeed == 0) {
+        render_nodes({}); // clean nodes' state color
+      }
+      else {
+        alert('clean cache failed : ' +  ret.message);
       }
     }
   );
@@ -767,7 +791,8 @@ function run_single_button() {
 }
 
 function delete_button(){
-  G.delNode(curr_id);
+  if (curr_id != null)
+    G.delNode(curr_id);
   curr_id = null;
   let button_single = $('#button_single_run');
   let dele = $('#button_delete');
@@ -928,8 +953,6 @@ function node_click(e) {
   // check is not circle
   if (id.split('-').length > 2)
     return;
-  if (curr_id == id)
-    return;
 
   if (curr_id == null) {
     $('#button_single_run').css('display', 'block');
@@ -1046,18 +1069,22 @@ function node_click(e) {
     function(ret) {
       ret = JSON.parse(ret);
       if (ret.succeed == 0) {
-        if (ret.type == 'DataFrame') {
-          if (ret.row_num > 0) {
+        if (ret.data.length == 0)
+          return;
+        let show = ret.data[0];
+        if (show.type == 'DataFrame') {
+          if (show.row_num > 0) {
             let table = $('<table class="table" border="1"></table>');
-            let row = ret.row_num;
-            let col = ret.col_num;
+            let row = show.row_num;
+            let col = show.col_num;
             let tr = $('<tr></tr>');
-            ret.col_index.forEach(function (value) {
+            for (let i = 0;i < show.col_index.length;++ i) {
+              let value = show.col_index[i] + '(' + show.col_type[i] + ')';
               let th = $('<th>'+value+'</th>');
               tr.append(th);
-            });
+            }
             table.append(tr);
-            ret.data.forEach(function (rowValue) {
+            show.data.forEach(function (rowValue) {
               let tr = $('<tr></tr>');
               rowValue.forEach(function (value) {
                 let td = $('<td>'+value+'</td>');
@@ -1069,7 +1096,7 @@ function node_click(e) {
           }
         }
         else {
-          alert('type ' + ret.type + ' not implemented');
+          alert('type ' + show.type + ' not implemented');
         }
       }
     }

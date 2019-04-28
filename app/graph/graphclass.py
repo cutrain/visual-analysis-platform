@@ -18,13 +18,11 @@ from functools import wraps
 
 def func_pack(func, *args, **kwargs):
     @wraps(func)
-    def wrap(queue, *args, **kwargs):
+    def wrap(*args, **kwargs):
         result = func(*args, **kwargs)
-        if type(result) is tuple:
-            for i in result:
-                queue.put(result)
-        else:
-            queue.put(result)
+        if type(result) != tuple:
+            result = (result,)
+        return result
     return wrap
 
 class Port:
@@ -81,6 +79,8 @@ class Node:
             'out':list(map(lambda x:x(), self._out)),
             'param':self._param,
         }
+        if not os.path.exists(dirpath):
+            os.mkdir(dirpath)
         with open(os.path.join(dirpath, self._name + '.pickle'), 'wb') as f:
             f.write(pickle.dumps(data))
 
@@ -91,13 +91,13 @@ class Node:
             if data['name'] != self._name:
                 print("ERROR: Node load, unexpect error happend")
                 return
-            if cmp(data['detail'], self._detail) != 0:
+            if data['detail'] != self._detail:
                 print('load error, detail changed :', self._name, self._detail, data['detail'])
                 return
-            if cmp(data['param'], self._param) != 0:
+            if data['param'] != self._param:
                 print('param changed :', self._name, self._param, data['param'])
                 return
-            if not all(map(lambda x:x[0]==x[1], (data['in_port_name'], self._in_port_name))):
+            if not all(map(lambda x:x[0]==x[1], zip(data['in_port_name'], self._in_port_name))):
                 print('in port not match :', self._name, self._in_port_name, data['in_port_name'])
                 return
             self.status = data['status']
@@ -118,25 +118,16 @@ class Node:
 
     def __run(self):
         try:
-            self._queue = Queue()
-            # self._processing = multiprocessing.Process(target=self._func, args=(self._queue,) + tuple(map(lambda x:x(), self._in_port)), kwargs=self._param)
-            self._processing = threading.Thread(target=self._func, args=(self._queue,) + tuple(map(lambda x:x(), self._in_port)), kwargs=self._param)
-            self._processing.daemon = True
             print('node', self._name, 'start run', flush=True)
-            self._processing.start()
             self.status = 2
-            self._processing.join()
+            result = self._func(*tuple(map(lambda x:x(), self._in_port)), **self._param)
             print('node', self._name, 'finish running', flush=True)
-            del self._processing
             for i in range(len(self._out)):
-                self._out[i](self._queue.get())
-            # self._queue.close() # multiprocessing use this
+                self._out[i](result[i])
             self.status = 0
-            del self._queue
             print('node', self._name, 'get ans', flush=True)
         except Exception as e:
-            print('node', self._name, 'run break', flush=True)
-            # self._queue.close() # multiprocessing use this
+            print('node', self._name, 'running break', flush=True)
             print('Node Run Error :', self)
             print(e)
             self.status = -1
@@ -216,6 +207,16 @@ class Graph:
                             if port.node.status != 0:
                                 node.reset()
                                 changed = True
+
+            # Delete nouse cache
+            for key in self.nodes:
+                node = self.nodes[key]
+                path = os.path.join(CACHE_DIR, self.pid, node._name+'.pickle')
+                if node.status != 0:
+                    if os.path.exists(path):
+                        os.remove(path)
+                        print('delete unused cache', path)
+
             return True
         except Exception as e:
             print('load cache error :', e)
@@ -255,11 +256,19 @@ class Graph:
             for key, val in last.items():
                 if val.status == 1:
                     val()
-                else:
+                elif val.status == 0:
+                    print('saving')
+                    val.save(os.path.join(CACHE_DIR, self.pid))
                     delkey.append(key)
-            for i in delkey:
-                print('stop node', i)
-                last.pop(i)
+                elif val.status == -1:
+                    delkey.append(key)
+                elif val.status == 2:
+                    pass
+                else:
+                    print('ERROR!!! UNKNOWN RUNNING STATUS', val.status)
+            for ikey in delkey:
+                print('stop node', ikey)
+                last.pop(ikey)
                 wait = False
             for key,val in self.nodes.items():
                 self.r.hset(self.pid, key, val.status)

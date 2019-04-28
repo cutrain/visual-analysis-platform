@@ -61,11 +61,10 @@ ul {
   opacity:1;
   position:absolute;
 }
-
 /*--------- detail -------------------*/
 .detail-bound{
   position:absolute;
-  right:0px;
+  right:3px;
   width:200px;
   height:100%;
   background:white;
@@ -75,6 +74,7 @@ ul {
   width:200px;
   min-height:100px;
   top:0px;
+  right:3px;
   border-style:double;
   border-width:3px;
   border-color:black;
@@ -88,7 +88,6 @@ ul {
 }
 .data-view{
   position:relative;
-  width:200px;
   min-height:100px;
   bottom:0px;
   border-style:double;
@@ -96,12 +95,20 @@ ul {
   border-color:black;
 }
 .data-top{
-  border-style:solid;
-  border-width:1px;
-  border-color:black;
 }
 .data-table{
 }
+#data-box {
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:1;
+  max-width:500px;
+  min-width:180px;
+  overflow-y:auto;
+  overflow-x:auto;
+}
+
 
 
 

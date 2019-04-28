@@ -94,6 +94,7 @@ def run():
                     line['line_to_port']
             fail['message'] = message
             return fail
+
     ret = G.load_cache()
     if not ret:
         message = 'local cache fail'
@@ -159,7 +160,6 @@ def sample():
     # get pid/nid's data
     with open(os.path.join(CACHE_DIR, pid, nid+'.pickle'), 'rb') as f:
         data = pickle.load(f)
-
     type_ = nid.split('-')[0]
     icomp = component_detail[type_]
     out = icomp['out_port']
@@ -169,16 +169,16 @@ def sample():
     retdata = ret['data']
     for i in range(len(out)):
         outtype = out[i]
-        idata = data[i]
+        idata = data['out'][i]
         if outtype == 'DataFrame':
             num = max(num, 0)
             num = min(num, len(idata))
-            index = idata.columns.tolist()
+            index = list(idata.columns)
             df = idata[0:num]
             df = df.round(3)
             types = [str(df[index[j]].dtype) for j in range(len(index))]
             df = df.fillna('NaN')
-            df = np.array(df).tolsit()
+            df = np.array(df).tolist()
             retdata.append({
                 'type':'DataFrame',
                 'col_num':len(index),
@@ -213,7 +213,7 @@ def init():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     pid = req.pop('project_id')
-    r.hdel(pid)
+    r.hdel(pid, *r.hkeys(pid))
     for root, dirs, files in os.walk(os.path.join(CACHE_DIR, pid)):
         for file in files:
             os.remove(os.path.join(root, file))
