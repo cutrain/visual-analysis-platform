@@ -3,7 +3,7 @@ import sqlite3
 import pandas as pd
 
 from tool import safepath
-from config import DATA_DIR, MODEL_DIR
+from config import DATA_DIR
 from .graph.graphio import from_json_dicts, from_json_lists, from_mat_matrix, graph2json
 
 __all__ = [
@@ -137,13 +137,13 @@ def model_instream(**kwargs):
     from sklearn.externals import joblib
     path = kwargs.pop('path')
     path = safepath(path)
-    model = joblib.load(os.path,join(MODEL_DIR, path))
+    model = joblib.load(os.path,join(DATA, path))
     return model
 
 def model_outstream(model, **kwargs):
     from sklearn.externals import joblib
     path = kwargs.pop('path')
-    joblib.dump(model, os.path.join(MODEL_DIR, path))
+    joblib.dump(model, os.path.join(DATA, path))
 
 def image_instream(**kwargs):
     import cv2
