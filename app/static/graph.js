@@ -9,6 +9,8 @@ const routes = {
   'graph_progress' : server + '/graph/progress',
   'graph_sample' : server + '/graph/sample',
   'graph_stop' : server + '/graph/stop',
+  'graph_save' : server + '/graph/save',
+  'graph_load' : server + '/graph/get',
 };
 const LINE_CIRCLE_X_BIAS = 8;
 const LINE_CIRCLE_Y_BIAS = 8;
@@ -29,6 +31,7 @@ class Renderer{
     this.container = $(container_selector);
     // TODO : change svg id
     this.svg_selector = '#svg';
+    this.nodes = [];
     this.lines = [];
   }
 
@@ -80,6 +83,8 @@ class Renderer{
       out_circle.css("left", Math.floor(circle_width/(1+out_port_num) * (i + 1) + CIRCLE_X_BIAS) + 'px');
       $node.append(out_circle);
     }
+
+    this.nodes.push(node_id);
   }
 
   addEdge(node_from, port_from, node_to, port_to) {
@@ -125,6 +130,14 @@ class Renderer{
       }
     }
     this.lines = last_lines;
+
+    let last_nodes = [];
+    for (let i in this.nodes) {
+      let inode = this.nodes[i];
+      if (inode != node_id)
+        last_nodes.push(inode);
+    }
+    this.nodes = last_nodes;
   }
 
   delEdge(node_from, port_from, node_to, port_to) {
@@ -173,6 +186,16 @@ class Renderer{
     let svg = $("#svg");
     svg.html(svg.html());
   }
+
+  clear() {
+    let node_list = [];
+    for (let i in this.nodes)
+      node_list.push(this.nodes[i]);
+    for (let i in node_list) {
+      let inode = node_list[i];
+      this.delNode(inode);
+    }
+  }
 }
 
 // ======================================================= Graph class ===================================================
@@ -190,7 +213,7 @@ class Graph {
     this.renderer = null;
   }
 
-  addNode(node_type, posiX=0, posiY=0) {
+  addNode(node_type, posiX=0, posiY=0, load_id=null) {
     console.log('Graph call : addNode');
     // check node type
     if (!type_detail.has(node_type)) {
@@ -208,13 +231,16 @@ class Graph {
     }
     let type_number = this.type_count.get(node_type);
     let node_id = node_type + '-' + type_number;
+    if (load_id != null)
+      node_id = load_id;
     let new_node = {
       "id" : node_id,
       "type" : node_type,
       "position" : [posiX, posiY],
       "param" : param,
     };
-    this.type_count.set(node_type, type_number+1);
+    if (load_id == null)
+      this.type_count.set(node_type, type_number+1);
     this.node.set(new_node.id, new_node);
 
     // initialize edge
@@ -511,10 +537,14 @@ class Graph {
     let nodes = obj.all_nodes;
     for (let key in nodes) {
       let x = nodes[key];
-      let node_id = this.addNode(x.node_type, x.node_position[0], x.node_position[1]);
+      let name = x.node_name;
+      let node_id = this.addNode(x.node_type, x.node_position[0], x.node_position[1], name);
       if (node_id == -1) {
         alert('bug in loadJson');
         return -1;
+      }
+      if (this.type_count.get(x.node_type) <= parseInt(node_id.split('-')[1])) {
+        this.type_count.set(x.node_type, parseInt(node_id.split('-')[1]) + 1);
       }
       this.setParam(node_id, x.details);
     }
@@ -636,11 +666,58 @@ function check_progress() {
   );
 }
 
+// ============================ button ==================================
+function save_button() {
+  save_detail();
+  let req = G.toJson();
+  // NOTE : temp
+  req['project_id'] = 'temp';
+  $.post(
+    routes['graph_save'],
+    JSON.stringify(req),
+    (ret) => {
+      ret = JSON.parse(ret);
+      if (ret.succeed == 0) {
+        alert('save succeed');
+      }
+      else {
+        alert('save fail : ' + ret.message);
+      }
+    }
+  );
+}
+
+function load_button() {
+  G.clear();
+  let req = {
+    'project_id' : 'temp',
+  }
+  $.post(
+    routes['graph_load'],
+    JSON.stringify(req),
+    (ret) => {
+      ret = JSON.parse(ret);
+      if (ret.succeed == 0) {
+        let succeed = G.loadJson(ret);
+        if (succeed == 1) {
+          alert('load failed at creating graph');
+          console.log('load failed:');
+          console.log(ret);
+        }
+      }
+      else {
+        alert('load failed at getting graph');
+      }
+    }
+  );
+}
+
 function stop_button() {
   if (finished) {
     alert('already stoped');
     return;
   }
+  // NOTE : temp
   req = {
     'project_id':'temp',
   };
@@ -665,6 +742,7 @@ function run_button() {
   }
   save_detail();
   let req = G.toJson();
+  // NOTE : temp
   req['project_id'] = 'temp';
   $.post(
     routes['graph_run'],
@@ -954,13 +1032,17 @@ function node_click(e) {
 
     detailBox.prepend($border);
   }
-  var data = {
+  var req = {
     "number":10,
-    "node_name":id
+    "node_id":id
   };
+
+  // NOTE : temp
+  req['project_id'] = 'temp';
+
   $.post(
     routes['graph_sample'],
-    JSON.stringify(data),
+    JSON.stringify(req),
     function(ret) {
       ret = JSON.parse(ret);
       if (ret.succeed == 0) {
@@ -1200,5 +1282,7 @@ $.post(
     component_init();
     bind_canvas('#svg');
     console.log('READY');
+    // NOTE : temp
+    load_button();
   }
 );

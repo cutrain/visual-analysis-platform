@@ -23,10 +23,8 @@ def func_pack(func, *args, **kwargs):
         if type(result) is tuple:
             for i in result:
                 queue.put(result)
-                print('put')
         else:
             queue.put(result)
-        print('put all')
     return wrap
 
 class Port:
@@ -40,6 +38,11 @@ class Port:
             # TODO : check data type
             self._data = data
         return self._data
+
+    def __repr__(self):
+        ret = 'Port of Node : ' + self.node._name + ' Type : ' + self._data_type + ' Data : '
+        ret += repr(self._data)
+        return ret
 
     def reset(self):
         self._data = None
@@ -63,7 +66,6 @@ class Node:
         # TODO : check param avaliable
         print('node :', self._name, 'function :', node_type, eval(node_type), flush=True)
         self._func = func_pack(eval(node_type))
-        print(self._func)
         self._thread = None
 
     @property
@@ -135,8 +137,7 @@ class Node:
         except Exception as e:
             print('node', self._name, 'run break', flush=True)
             # self._queue.close() # multiprocessing use this
-            print('Node Run Error :')
-            self.__repr__(indent=4)
+            print('Node Run Error :', self)
             print(e)
             self.status = -1
 
@@ -161,18 +162,19 @@ class Node:
             self._thread.daemon = True
             self._thread.start()
         except Exception as e:
-            print('Node Call Error :')
-            self.__repr__(indent=4)
+            print('Node Call Error :', self)
             print(e)
             self.status = -1
 
-    def __repr__(self, *, indent=0):
-        print(' '*indent + 'node name :', self._name)
-        print(' '*indent + 'node type :', self._detail['name'])
-        print(' '*indent + 'status :', self.status)
-        print(' '*indent + 'in port data :', list(map(lambda x:x(), self._in_port)))
-        print(' '*indent + 'out port data :', list(map(lambda x:x(), self._out)))
-        print(' '*indent + 'params :', self._param)
+    def __repr__(self):
+        ret = ''
+        ret += 'Node name : ' + str(self._name)
+        ret += ' Node type : ' + str(self._detail['name'])
+        ret += ' Status : ' + str(self.status)
+        ret += ' in port data : ' + str(list(map(repr, self._in_port)))
+        ret += ' out port data : ' + str(list(map(repr, self._out)))
+        ret += ' Params : ' + str(self._param)
+        return ret
 
 class Graph:
     def __init__(self, pid):
@@ -190,7 +192,7 @@ class Graph:
     def add_edge(self, node_from, port_from, node_to, port_to):
         try:
             if self.nodes[node_to]._in[port_to].type == self.nodes[node_from]._out[port_from].type:
-                self.nodes[node_to]._in_port_name[port_to] = node_from + '-' + port_from
+                self.nodes[node_to]._in_port_name[port_to] = node_from + '-' + str(port_from)
                 self.nodes[node_to]._in_port[port_to] = self.nodes[node_from]._out[port_from]
                 return True
         except Exception as e:
@@ -244,9 +246,6 @@ class Graph:
                     self.__wait = self.__wait * self.__times
                     self.__wait = min(self.__wait, self.__upper_bound)
                 time.sleep(self.__wait)
-
-
-
 
         ws = wait_scheduler()
         while len(last.keys()) > 0:

@@ -33,6 +33,8 @@ def create():
         'project_name':pname,
         'create_time':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
     }
+    if pname == 'temp':
+        new_data['project_id'] = 'temp'
     with open(os.path.join(PROJECT_DIR, new_data['project_id'] + '.pickle'), 'wb') as f:
         f.write(pickle.dumps(new_data))
     ret = {
@@ -46,11 +48,7 @@ def change():
     global PROJECT_DIR
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    global DEBUG
-    if DEBUG:
-        pid = 'temp'
-    else:
-        pid = req.pop('project_id')
+    pid = req.pop('project_id')
     pname = req.pop('project_name')
     with open(os.path.join(PROJECT_DIR, pid+'.pickle'), 'rb') as f:
         data = pickle.load(f)
@@ -63,10 +61,6 @@ def change():
 def delete():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    global DEBUG
-    if DEBUG:
-        pid = 'temp'
-    else:
-        pid = req.pop('project_id')
+    pid = req.pop('project_id')
     os.remove(os.path.join(PROJECT_DIR, pid+'.pickle'))
 

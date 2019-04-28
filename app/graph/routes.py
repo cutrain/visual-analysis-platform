@@ -11,7 +11,7 @@ from flask import render_template, request
 from . import graph
 from .graphclass import Graph
 from tool import msgwrap, safepath, gen_random_string
-from config import CACHE_DIR, REDIS_HOST, REDIS_DB, REDIS_PORT, PROJECT_DIR, STATIC_PATH, DEBUG
+from config import CACHE_DIR, REDIS_HOST, REDIS_DB, REDIS_PORT, PROJECT_DIR, STATIC_PATH
 from common import component_detail
 
 
@@ -38,19 +38,16 @@ def get_graph():
 def save_graph():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    global DEBUG
-    if DEBUG:
-        pid = 'temp'
-    else:
-        pid = req.pop('project_id')
+    pid = req.pop('project_id')
     all_nodes = req.pop('all_nodes')
     all_lines = req.pop('all_lines')
-    nodes_details = req.pop('nodes_details')
     with open(os.path.join(PROJECT_DIR, pid+'.pickle'), 'rb') as f:
         p_data = pickle.load(f)
     p_data.update({
-        'all_nodes':all_nodes,
-        'all_lines':all_lines,
+        'graph':{
+            'all_nodes':all_nodes,
+            'all_lines':all_lines,
+        }
     })
     with open(os.path.join(PROJECT_DIR, pid+'.pickle'), 'wb') as f:
         f.write(pickle.dumps(p_data))
@@ -67,11 +64,7 @@ def run():
 
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    global DEBUG
-    if DEBUG:
-        pid = 'temp'
-    else:
-        pid = req.pop('project_id')
+    pid = req.pop('project_id')
     global processing_manager
     # check the project not running yet
     if pid in processing_manager:
@@ -91,9 +84,14 @@ def run():
             fail['message'] = message
             return fail
     for line in all_lines:
-        ret = G.add_line(line['line_from'], line['port_from'], line['line_to'], line['port_to'])
+        print(line, flush=True)
+        ret = G.add_edge(line['line_from'], int(line['line_from_port']), line['line_to'], int(line['line_to_port']))
         if not ret:
-            message = 'add line fail' + line['line_from'] + ' ' + line['port_from'] + ' ' + line['line_to'] + ' ' + line['port_to']
+            message = 'add edge fail' + \
+                    line['line_from'] + ' ' + \
+                    line['line_from_port'] + ' ' + \
+                    line['line_to'] + ' ' + \
+                    line['line_to_port']
             fail['message'] = message
             return fail
     ret = G.load_cache()
@@ -116,11 +114,7 @@ def run():
 def progress():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    global DEBUG
-    if DEBUG:
-        pid = 'temp'
-    else:
-        pid = req.pop('project_id')
+    pid = req.pop('project_id')
     global processing_manager
     status = 0
     if pid in processing_manager:
@@ -139,11 +133,7 @@ def progress():
 def stop():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    global DEBUG
-    if DEBUG:
-        pid = 'temp'
-    else:
-        pid = req.pop('project_id')
+    pid = req.pop('project_id')
     global processing_manager
     if pid not in processing_manager:
         return {
@@ -163,11 +153,7 @@ def sample():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     num = int(req.pop('number', 10))
-    global DEBUG
-    if DEBUG:
-        pid = 'temp'
-    else:
-        pid = req.pop('project_id')
+    pid = req.pop('project_id')
     nid = req.pop('node_id')
 
     # get pid/nid's data
@@ -226,11 +212,7 @@ def init():
     global CACHE_DIR
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
-    global DEBUG
-    if DEBUG:
-        pid = 'temp'
-    else:
-        pid = req.pop('project_id')
+    pid = req.pop('project_id')
     r.hdel(pid)
     for root, dirs, files in os.walk(os.path.join(CACHE_DIR, pid)):
         for file in files:
