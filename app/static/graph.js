@@ -982,6 +982,7 @@ function node_click(e) {
     let key = param_detail.name;
     let value = params[key];
     let param_type = param_detail.type;
+    let note = param_detail.note;
 
     let $border = $('<div class="param-border"></div>');
     let $name = $('<div class="param-key"></div>');
@@ -1047,6 +1048,7 @@ function node_click(e) {
     $param.val(value);
     $param.attr("data-type", param_type);
     $name.css("order", "1");
+    $name.attr("title", note);
     $param.css("order", "2");
     $border.css("order", i);
     $border.prepend($name);
