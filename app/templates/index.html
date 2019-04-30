@@ -16,6 +16,7 @@
       </div>
       <div class="data-view"  id="data-box">
         <div class='data-top'>数据</div>
+        <hr/>
         <div class="data-table" id="table-box"></div>
       </div>
     </div>
@@ -23,21 +24,25 @@
       <!--<div class='button-single-div' style="display:none" id='button_single_run'>-->
       <!--<button class="bubbly-button" onclick="run_single_button()">运行节点</button>-->
       <!--</div>-->
-      <div class='button-div'>
-        <button onclick="save_button()">保存流程图</button>
-        <button onclick="load_button()">读取流程图</button>
+      <div class='button-area'>
+        <div class='button-div'>
+          <button onclick="save_button()">保存流程图</button>
+          <button onclick="load_button()">读取流程图</button>
+        </div>
+        <div class='button-div'>
+          <button id='button_clean' onclick="clean_button()">清除缓存</button>
+          <button id='button_run' style="display:inline" onclick="run_button()">运行</button>
+          <button id='button_stop' style="display:none" onclick="stop_button()">停止</button>
+        </div>
+        <div class='delete-div'>
+          <button id='button_delete' style="display:none" onclick="delete_button()">删除节点</button>
+          <button id='button_single_run' style="display:none" onclick="run_single_button()">运行节点</button>
+        </div>
       </div>
-      <div class='button-div'>
-        <button id='button_clean' onclick="clean_button()">清除缓存</button>
-        <button id='button_run' style="display:inline" onclick="run_button()">运行</button>
-        <button id='button_stop' style="display:none" onclick="stop_button()">停止</button>
-      </div>
-      <div class='delete-div'>
-        <button id='button_delete' style="display:none" onclick="delete_button()">删除节点</button>
-        <button id='button_single_run' style="display:none" onclick="run_single_button()">运行节点</button>
-      </div>
+      <hr/>
       <div class="detail-view"  >
         <div class="detail-top">参数</div>
+        <hr/>
         <div class="detail-table" id="detail-box"></div>
       </div>
     </div>

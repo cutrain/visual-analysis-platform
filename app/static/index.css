@@ -64,24 +64,26 @@ ul {
 /*--------- detail -------------------*/
 .detail-bound{
   position:absolute;
-  right:3px;
+  right:23px;
+  top:20px;
   width:200px;
+  border-style:solid;
+  border-width:2px;
   background:white;
+}
+.button-area{
+  position:relative;
+  left:2px;
+  top:2px;
 }
 .detail-view{
   position:relative;
-  width:200px;
+  width:100%;
   min-height:100px;
-  top:0px;
-  right:3px;
-  border-style:double;
-  border-width:3px;
-  border-color:black;
 }
 .detail-top{
-  border-style:solid;
-  border-width:1px;
-  border-color:black;
+  font-weight:bold;
+  text-align:center;
 }
 .detail-table{
 }
@@ -94,6 +96,8 @@ ul {
   border-color:black;
 }
 .data-top{
+  text-align:center;
+  font-weight:bold;
 }
 .data-table{
 }
