@@ -222,7 +222,9 @@ def init():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
     pid = req.pop('project_id')
-    r.hdel(pid, *r.hkeys(pid))
+    keys = r.hkeys(pid)
+    if len(keys) > 0:
+        r.hdel(pid, *keys)
     for root, dirs, files in os.walk(os.path.join(CACHE_DIR, pid)):
         for file in files:
             os.remove(os.path.join(root, file))
