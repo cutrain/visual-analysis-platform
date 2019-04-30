@@ -118,10 +118,17 @@ def progress():
     pid = req.pop('project_id')
     global processing_manager
     status = 0
-    if pid in processing_manager:
+    if pid in processing_manager and processing_manager[pid].is_alive():
         status = 1
-    progress = r.hgetall(pid)
-    print(pid, "nodes' status :", progress)
+    progress_ = r.hgetall(pid)
+    print(pid, "nodes' status :", progress_, flush=True)
+
+    progress = []
+    for key, value in progress_.items():
+        progress.append({
+            'node_name':key,
+            'node_status':value
+        })
 
     ret = {
         "status":status,
