@@ -640,7 +640,7 @@ function render_nodes(data) {
     else {
       alert('unknown node status' + status);
     }
-    node.css('background-color', color);
+    inode.css('background-color', color);
   }
 }
 
@@ -648,10 +648,18 @@ function check_progress() {
   if (finished) {
     return;
   }
+
+  // NOTE : temp
+  let req = {
+    'project_id':'temp'
+  };
+
   $.post(
     routes['graph_progress'],
+    JSON.stringify(req),
     (ret) => {
       ret = JSON.parse(ret);
+      console.log(ret);
       if (ret.status == 0) {
         finished = true;
         $('#button_stop').css('display', 'none');
@@ -741,18 +749,28 @@ function stop_button() {
     return;
   }
   // NOTE : temp
-  req = {
+  let req = {
     'project_id':'temp',
   };
   $.post(
     routes['graph_stop'],
     JSON.stringify(req),
     (ret) => {
+      ret = JSON.parse(ret);
       console.log('stop : get response');
       console.log(ret);
       if (ret.succeed == 0) {
+        finished = true;
         $('#button_stop').css('display', 'none');
         $('#button_run').css('display', 'block');
+      }
+      else if (ret.message.indexOf('not running') != -1) {
+        finished = true;
+        $('#button_stop').css('display', 'none');
+        $('#button_run').css('display', 'block');
+      }
+      else {
+        alert('stop failed : ' + ret.message);
       }
     }
   );
@@ -771,6 +789,7 @@ function run_button() {
     routes['graph_run'],
     JSON.stringify(req),
     (ret)=> {
+      ret = JSON.parse(ret);
       console.log('run : get response');
       console.log(ret);
       if (ret.succeed == 0) {
