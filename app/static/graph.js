@@ -510,11 +510,10 @@ class Graph {
       if (key.indexOf('-out-') != -1) {
         for (let item of value) {
           let detail = {
-            'line_name' : key + '-' + item,
             'line_from' : key.split('-')[0] + '-' + key.split('-')[1],
-            'line_from_port' : key.split('-')[3],
+            'line_from_port' : parseInt(key.split('-')[3]),
             'line_to' : item.split('-')[0] + '-' + item.split('-')[1],
-            'line_to_port' : item.split('-')[3],
+            'line_to_port' : parseInt(item.split('-')[3]),
           };
           all_lines.push(detail);
         }
