@@ -6,3 +6,5 @@ back.log
 *.csv
 /data/
 /model/
+node_modules/
+.idea/
