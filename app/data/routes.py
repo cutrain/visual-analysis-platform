@@ -13,14 +13,25 @@ from tool import msgwrap, get_type, safepath
 def upload():
     # TODO : return message
     global DATA_DIR
-    name = request.form.get('dataset')
+    path = request.form.get('dataset')
+    path = safepath(path)
     file = request.files['file']
-    path = os.path.join(DATA_DIR, name)
+    path = os.path.join(DATA_DIR, path)
     file.save(path)
     return {
         "size":os.path.getsize(path),
-        'type':file_type(path),
+        'type':get_type(path),
     }
+
+@data.route('/createset', methods=['POST'])
+@msgwrap
+def createset():
+    global DATA_DIR
+    req = request.get_data().decode('utf-8')
+    req = json.loads(req)
+    path = req.pop('dataset')
+    path = safepath(path)
+    os.mkdir(path)
 
 @data.route('/view', methods=['POST'])
 @msgwrap
@@ -93,8 +104,8 @@ def move():
     global DATA_DIR
     req = request.get_data().decode('utf-8')
     req = json.loads(req)
-    src = safepath(req.pop('src'))
-    dest = safepath(req.pop('dest'))
+    src = safepath(req.pop('src_path'))
+    dest = safepath(req.pop('dest_path'))
     src = os.path.join(DATA_DIR, src)
     dest = os.path.join(DATA_DIR, dest)
     os.rename(src, dest)

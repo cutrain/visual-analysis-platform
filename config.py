@@ -9,10 +9,11 @@ REDIS_PORT = 6379
 REDIS_DB = 0
 
 DATA_DIR= 'data'
-MODEL_DIR= 'model'
 COMPONENT_DIR= 'component'
 PROJECT_DIR= 'project'
 CACHE_DIR = 'cache'
+
+STATIC_PATH = ''
 
 
 class Config:

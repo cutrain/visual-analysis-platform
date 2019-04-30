@@ -1,3 +1,4 @@
+import os
 import time
 import random
 import string
@@ -57,4 +58,5 @@ def safepath(path):
     # TODO : change replace
     path = path.replace('..', '')
     path = path.lstrip('/')
+    path = path.replace('/', os.path.sep)
     return path

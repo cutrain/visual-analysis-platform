@@ -1,4 +1,4 @@
-from config import PROJECT_DIR
+from config import PROJECT_DIR, DEBUG
 from . import project
 from tool import msgwrap, gen_random_string
 from flask import render_template, request
@@ -33,6 +33,8 @@ def create():
         'project_name':pname,
         'create_time':time.strftime("%Y-%m-%d %H:%M:%S", time.localtime()),
     }
+    if pname == 'temp':
+        new_data['project_id'] = 'temp'
     with open(os.path.join(PROJECT_DIR, new_data['project_id'] + '.pickle'), 'wb') as f:
         f.write(pickle.dumps(new_data))
     ret = {

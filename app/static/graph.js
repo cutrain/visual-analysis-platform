@@ -8,6 +8,10 @@ const routes = {
   'graph_run' : server + '/graph/run',
   'graph_progress' : server + '/graph/progress',
   'graph_sample' : server + '/graph/sample',
+  'graph_stop' : server + '/graph/stop',
+  'graph_save' : server + '/graph/save',
+  'graph_load' : server + '/graph/get',
+  'graph_clean' : server + '/graph/init',
 };
 const LINE_CIRCLE_X_BIAS = 8;
 const LINE_CIRCLE_Y_BIAS = 8;
@@ -16,10 +20,11 @@ const CIRCLE_Y_BIAS = -6;
 const CIRCLE_Y_AWAY = 3;
 
 
-const type_detail = new Map(); // {param_name:param_value}
+const type_detail = new Map(); // {param_name: {"name":"", "display":"", "in_port":[], "out_port":[], "params":[{"name","display","type","default","list","note"} ]}}
 const drag_data = new Map(); // replace default event dataTransfer
-var curr_id = null;
+var curr_id = null; // selected node id
 var G = null;
+var finished = true; // check running state
 
 // ====================================================== Renderer class ============================================
 class Renderer{
@@ -27,6 +32,7 @@ class Renderer{
     this.container = $(container_selector);
     // TODO : change svg id
     this.svg_selector = '#svg';
+    this.nodes = [];
     this.lines = [];
   }
 
@@ -78,6 +84,8 @@ class Renderer{
       out_circle.css("left", Math.floor(circle_width/(1+out_port_num) * (i + 1) + CIRCLE_X_BIAS) + 'px');
       $node.append(out_circle);
     }
+
+    this.nodes.push(node_id);
   }
 
   addEdge(node_from, port_from, node_to, port_to) {
@@ -113,7 +121,8 @@ class Renderer{
     
     // delete lines
     let last_lines = [];
-    for (let line_id in this.lines) {
+    for (let i in this.lines) {
+      let line_id = this.lines[i];
       if (line_id.indexOf(node_id+'-') != -1) {
         $("#"+line_id).remove();
       }
@@ -122,6 +131,14 @@ class Renderer{
       }
     }
     this.lines = last_lines;
+
+    let last_nodes = [];
+    for (let i in this.nodes) {
+      let inode = this.nodes[i];
+      if (inode != node_id)
+        last_nodes.push(inode);
+    }
+    this.nodes = last_nodes;
   }
 
   delEdge(node_from, port_from, node_to, port_to) {
@@ -170,6 +187,16 @@ class Renderer{
     let svg = $("#svg");
     svg.html(svg.html());
   }
+
+  clear() {
+    let node_list = [];
+    for (let i in this.nodes)
+      node_list.push(this.nodes[i]);
+    for (let i in node_list) {
+      let inode = node_list[i];
+      this.delNode(inode);
+    }
+  }
 }
 
 // ======================================================= Graph class ===================================================
@@ -187,7 +214,7 @@ class Graph {
     this.renderer = null;
   }
 
-  addNode(node_type, posiX=0, posiY=0) {
+  addNode(node_type, posiX=0, posiY=0, load_id=null) {
     console.log('Graph call : addNode');
     // check node type
     if (!type_detail.has(node_type)) {
@@ -205,13 +232,16 @@ class Graph {
     }
     let type_number = this.type_count.get(node_type);
     let node_id = node_type + '-' + type_number;
+    if (load_id != null)
+      node_id = load_id;
     let new_node = {
       "id" : node_id,
       "type" : node_type,
       "position" : [posiX, posiY],
       "param" : param,
     };
-    this.type_count.set(node_type, type_number+1);
+    if (load_id == null)
+      this.type_count.set(node_type, type_number+1);
     this.node.set(new_node.id, new_node);
 
     // initialize edge
@@ -480,11 +510,10 @@ class Graph {
       if (key.indexOf('-out-') != -1) {
         for (let item of value) {
           let detail = {
-            'line_name' : key + '-' + item,
             'line_from' : key.split('-')[0] + '-' + key.split('-')[1],
-            'line_from_port' : key.split('-')[3],
+            'line_from_port' : parseInt(key.split('-')[3]),
             'line_to' : item.split('-')[0] + '-' + item.split('-')[1],
-            'line_to_port' : item.split('-')[3],
+            'line_to_port' : parseInt(item.split('-')[3]),
           };
           all_lines.push(detail);
         }
@@ -494,7 +523,7 @@ class Graph {
       all_nodes,
       all_lines,
     }
-    return JSON.stringify(ret);
+    return ret;
   }
 
   loadJson(string_or_obj) {
@@ -508,10 +537,14 @@ class Graph {
     let nodes = obj.all_nodes;
     for (let key in nodes) {
       let x = nodes[key];
-      let node_id = this.addNode(x.node_type, x.node_position[0], x.node_position[1]);
+      let name = x.node_name;
+      let node_id = this.addNode(x.node_type, x.node_position[0], x.node_position[1], name);
       if (node_id == -1) {
         alert('bug in loadJson');
         return -1;
+      }
+      if (this.type_count.get(x.node_type) <= parseInt(node_id.split('-')[1])) {
+        this.type_count.set(x.node_type, parseInt(node_id.split('-')[1]) + 1);
       }
       this.setParam(node_id, x.details);
     }
@@ -540,31 +573,6 @@ class Graph {
     return 0;
   }
 
-  run(node_id=null, callback_func=null) {
-    console.log('Graph call : run');
-    if (typeof(node_id)=='function') {
-      callback_func = node_id;
-      node_id = null;
-    }
-    if (typeof(callback_func) != 'function')
-      callback_func = null;
-    if (node_id != null) {
-      if (!this.node.has(node_id)) {
-        alert(node_id + ' not exist, please check');
-        return -1;
-      }
-    }
-    // TODO : support single node
-    $.post(
-      routes['graph_run'],
-      this.toJson(),
-      (ret)=> {
-        if (callback_func != null)
-          callback_func(ret)
-      }
-    );
-    return 0;
-  }
 }
 
 // ====================================================== common functions =========================================
@@ -596,7 +604,7 @@ function save_detail() {
     let key = tnode.attr("name");
     let type = tnode.attr("data-type");
 
-    if (!(['text', 'file', 'password', 'number', 'list', 'richtext'].includes(type))) {
+    if (!(['text', 'file', 'model', 'password', 'int', 'float', 'list', 'richtext'].includes(type))) {
       alert("<function 'save_detail'>there is something wrong, unknown type found : " + type);
       return false;
     }
@@ -606,41 +614,194 @@ function save_detail() {
 }
 
 function render_nodes(data) {
-  for (let key in all_nodes) {
-    $("#"+key).css("background", "#ffffff");
-  }
-  for (let key in data) {
-    let node = $("#"+key);
+  $('.canvas>.node').css('background-color', '#ffffff');
+  for (let i in data) {
+    let node = data[i];
+    let key = node.node_name;
+    let status = node.node_status;
+    let inode = $('#'+key);
     let color;
-    if (data[key] == '0')
+    if (status == '0') {
+      // finish
       color = '#D5F5E3';
-    else if (data[key] == '-1')
-      color = '#FADBD8';
-    else if (data[key] == '1')
-      color = '#FCF3CF';
-    else
+    }
+    else if (status == '1') {
+      // wait
       color = 'rgba(128,128,128,0)';
-    node.css("background", color);
+    }
+    else if (status == '2') {
+      // running
+      color = '#FCF3CF';
+    }
+    else if (status == '-1') {
+      // fail
+      color = '#FADBD8';
+    }
+    else {
+      alert('unknown node status' + status);
+    }
+    node.css('background-color', color);
   }
 }
 
-function run_button() {
+function check_progress() {
+  if (finished) {
+    return;
+  }
+  $.post(
+    routes['graph_progress'],
+    (ret) => {
+      ret = JSON.parse(ret);
+      if (ret.status == 0) {
+        finished = true;
+        $('#button_stop').css('display', 'none');
+        $('#button_run').css('display', 'block');
+      }
+      else {
+        finished = false;
+        setTimeout('check_progress()', 1000);
+      }
+      render_nodes(ret.progress);
+    }
+  );
+}
+
+// ============================ button ==================================
+function save_button() {
   save_detail();
-  G.run();
+  let req = G.toJson();
+  // NOTE : temp
+  req['project_id'] = 'temp';
+  $.post(
+    routes['graph_save'],
+    JSON.stringify(req),
+    (ret) => {
+      ret = JSON.parse(ret);
+      if (ret.succeed == 0) {
+        alert('save succeed');
+      }
+      else {
+        alert('save fail : ' + ret.message);
+      }
+    }
+  );
+}
+
+function load_button() {
+  G.clear();
+  // NOTE : temp
+  let req = {
+    'project_id' : 'temp',
+  };
+  $.post(
+    routes['graph_load'],
+    JSON.stringify(req),
+    (ret) => {
+      ret = JSON.parse(ret);
+      if (ret.succeed == 0) {
+        let succeed = G.loadJson(ret);
+        if (succeed == 1) {
+          alert('load failed at creating graph');
+          console.log('load failed:');
+          console.log(ret);
+        }
+        curr_id = null;
+        delete_button(); // clean param and data table
+      }
+      else {
+        alert('load failed at getting graph');
+      }
+    }
+  );
+}
+
+function clean_button() {
+  // NOTE : temp
+  let req = {
+    'project_id' : 'temp',
+  };
+  $.post(
+    routes['graph_clean'],
+    JSON.stringify(req),
+    (ret) => {
+      ret = JSON.parse(ret);
+      if (ret.succeed == 0) {
+        render_nodes({}); // clean nodes' state color
+      }
+      else {
+        alert('clean cache failed : ' +  ret.message);
+      }
+    }
+  );
+}
+
+function stop_button() {
+  if (finished) {
+    alert('already stoped');
+    return;
+  }
+  // NOTE : temp
+  req = {
+    'project_id':'temp',
+  };
+  $.post(
+    routes['graph_stop'],
+    JSON.stringify(req),
+    (ret) => {
+      console.log('stop : get response');
+      console.log(ret);
+      if (ret.succeed == 0) {
+        $('#button_stop').css('display', 'none');
+        $('#button_run').css('display', 'block');
+      }
+    }
+  );
+}
+
+function run_button() {
+  if (!finished) {
+    alert('still running, please stop the mission first');
+    return;
+  }
+  save_detail();
+  let req = G.toJson();
+  // NOTE : temp
+  req['project_id'] = 'temp';
+  $.post(
+    routes['graph_run'],
+    JSON.stringify(req),
+    (ret)=> {
+      console.log('run : get response');
+      console.log(ret);
+      if (ret.succeed == 0) {
+        finished = false;
+        setTimeout("check_progress()", 1000);
+        $('#button_stop').css('display', 'block');
+        $('#button_run').css('display', 'none');
+      }
+    }
+  );
 }
 
 function run_single_button() {
   save_detail();
-  G.run(curr_id);
+  //G.run(curr_id);
+  // TODO
 }
 
 function delete_button(){
-  G.delNode(curr_id);
+  if (curr_id != null)
+    G.delNode(curr_id);
   curr_id = null;
-  let detailBox = $("#detail-box");
-  detailBox.css("display","none");
-  let dataBox = $("#data-box");
-  dataBox.css("display","none");
+  let button_single = $('#button_single_run');
+  let dele = $('#button_delete');
+  button_single.css('display', 'none');
+  dele.css('display', 'none');
+
+  let detail = $('#detail-box');
+  let data = $('#table-box');
+  data.children().remove();
+  detail.children().remove();
 }
 
 // ================================================= component event ================================================
@@ -782,26 +943,33 @@ function node_drop(e) {
 }
 
 function node_click(e) {
+  //   0. show button
+  // v 1. save detail 
+  // v 2. change id
+  // v 3. del old param
+  // 4. render new param
   let id = e.target.id;
-  let node = $("#"+id);
+  // check is not circle
+  if (id.split('-').length > 2)
+    return;
 
-  let detailBox = $("#detail-box");
-  if(detailBox.css('display')=='none'){
-    detailBox.css("display","flex");
-    detailBox.css("flex-direction","column");
-    detailBox.css("align-items","flex-start");
+  if (curr_id == null) {
+    $('#button_single_run').css('display', 'block');
+    $('#button_delete').css('display', 'block');
   }
-  let dataBox = $("#data-box");
-  if(dataBox.css('display')=='none'){
-    dataBox.css("display","block");
+
+  let node = $("#"+id);
+  if (curr_id != null) {
+    let old_node = $('#'+curr_id);
+    old_node.css('border-color', 'black');
+    save_detail();
   }
-  let tableBox = $("#table-box");
-  $("#button_run").css("display",'table-cell');
-  $("#button_single_run").css("display",'table-cell');
-  $("#button_delete").css("display",'table-cell');
-  save_detail();
 
   curr_id = id;
+  node.css('border-color', 'rgb(220,20,60)');
+
+  let detailBox = $('#detail-box');
+  let tableBox = $('#table-box');
   detailBox.empty();
   tableBox.empty();
 
@@ -817,40 +985,54 @@ function node_click(e) {
 
     let $border = $('<div class="param-border"></div>');
     let $name = $('<div class="param-key"></div>');
-    let $param;
 
     $name.text(param_detail.display);
 
     let choice = {
       'text' : () => {
-        $param = $('<input></input>');
+        let $param = $('<input></input>');
         $param.attr("type", "text");
+        return $param;
       },
       'file' : () => {
-        $param = $('<input></input>');
-        $param.attr("id", "path");
+        let $param = $('<input></input>');
         $param.attr("type", "text");
+        return $param;
+      },
+      'model' : () => {
+        let $param = $('<input></input>');
+        $param.attr("type", "text");
+        return $param;
       },
       'password' : () => {
-        $param = $('<input></input>');
+        let $param = $('<input></input>');
         $param.attr("type", "password");
+        return $param;
       },
       'list' : () => {
-        $param = $('<select></select>');
+        let $param = $('<select></select>');
         for (let j=0;j < param_detail.list.length; ++j) {
           let $tmp = $('<option></option>');
           $tmp.attr("value", param_detail.list[j]);
           $tmp.text(param_detail.list[j]);
           $param.append($tmp);
         }
+        return $param;
       },
-      'number' : () => {
-        $param = $('<input></input>');
+      'int' : () => {
+        let $param = $('<input></input>');
         $param.attr("type", "number");
+        return $param;
+      },
+      'float': () => {
+        let $param = $('<input></input>');
+        $param.attr("type", "number");
+        return $param;
       },
       'richtext' : () => {
-        $param = $('<textarea rows="10" cols="30"></textarea>');
+        let $param = $('<textarea rows="10" cols="30"></textarea>');
         $param.attr("type", "richtext");
+        return $param;
       },
     };
 
@@ -858,7 +1040,7 @@ function node_click(e) {
       alert("there is something wrong, unknown type found : " + param_type);
       return false;
     }
-    choice[param_type]();
+    let $param = choice[param_type]();
 
     $param.attr("class", "param-value");
     $param.attr("name", key);
@@ -870,40 +1052,38 @@ function node_click(e) {
     $border.prepend($name);
     $border.prepend($param);
 
-    if (param_type == "file") {
-      let $bt = $('<input></input>');
-      $bt.attr("type", "file");
-      $bt.attr("id", "pathbt");
-      $bt.attr("onchange", 'file_name()');
-      $bt.css("order", "3");
-      $border.prepend($bt);
-    }
-
     detailBox.prepend($border);
   }
-  let $detail_top = $("<div class='detail-top' style='order:0;'>属性</div>")
-  var data = {
+  var req = {
     "number":10,
-    "node_name":id
+    "node_id":id
   };
+
+  // NOTE : temp
+  req['project_id'] = 'temp';
+
   $.post(
     routes['graph_sample'],
-    JSON.stringify(data),
+    JSON.stringify(req),
     function(ret) {
       ret = JSON.parse(ret);
       if (ret.succeed == 0) {
-        if (ret.type == 'DataFrame') {
-          if (ret.row_num > 0) {
+        if (ret.data.length == 0)
+          return;
+        let show = ret.data[0];
+        if (show.type == 'DataFrame') {
+          if (show.row_num > 0) {
             let table = $('<table class="table" border="1"></table>');
-            let row = ret.row_num;
-            let col = ret.col_num;
+            let row = show.row_num;
+            let col = show.col_num;
             let tr = $('<tr></tr>');
-            ret.col_index.forEach(function (value) {
+            for (let i = 0;i < show.col_index.length;++ i) {
+              let value = show.col_index[i] + '(' + show.col_type[i] + ')';
               let th = $('<th>'+value+'</th>');
               tr.append(th);
-            });
+            }
             table.append(tr);
-            ret.data.forEach(function (rowValue) {
+            show.data.forEach(function (rowValue) {
               let tr = $('<tr></tr>');
               rowValue.forEach(function (value) {
                 let td = $('<td>'+value+'</td>');
@@ -915,7 +1095,7 @@ function node_click(e) {
           }
         }
         else {
-          alert('type ' + ret.type + ' not implemented');
+          alert('type ' + show.type + ' not implemented');
         }
       }
     }
@@ -1128,5 +1308,7 @@ $.post(
     component_init();
     bind_canvas('#svg');
     console.log('READY');
+    // NOTE : temp
+    load_button();
   }
 );

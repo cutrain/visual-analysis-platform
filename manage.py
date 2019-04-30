@@ -1,5 +1,5 @@
 import os
-from config import DATA_DIR, MODEL_DIR, PROJECT_DIR, CACHE_DIR
+from config import DATA_DIR, PROJECT_DIR, CACHE_DIR
 from app import create_app
 from flask_script import Manager
 
@@ -9,8 +9,6 @@ manager = Manager(app)
 def init():
     if not os.path.exists(DATA_DIR):
         os.mkdir(DATA_DIR)
-    if not os.path.exists(MODEL_DIR):
-        os.mkdir(MODEL_DIR)
     if not os.path.exists(PROJECT_DIR):
         os.mkdir(PROJECT_DIR)
     if not os.path.exists(CACHE_DIR):
