@@ -26,3 +26,6 @@ SQLAlchemy>=1.2.5
 Werkzeug>=0.14.1
 filetype
 Flask-cors
+tensorflow
+networkx
+pandasql
