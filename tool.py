@@ -56,5 +56,6 @@ def get_type(filepath=None, data=None):
 def safepath(path):
     path = path.replace('..', '')
     path = path.lstrip('/')
+    path = path.replace('/', os.path.sep)
     return path
 
