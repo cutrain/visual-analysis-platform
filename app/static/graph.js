@@ -663,7 +663,9 @@ function check_progress() {
       if (ret.status == 0) {
         finished = true;
         $('#button_stop').css('display', 'none');
-        $('#button_run').css('display', 'block');
+        $('#button_run').css('display', 'inline');
+        if (curr_id != null)
+          $('#button_single_run').css('display', 'inline');
       }
       else {
         finished = false;
@@ -759,15 +761,12 @@ function stop_button() {
       ret = JSON.parse(ret);
       console.log('stop : get response');
       console.log(ret);
-      if (ret.succeed == 0) {
+      if ((ret.succeed == 0) || (ret.message.indexOf('not running') != -1)) {
         finished = true;
         $('#button_stop').css('display', 'none');
-        $('#button_run').css('display', 'block');
-      }
-      else if (ret.message.indexOf('not running') != -1) {
-        finished = true;
-        $('#button_stop').css('display', 'none');
-        $('#button_run').css('display', 'block');
+        $('#button_run').css('display', 'inline');
+        if (curr_id != null)
+          $('#button_single_run').css('display', 'inline');
       }
       else {
         alert('stop failed : ' + ret.message);
@@ -795,17 +794,40 @@ function run_button() {
       if (ret.succeed == 0) {
         finished = false;
         setTimeout("check_progress()", 1000);
-        $('#button_stop').css('display', 'block');
+        $('#button_stop').css('display', 'inline');
         $('#button_run').css('display', 'none');
+        $('#button_single_run').css('display', 'none');
       }
     }
   );
 }
 
 function run_single_button() {
+  if (!finished) {
+    alert('still running, please stop the mission first');
+    return;
+  }
   save_detail();
-  //G.run(curr_id);
-  // TODO
+  let req = G.toJson();
+  // NOTE : temp
+  req['project_id'] = 'temp';
+  req['run'] = [curr_id];
+  $.post(
+    routes['graph_run'],
+    JSON.stringify(req),
+    (ret)=> {
+      ret = JSON.parse(ret);
+      console.log('run : get response');
+      console.log(ret);
+      if (ret.succeed == 0) {
+        finished = false;
+        setTimeout("check_progress()", 1000);
+        $('#button_stop').css('display', 'inline');
+        $('#button_run').css('display', 'none');
+        $('#button_single_run').css('display', 'none');
+      }
+    }
+  );
 }
 
 function delete_button(){
@@ -973,8 +995,8 @@ function node_click(e) {
     return;
 
   if (curr_id == null) {
-    $('#button_single_run').css('display', 'block');
-    $('#button_delete').css('display', 'block');
+    $('#button_single_run').css('display', 'inline');
+    $('#button_delete').css('display', 'inline');
   }
 
   let node = $("#"+id);

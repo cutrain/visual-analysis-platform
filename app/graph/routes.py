@@ -101,7 +101,9 @@ def run():
         fail['message'] = message
         return fail
 
-    process = multiprocessing.Process(name=pid, target=G)
+    run_node = req.pop('run', None)
+
+    process = multiprocessing.Process(name=pid, target=G, args=(run_node,))
     process.daemon = True
     process.start()
     processing_manager.update({

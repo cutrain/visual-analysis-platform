@@ -27,18 +27,14 @@
         <button onclick="save_button()">保存流程图</button>
         <button onclick="load_button()">读取流程图</button>
       </div>
-      <div class='button-div' id='button_clean'>
-        <button onclick="clean_button()">清除缓存数据</button>
-      </div>
-      <div class='button-div' style="display:none" id='button_stop'>
-        <button onclick="stop_button()">停止运行</button>
-      </div>
       <div class='button-div'>
-        <button class="bubbly-button" style="display:block" onclick="run_button()" id='button_run'>运行全部</button>
-        <!--<button class="bubbly-button" style="display:block" onclick="run_single_button()" id='button_single_run'>运行节点</button>-->
+        <button id='button_clean' onclick="clean_button()">清除缓存</button>
+        <button id='button_run' style="display:inline" onclick="run_button()">运行</button>
+        <button id='button_stop' style="display:none" onclick="stop_button()">停止</button>
       </div>
-      <div class='delete-div' style="display:none" id='button_delete'>
-        <button class="bubbly-button-delete" onclick="delete_button()">删除节点</button>
+      <div class='delete-div'>
+        <button id='button_delete' style="display:none" onclick="delete_button()">删除节点</button>
+        <button id='button_single_run' style="display:none" onclick="run_single_button()">运行节点</button>
       </div>
       <div class="detail-view"  >
         <div class="detail-top">参数</div>

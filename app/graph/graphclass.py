@@ -222,14 +222,39 @@ class Graph:
             print('load cache error :', e)
         return False
 
-    def __call__(self):
+    def __call__(self, run_node=None):
         global REDIS_HOST, REDIS_PORT, REDIS_DB
         self.r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, charset='utf-8', decode_responses=True)
         for key, val in self.nodes.items():
             self.r.hset(self.pid, key, val.status)
+
+        # get which nodes to run
         last = {}
-        for key, val in self.nodes.items():
-            last.update({key:val})
+        if not run_node:
+            for key, val in self.nodes.items():
+                last.update({key:val})
+        else:
+            for key in run_node:
+                if key in self.nodes:
+                    print(key)
+                    print(self.nodes[key], flush=True)
+                    last.update({key : self.nodes[key]})
+                    self.nodes[key].status = 1
+
+        # ensure pre node
+        changed = True
+        while changed:
+            changed = False
+            new_dict = {}
+            for key, val in last.items():
+                for pre in val._in_port:
+                    if pre is not None:
+                        name = pre.node._name
+                        if name not in last:
+                            new_dict.update({name : self.nodes[name]})
+                            changed = True
+            last.update(new_dict)
+
 
         class wait_scheduler:
             def __init__(self, init=0.1, times=1.5, upper_bound=1):
