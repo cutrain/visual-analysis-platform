@@ -22,7 +22,7 @@
     },
     {
       "name": "gamma",
-      "display": "百分比",
+      "display": "第二张图混合百分比",
       "type": "float",
       "default": "50",
       "note": "0~100"

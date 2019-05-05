@@ -11,8 +11,8 @@
     {
       "name": "kernel_size",
       "display": "kernel size",
-      "type": "int",
-      "default": "3",
+      "type": "text",
+      "default": "3,3",
       "note": ""
     }
   ]

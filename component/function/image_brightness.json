@@ -11,9 +11,9 @@
     {
       "name": "shift",
       "display": "变化值",
-      "type": "float",
-      "default": "1",
-      "note": "-100~100"
+      "type": "int",
+      "default": "10",
+      "note": "-255~255"
     }
   ]
 }
