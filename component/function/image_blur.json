@@ -25,7 +25,7 @@
       "display": "kernel size",
       "type": "text",
       "default": "3,3",
-      "note": ""
+      "note": "平均滤波和高斯滤波kernel为2个整数，中值滤波为一个奇数"
     }
   ]
 }

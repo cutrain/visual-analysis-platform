@@ -5,7 +5,7 @@
     "image_instream": "导入图像数据",
     "image_outstream": "导出图像数据",
     "video_instream": "导入视频数据",
-    "video_outstream": "导出视频数据",
+    "video_outstream": "导入视频数据",
     "graph_instream": "导入图数据",
     "graph_outstream": "导出图数据",
     "sql_outstream": "导出SQL数据",
@@ -61,10 +61,9 @@
         "image_erode": "腐蚀",
         "image_close": "闭运算",
         "image_open": "开运算",
-        "image_brightness": "亮度",
         "image_noiseness": "噪声化",
-        "image_contrast": "对比度",
-        "image_blend": "图片混合"
+        "image_blend": "图片混合",
+        "image_brightness_contrast": "亮度/对比度"
       },
       "机器学习": {
         "image_svm": "svm",

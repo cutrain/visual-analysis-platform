@@ -1,10 +1,8 @@
 import os
 import sqlite3
-import pandas as pd
 
 from tool import safepath
 from config import DATA_DIR
-from .graph.graphio import from_json_dicts, from_json_lists, from_mat_matrix, graph2json
 
 __all__ = [
     'data_instream',
@@ -20,6 +18,7 @@ __all__ = [
 ]
 
 def data_instream(**kwargs):
+    import pandas as pd
     num = int(kwargs.pop('read_number'))
     path = kwargs.pop('path')
     path = safepath(path)
@@ -29,11 +28,13 @@ def data_instream(**kwargs):
     return df
 
 def data_outstream(data, **kwargs):
+    import pandas as pd
     path = kwargs.pop('path')
     path = safepath(path)
     data.to_csv(os.path.join(DATA_DIR, path), encoding='utf-8', index=False)
 
 def sql_instream(**kwargs):
+    import pandas as pd
     dbtype = kwargs.pop('database_type')
     host = kwargs.pop('address')
     port = int(kwargs.pop('port'))
@@ -152,6 +153,8 @@ def image_instream(**kwargs):
         path = [path]
     images = []
     for i in path:
+        i = safepath(i)
+        i = os.path.join(DATA_DIR, i)
         images.append(cv2.imread(i))
     return images
 
@@ -170,6 +173,7 @@ def image_outstream(images, **kwargs):
             cnt += 1
 
 def graph_instream(**kwargs):
+    from .graph.graphio import from_json_dicts, from_json_lists, from_mat_matrix
     path = kwargs.pop('path')
     path = safepath(path)
     graph = from_json_dicts(path)
@@ -182,6 +186,7 @@ def graph_instream(**kwargs):
     return graph
 
 def graph_outstream(graph, **kwargs):
+    from .graph.graphio import graph2json
     path = kwargs.pop('path')
     path = safepath(path)
     data = graph2json(graph)

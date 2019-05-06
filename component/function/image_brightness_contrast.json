@@ -1,0 +1,26 @@
+{
+  "name": "image_brightness_contrast",
+  "display": "亮度/对比度",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "brightness_shift",
+      "display": "亮度变化值",
+      "type": "int",
+      "default": "10",
+      "note": "-255~255"
+    },
+    {
+      "name": "contrast_shift",
+      "display": "对比度变化值",
+      "type": "float",
+      "default": "1.1",
+      "note": "0~10"
+    }
+  ]
+}

@@ -181,7 +181,7 @@ def sample():
         idata = data['out'][i]
         if outtype == 'DataFrame':
             num = max(num, 0)
-            num = min(num, len(idata))
+            num = min(num, idata.shape[0])
             index = list(idata.columns)
             df = idata[0:num]
             df = df.round(3)
@@ -190,6 +190,7 @@ def sample():
             df = np.array(df).tolist()
             retdata.append({
                 'type':'DataFrame',
+                'shape':list(idata.shape),
                 'col_num':len(index),
                 'col_index':index,
                 'col_type':types,
@@ -197,14 +198,26 @@ def sample():
                 'data': df
             })
         elif outtype == 'Image':
+            import cv2
             savename = CACHE_DIR + pid + nid + gen_random_string() + '.png'
-            savedir = os.path('app', 'static', 'cache')
+            savedir = os.path.join('app', 'static', 'cache')
             if not os.path.exists(savedir):
                 os.mkdir(savedir)
+            idata = idata[0]
+            shape = idata.shape
+            shape = [shape[1], shape[0], shape[2]]
+            resize_shape = shape[:2]
+            while resize_shape[0] > 640 or resize_shape[1] > 480:
+                resize_shape[0] //= 2
+                resize_shape[1] //= 2
+            idata = cv2.resize(idata, tuple(resize_shape))
             cv2.imwrite(os.path.join(savedir, savename), idata)
             retdata.append({
                 'type':'Image',
-                "url":'static/cache/'+savename,
+                'data':{
+                    'url':'static/cache/'+savename,
+                    'shape':shape,
+                }
             })
         elif outtype == 'Graph':
             pass

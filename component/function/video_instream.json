@@ -7,7 +7,7 @@
   ],
   "params": [
     {
-      "name": "file",
+      "name": "path",
       "display": "文件名",
       "type": "file",
       "default": "0",

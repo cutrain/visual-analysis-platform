@@ -783,6 +783,7 @@ function run_button() {
   save_detail();
   let req = G.toJson();
   // NOTE : temp
+  render_nodes({});
   req['project_id'] = 'temp';
   $.post(
     routes['graph_run'],
@@ -812,6 +813,7 @@ function run_single_button() {
   // NOTE : temp
   req['project_id'] = 'temp';
   req['run'] = [curr_id];
+  render_nodes({});
   $.post(
     routes['graph_run'],
     JSON.stringify(req),
@@ -1110,6 +1112,7 @@ function node_click(e) {
     JSON.stringify(req),
     function(ret) {
       ret = JSON.parse(ret);
+      console.log('get', ret);
       if (ret.succeed == 0) {
         if (ret.data.length == 0)
           return;
@@ -1134,8 +1137,23 @@ function node_click(e) {
               });
               table.append(tr);
             });
+            let $shape = $('<a></a>');
+            $shape.text('Shape:(' + show.shape + ')');
+            tableBox.append($shape);
             tableBox.append(table);
           }
+        }
+        else if (show.type == 'Image') {
+          let $shape = $('<a></a>');
+          let $img = $('<img></img>');
+          let shape = show.data.shape;
+          if (shape.length == 2) {
+            shape.push(1);
+          }
+          $shape.text('Shape:' + shape[0] + 'X' + shape[1] + 'X' + shape[2]);
+          $img.attr('src', show.data.url);
+          tableBox.append($shape);
+          tableBox.append($img);
         }
         else {
           alert('type ' + show.type + ' not implemented');

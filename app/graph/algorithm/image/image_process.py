@@ -9,9 +9,8 @@ __all__ = [
     'image_erode',
     'image_close',
     'image_open',
-    'image_brightness',
+    'image_brightness_contrast',
     'image_noiseness',
-    'image_contrast',
     'image_blend',
 ]
 def image_resolution(images, **kwargs):
@@ -57,9 +56,9 @@ def image_blur(images, **kwargs):
     method = kwargs.pop('method')
     kernel = tuple(map(int,kwargs.pop('kernel_size').split(',')))
     func = {
-        'linear':lambda x,y:cv2.blur(x,y),
-        'gaussian':lambda x,y:cv2.GaussianBlur(x,y,0),
-        'median':lambda x,y:cv2.medianBlur(x,y),
+        'linear':lambda x:cv2.blur(x, kernel),
+        'gaussian':lambda x:cv2.GaussianBlur(x, kernel, 0),
+        'median':lambda x:cv2.medianBlur(x, kernel[0]),
     }[method]
     result_images = list(map(func, images))
     return result_images
@@ -72,7 +71,7 @@ def image_dilate(images, **kwargs):
     kernel = np.ones(kernel_size, np.uint8)
     result_images = list(map(lambda x:cv2.dilate(x, kernel, iterations=iter_n), images))
     return result_images
-
+[0]
 def image_erode(images, **kwargs):
     import cv2
     import numpy as np
@@ -98,14 +97,7 @@ def image_open(images, **kwargs):
     iter_n = int(kwargs.pop('iterations'))
     kernel = np.ones(kernel_size, np.uint8)
     result_images = list(map(lambda x:cv2.morphologyEx(x, cv2.MORPH_OPEN, kernel), images))
-    return result_images
-
-def image_brightness(images, **kwargs):
-    import cv2
-    import numpy as np
-    shift = int(kwargs.pop('shift'))
-    result_images = list(map(lambda x:(np.uint8(np.clip(np.float(x)+shift, 0, 255))), images))
-    return result_images
+    return result_imkernels
 
 def image_noiseness(images, **kwargs):
     import cv2
@@ -115,14 +107,15 @@ def image_noiseness(images, **kwargs):
     result_images = []
     for i in images:
         noise = np.random.normal(mean, std, i.shape)
-        result_images.append(np.uint8(np.clip(np.float(i) + noise, 0, 255)))
+        result_images.append(np.clip(i.astype('float') + noise, 0, 255).astype('uint8'))
     return result_images
 
-def image_contrast(images, **kwargs):
+def image_brightness_contrast(images, **kwargs):
     import cv2
     import numpy as np
-    shift = float(kwargs.pop('shift'))
-    result_images = list(map(lambda x:(np.uint8(np.clip(np.float(x)*shift, 0, 255))), images))
+    brightness_shift = int(kwargs.pop('brightness_shift'))
+    contrast_shift = float(kwargs.pop('contrast_shift'))
+    result_images = list(map(lambda x:np.clip(x.astype('float') * contrast_shift + brightness_shift, 0, 255).astype('uint8'), images))
     return result_images
 
 def image_blend(images1, images2, **kwargs):
@@ -136,7 +129,7 @@ def image_blend(images1, images2, **kwargs):
     if method == 'linear':
         l = min(len(images1), len(images2))
         for i in range(l):
-            result_images.append(np.uint8(images1[i]*(1-gamma) + images2[i]*gamma))
+            result_images.append((images1[i]*(1-gamma) + images2[i]*gamma).astype('uint8'))
         for i in range(l, len(images1)):
             result_images.append(images1[i])
         for i in range(l, len(images2)):
@@ -144,11 +137,11 @@ def image_blend(images1, images2, **kwargs):
     elif method == 'add':
         l = min(len(images1), len(images2))
         for i in range(l):
-            result_images.append(np.uint8(np.clip(np.float(images1[i]) + images2[i]*gamma, 0, 255)))
+            result_images.append(np.clip(images1[i].astype('float') + images2[i]*gamma, 0, 255).astype('uint8'))
         for i in range(l, len(images1)):
             result_images.append(images1[i])
         for i in range(l, len(images2)):
-            result_images.append(np.uint8(images2[i] * gamma))
+            result_images.append((images2[i] * gamma).astype('uint8'))
     else:
         raise NotImplementedError
     return result_images

@@ -29,3 +29,4 @@ Flask-cors
 tensorflow
 networkx
 pandasql
+opencv-python
