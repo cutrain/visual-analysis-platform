@@ -7,5 +7,31 @@
   "out_port": [
     "Image"
   ],
-  "params": []
+  "params": [
+    {
+      "name": "isblur",
+      "display": "是否滤波",
+      "type": "list",
+      "default": "yes",
+      "note": "边缘检测一般需要滤波减少噪点",
+      "list": [
+        "yes",
+        "no"
+      ]
+    },
+    {
+      "name": "thresh_min",
+      "display": "滞后阈值最小值",
+      "type": "int",
+      "default": "50",
+      "note": ""
+    },
+    {
+      "name": "thresh_max",
+      "display": "滞后阈值最大值",
+      "type": "int",
+      "default": "100",
+      "note": ""
+    }
+  ]
 }

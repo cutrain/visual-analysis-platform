@@ -30,3 +30,4 @@ tensorflow
 networkx
 pandasql
 opencv-python
+torch

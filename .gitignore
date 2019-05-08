@@ -6,3 +6,9 @@ back.log
 *.csv
 /data/
 /model/
+*.weights
+cache/
+/project/
+/data_bak/
+/todo
+node_modules/

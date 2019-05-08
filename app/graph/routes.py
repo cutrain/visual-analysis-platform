@@ -199,13 +199,13 @@ def sample():
             })
         elif outtype == 'Image':
             import cv2
-            savename = CACHE_DIR + pid + nid + gen_random_string() + '.png'
+            savename = pid + nid + gen_random_string() + '.png'
             savedir = os.path.join('app', 'static', 'cache')
             if not os.path.exists(savedir):
                 os.mkdir(savedir)
             idata = idata[0]
-            shape = idata.shape
-            shape = [shape[1], shape[0], shape[2]]
+            shape = list(idata.shape)
+            shape[0], shape[1] = shape[1], shape[0]
             resize_shape = shape[:2]
             while resize_shape[0] > 640 or resize_shape[1] > 480:
                 resize_shape[0] //= 2

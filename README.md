@@ -13,7 +13,10 @@ python >= 3.4
 ```bash
 sudo apt-get install python3
 sudo apt-get install redis-server
+git clone https://github.com/cutrain/visual-analysis-platform
+cd visual-analysis-platform
 pip install -r requirements.txt
+wget -P app/graph/algorithm/image/yolov3 https://pjreddie.com/media/files/yolov3.weights 
 ```
 
 ### windows(x64) 安装
@@ -21,6 +24,8 @@ pip install -r requirements.txt
 download python3 from "https://www.python.org/downloads/"
 download redis from "https://github.com/MicrosoftArchive/redis/releases"
 pip install -r requirements.txt
+download yolov3 weights from https://pjreddie.com/media/files/yolov3.weights, and put in app/graph/algorithm/image/yolov3
+
 ```
 
 

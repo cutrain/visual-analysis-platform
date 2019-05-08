@@ -80,8 +80,7 @@
       },
       "其它": {
         "image_edge": "边缘检测",
-        "image_monorec": "物体识别",
-        "image_gen_noise": "生成噪音"
+        "image_monorec": "物体识别"
       }
     },
     "视频": {

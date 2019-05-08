@@ -11,13 +11,9 @@
     {
       "name": "class_",
       "display": "类别",
-      "type": "list",
-      "default": "person",
-      "note": "",
-      "list": [
-        "person",
-        "car"
-      ]
+      "type": "text",
+      "default": "person,car",
+      "note": "coco数据集中所有分类均可，用半角逗号分隔"
     }
   ]
 }
