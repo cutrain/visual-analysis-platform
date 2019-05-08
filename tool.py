@@ -41,18 +41,23 @@ def gen_random_string(length=8, *, number=True, abc=True, upper_case=False, lowe
     return ''.join(random.choice(charset) for _ in range(length))
 
 def get_type(filepath=None, data=None):
-    if filepath is not None:
-        ans = filetype.guess(filepath)
-        if ans is None:
-            return 'DataFrame'
-        if ans.find('image') != -1:
-            return "Image"
-        if ans.find('video') != -1:
-            return 'Video'
-        if ans.find('audio') != -1:
-            return 'Audio'
-        # TODO : more type
-    return "DataFrame"
+    try:
+        if filepath is not None:
+            ans = filetype.guess_mime(filepath)
+            print('filetype : ', filepath, ans)
+            if ans is None:
+                return 'DataFrame'
+            if ans.find('image') != -1:
+                return "Image"
+            if ans.find('video') != -1:
+                return 'Video'
+            if ans.find('audio') != -1:
+                return 'Audio'
+            # TODO : more type
+        return "DataFrame"
+    except Exception as e:
+        print("Guess Type Error :", e)
+        print(filepath)
 
 def safepath(path):
     # TODO : change replace

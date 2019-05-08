@@ -1,11 +1,12 @@
 import os
 import json
 from flask import render_template, request
+import numpy as np
 import pandas as pd
 
 from config import DATA_DIR
 from . import data
-from tool import msgwrap, get_type, safepath
+from tool import msgwrap, get_type, safepath, gen_random_string
 
 
 @data.route('/upload', methods=['POST'])
@@ -31,6 +32,7 @@ def createset():
     req = json.loads(req)
     path = req.pop('dataset')
     path = safepath(path)
+    path = os.path.join(DATA_DIR, path)
     os.mkdir(path)
 
 @data.route('/view', methods=['POST'])
@@ -47,7 +49,7 @@ def view():
         for i in dirs:
             new_path = os.path.join(path, i)
             if os.path.isfile(new_path):
-                obj[i] = os.path.getsize(new_path) // 1024
+                obj[i] = [os.path.getsize(new_path) // 1024, get_type(new_path)]
     structure = {}
     oswalk(structure, DATA_DIR)
     return {
@@ -73,28 +75,53 @@ def get():
             'succeed':0,
             'message':path+ ' is not a file',
         }
-    file_type = get_type(path)
-    ret = {
-        'type':file_type,
-    }
-    if file_type == 'DataFrame':
-        data = pd.read_csv(path, nrows=10)
-        ret['data'] = {
-            'col_num':len(data.columns),
-            'col_index':list(map(str,data.columns)),
-            'col_type':list(map(str,list(data.dtypes))),
-            'row_num':len(data),
-            'data':data.values.tolist()
+    outtype = get_type(path)
+    if outtype == 'DataFrame':
+        idata = pd.read_csv(path, nrows=10)
+        num = 10
+        index = list(idata.columns)
+        df = idata[0:num]
+        df = df.round(3)
+        types = [str(df[index[j]].dtype) for j in range(len(index))]
+        df = df.fillna('NaN')
+        df = np.array(df).tolist()
+        ret = {
+            'type':'DataFrame',
+            'shape':list(idata.shape),
+            'col_num':len(index),
+            'col_index':index,
+            'col_type':types,
+            'row_num':num,
+            'data': df
         }
-    elif file_type == 'String':
-        # TODO
+    elif outtype == 'Image':
+        import cv2
+        savename = gen_random_string() + '.png'
+        savedir = os.path.join('app', 'static', 'cache')
+        if not os.path.exists(savedir):
+            os.mkdir(savedir)
+        idata = cv2.imread(path)
+        shape = list(idata.shape)
+        shape[0], shape[1] = shape[1], shape[0]
+        resize_shape = shape[:2]
+        while resize_shape[0] > 640 or resize_shape[1] > 480:
+            resize_shape[0] //= 2
+            resize_shape[1] //= 2
+        idata = cv2.resize(idata, tuple(resize_shape))
+        cv2.imwrite(os.path.join(savedir, savename), idata)
+        ret = {
+            'type':'Image',
+            'data':{
+                'url':'static/cache/'+savename,
+                'shape':shape,
+            }
+        }
+    elif outtype == 'Graph':
         pass
-    elif file_type == 'Image':
-        # TODO
+    elif outtype == 'Video':
         pass
     else:
-        # TODO
-        pass
+        raise NotImplementedError
 
     return ret
 
@@ -123,8 +150,8 @@ def delete():
             for file in files:
                 os.remove(os.path.join(root, file))
             for dir in dirs:
-                os.removedirs(os.path.join(root, dir))
-        os.removedirs(path)
+                os.rmdir(os.path.join(root, dir))
+        os.rmdir(path)
     else:
         os.remove(path)
 
