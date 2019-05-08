@@ -9,7 +9,7 @@
     {
       "name": "path",
       "display": "文件名",
-      "type": "file",
+      "type": "upload",
       "default": "",
       "note": ""
     }

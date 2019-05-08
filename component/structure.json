@@ -5,7 +5,7 @@
     "image_instream": "导入图像数据",
     "image_outstream": "导出图像数据",
     "video_instream": "导入视频数据",
-    "video_outstream": "导入视频数据",
+    "video_outstream": "导出视频数据",
     "graph_instream": "导入图数据",
     "graph_outstream": "导出图数据",
     "sql_outstream": "导出SQL数据",

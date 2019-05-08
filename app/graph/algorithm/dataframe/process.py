@@ -3,15 +3,30 @@ import pandas as pd
 import numpy as np
 from pandasql import sqldf
 
+__all__ = [
+    'random',
+    'sql_execute',
+    'sort',
+    'dropna',
+    'fillna',
+    'drop_duplicate',
+    'normalization',
+    'merge_row',
+    'merge_col',
+    'split_row',
+    'split_col',
+]
+
+
 def random(data, **kwargs):
     data = data.sample(frac=1, random_state=int(time.time())).reset_index(drop=True)
     return data
 
 def sql_execute(data, **kwargs):
     command = kwargs.pop('sql_command')
-    sqldf = data
     global df
-    command.format(this='sqldf')
+    df = data
+    command = command.format(this='df')
     pysqldf = lambda q: sqldf(q, globals())
     ret = pysqldf(command)
     return ret

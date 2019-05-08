@@ -40,9 +40,10 @@ def classify_neural_network(data, **kwargs):
     params = {
         'activation':kwargs.pop('activation'),
         'solver':kwargs.pop('solver'),
-        'alpha':kwargs.pop('alpha'),
+        'alpha':float(kwargs.pop('alpha')),
         'label':kwargs.pop('label_columns'),
     }
+    print(params, flush=True)
     return training(data, MLPClassifier, **params)
 
 def classify_knn(data, **kwargs):

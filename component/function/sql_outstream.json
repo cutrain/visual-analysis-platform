@@ -13,11 +13,7 @@
       "default": "MySQL",
       "note": "",
       "list": [
-        "MySQL",
-        "sqlite",
-        "oracle",
-        "SQLServer",
-        "PostgreSQL"
+        "MySQL"
       ]
     },
     {

@@ -22,6 +22,7 @@ def my_rectangle(img, p1, p2, color, thick):
     return img
 
 def draw_boxes(img, bboxes, color=(255, 0, 0), thick=3, copy=True):
+    import numpy as np
     if copy:
         imcopy = np.copy(img)
     else:

@@ -1,6 +1,6 @@
 {
   "name": "video_outstream",
-  "display": "导入视频数据",
+  "display": "导出视频数据",
   "in_port": [
     "Video"
   ],
@@ -9,7 +9,7 @@
     {
       "name": "path",
       "display": "文件名",
-      "type": "file",
+      "type": "upload",
       "default": "0",
       "note": ""
     }
