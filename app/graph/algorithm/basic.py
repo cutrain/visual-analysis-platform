@@ -1,5 +1,4 @@
 import os
-import sqlite3
 
 from tool import safepath
 from config import DATA_DIR
@@ -35,56 +34,31 @@ def data_outstream(data, **kwargs):
 
 def sql_instream(**kwargs):
     import pandas as pd
+    from sqlalchemy import create_engine
     dbtype = kwargs.pop('database_type')
     host = kwargs.pop('address')
     port = int(kwargs.pop('port'))
     user = kwargs.pop('user')
     passwd = kwargs.pop('password')
     dbname = kwargs.pop('database_name')
-    num = int(kwargs.pop('read_number'))
     command = kwargs.pop('command')
     if dbtype == 'MySQL':
-        import MySQLdb
-        con = MySQLdb.connect(
-            host=host,
-            port=port,
-            user=user,
-            passwd=passwd,
-            db=dbname
-        )
-    elif dbtype == 'sqlite':
-        con = sqlite3.connect(os.path,join(dbname, DATA_DIR))
-    elif dbtype == 'oracle':
-        import cx_Oracle as cO
-        con = cO.connect(
-            user,
-            passwd,
-            host + ':' + str(port) + '/' + dbname
-        )
-    elif dbtype == 'SQLServer':
-        import pymssql
-        con = pymssql.connect(
-            server=host,
-            port=port,
-            user=user,
-            password=passwd,
-            database=dbname
-        )
-    elif dbtype == "PostgreSQL":
-        import psycopg2
-        con = psycopg2.connect(
-            host=host,
-            port=port,
-            user=user,
-            password=passswd,
-            database=dbname,
-        )
+        URI = "mysql+pymysql://" + \
+                user + ':' + \
+                passwd + '@' + \
+                host + ':' + \
+                str(port) + '/' + \
+                dbname
+    else:
+        raise NotImplementedError
 
-    data = pd.read_sql(command, con, nrows=num)
-    con.close()
+    sql_engine = create_engine(URI)
+    data = pd.read_sql(command, sql_engine)
     return data
 
 def sql_outstream(data, **kwargs):
+    import pandas as pd
+    from sqlalchemy import create_engine
     dbtype = kwargs.pop('database_type')
     host = kwargs.pop('address')
     port = int(kwargs.pop('port'))
@@ -94,45 +68,17 @@ def sql_outstream(data, **kwargs):
     table_name = kwargs.pop('table_name')
     exist_method = kwargs.pop('if_exists')
     if dbtype == "MySQL":
-        import MySQLdb
-        con = MySQLdb.connect(
-            host=host,
-            port=port,
-            user=user,
-            passwd=passwd,
-            db=dbname
-        )
-    elif dbtype == 'sqlite':
-        con = sqlite3.connect(os.path.join(DATA_DIR, dbname))
-    elif dbtype == 'oracle':
-        import cx_Oracle as cO
-        con = cO.connect(
-            user,
-            passwd,
-            host + ':' + str(port) + '/' + dbname,
-        )
-    elif dbtype == 'SQLServer':
-        import pymssql
-        con = pymssql.connect(
-            server=host,
-            port=port,
-            user=user,
-            password=passwd,
-            database=dbname,
-        )
-    elif dbtype == "PostgreSQL":
-        import psycopg2
-        con = psycopg2.connect(
-            host=host,
-            port=port,
-            user=user,
-            password=passwd,
-            database=dbname,
-        )
+        URI = "mysql+pymysql://" + \
+                user + ':' + \
+                passwd + '@' + \
+                host + ':' + \
+                str(port) + '/' + \
+                dbname
+    else:
+        raise NotImplementedError
 
-    data.to_sql(table_name, con, flavor='mysql', if_exists=exist_method)
-    con.commit()
-    con.close()
+    sql_engine = create_engine(URI)
+    data.to_sql(table_name, con=sql_engine, if_exists=exist_method)
 
 def model_instream(**kwargs):
     from sklearn.externals import joblib

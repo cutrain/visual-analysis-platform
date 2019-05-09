@@ -7,13 +7,6 @@
   ],
   "params": [
     {
-      "name": "read_number",
-      "display": "读入数量",
-      "type": "int",
-      "default": "0",
-      "note": ""
-    },
-    {
       "name": "database_type",
       "display": "数据库类型",
       "type": "list",
@@ -62,7 +55,7 @@
       "name": "command",
       "display": "SQL查询语句",
       "type": "richtext",
-      "default": "SELECT *FROM tableA",
+      "default": "SELECT * FROM tableA",
       "note": ""
     }
   ]
