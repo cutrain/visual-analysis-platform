@@ -46,32 +46,63 @@
           </line>-->
         </svg>
 
-        <node
-          v-for="(item, index) in node_items"
-          :style="{top:item.posiY+'px', left:item.posiX+'px'}"
-          v-if=item.node_id
-          :id=item.node_id
-          :drag_data="drag_data"
-          :type_detail="type_detail"
-          :G="G"
-          :project_id="project_id"
-          :show_detail_box="show_detail_box"
-          :show_data_box="show_data_box"
-          :show_table_box="show_table_box"
-          :show_button_lists.sync="show_button_lists"
-          :node="item"
-          :select_id="curr_id"
-          ref="noderef"
-          v-bind:curr_id.sync="curr_id"
-          v-bind:G.sync="G"
-          v-bind:node_show_button_lists.sync="node_show_button_lists"
-          v-bind:node_show_detail_box.sync="node_show_detail_box"
-          v-bind:node_show_data_box.sync="node_show_data_box"
-          v-bind:node_show_table_box.sync="node_show_table_box"
-          :key="index"
+        <el-scrollbar id="scrollBar-dragResize"
+                      wrap-class="list-dragResize"
+                      view-class="view-box"
+                      view-style="font-weight: bold;"
+                      :native="false">
+
+        </el-scrollbar>
+        <!--<VueDragResize
+          :isActive="true"
+          :w="200"
+          :h="heightDragResize"
+          @activated="activeEvent()"
+          ref="vueDrag"
+          :class="node_show_data_box? 'data-view' : 'none-data-view'" id="data-box">
+          <div class='detail-top'>数据</div>
+          <el-button id="testButton" @click="msg += 1">{{msg}}</el-button>
+          <el-input v-model="test1"></el-input>
+          <el-table :data="tableInBorder.data"
+                      style="width: 100%">
+              <el-table-column v-for="(item, index) in tableInBorder.title"
+                               :key="index"
+                               :prop="item"
+                               :label="item"
+                               width="150"
+              ></el-table-column>
+            </el-table>
+        </VueDragResize>-->
+
+        <node v-for="(item, index) in node_items"
+              :style="{top:item.posiY+'px', left:item.posiX+'px'}"
+              v-if=item.node_id
+              :id=item.node_id
+              :drag_data="drag_data"
+              :type_detail="type_detail"
+              :G="G"
+              :project_id="project_id"
+              :show_detail_box="show_detail_box"
+              :show_data_box="show_data_box"
+              :show_button_lists.sync="show_button_lists"
+              :node="item"
+              :select_id="curr_id"
+              ref="noderef"
+              v-bind:curr_id.sync="curr_id"
+              v-bind:G.sync="G"
+              v-bind:node_show_button_lists.sync="node_show_button_lists"
+              v-bind:node_show_detail_box.sync="node_show_detail_box"
+              v-bind:node_show_data_box.sync="node_show_data_box"
+              v-bind:heightDragResize.sync="heightDragResize"
+              v-bind:tableInBorder.sync="tableInBorder"
+              v-bind:imageInBorder.sync="imageInBorder"
+              v-bind:stringInBorder.sync="stringInBorder"
+              v-bind:addressInBorder.sync="addressInBorder"
+              v-bind:dataTypeInBorder.sync="dataTypeInBorder"
+              :key="index"
         ></node>
 
-        <div id="button_lists" :class="node_show_button_lists ? 'button-lists' : 'none-button-lists'">
+        <div id="button_lists" class="button-lists" >
           <div id="button-save">
             <el-button class="bubbly-button-save" type="text" @click="save_button()">
               <svg class="icon" aria-hidden="true">
@@ -87,10 +118,10 @@
               重载</el-button>
           </div>
           <div id="button-run" v-show="finished">
-            <el-button class="bubbly-button" type="text" icon="el-icon-caret-right" @click="run_button()">运行</el-button>
+            <el-button class="bubbly-button" type="text" icon="el-icon-caret-right" @click="run_button()">运行全部</el-button>
           </div>
           <div id="button-run-inactive" v-show="!finished">
-            <el-button class="bubbly-button" type="text" icon="el-icon-caret-right" disabled="disabled">运行</el-button>
+            <el-button class="bubbly-button" type="text" icon="el-icon-caret-right" disabled="disabled">运行全部</el-button>
           </div>
           <div id="button-stop" v-show="!finished">
             <el-button class="bubbly-button-stop" type="text"  @click="stop_button()">
@@ -109,75 +140,102 @@
               </svg>
               清空</el-button>
           </div>
-          <div id="button-delete">
-            <el-button class="bubbly-button-delete" type="text" icon="el-icon-delete" @click="delete_button()">删除</el-button>
+          <div id="button-delete" v-show="curr_id !== null">
+            <el-button class="bubbly-button-delete" type="text" icon="el-icon-delete" @click="delete_button()">删除节点</el-button>
+          </div>
+          <div id="button-run-single" v-show="curr_id !== null">
+            <el-button class="bubbly-button-run-single" type="text" icon="el-icon-caret-right" @click="run_single_button()">运行单个</el-button>
           </div>
         </div>
 
-        <div id="nodes_running_states" v-show="!finished">
+        <!--  v-show="!finished" -->
+        <div id="nodes_running_states">
           <ul id="states_list">
-            <li><el-button type="text">
-              <svg class="icon" aria-hidden="true"><use xlink:href="#icon-none-running"></use></svg>
-              未运行</el-button></li>
             <li>
               <el-button type="text">
-                <svg class="icon" aria-hidden="true"><use xlink:href="#icon-running"></use></svg>
-                运行中</el-button>
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-none-running"></use>
+                </svg>未运行
+              </el-button>
             </li>
             <li>
               <el-button type="text">
-                <svg class="icon" aria-hidden="true"><use xlink:href="#icon-waiting"></use></svg>
-                等待</el-button>
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-running"></use>
+                </svg>运行中
+              </el-button>
             </li>
             <li>
               <el-button type="text">
-                <svg class="icon" aria-hidden="true"><use xlink:href="#icon-failed"></use></svg>
-                失败</el-button>
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-waiting"></use>
+                </svg>等待
+              </el-button>
             </li>
             <li>
               <el-button type="text">
-                <svg class="icon" aria-hidden="true"><use xlink:href="#icon-finished"></use></svg>
-                完成</el-button>
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-failed"></use>
+                </svg>失败
+              </el-button>
+            </li>
+            <li>
+              <el-button type="text">
+                <svg class="icon" aria-hidden="true">
+                  <use xlink:href="#icon-finished"></use>
+                </svg>完成
+              </el-button>
             </li>
           </ul>
         </div>
-
       </div>
+
       <div class="detail-bound">
-        <!--<el-scrollbar view-class="view-box"
-                      view-style="font-weight: bold;"
-                      :native="false">-->
-        <div :class="node_show_detail_box ? 'detail-view' : 'none-detail-view'" id="detail-box">
-          <param-border
-            v-for="(item, index) in border_items"
-            :key="item.order"
-            :border="item"
-            :class="item.class"
-            :curr_id="curr_id"
-            :props_list="props_list"
-            :back_flag="back_flag"
-            v-bind:param_list.sync = "param_list[index]"
-            v-bind:last_lists.sync="last_lists[index]"
-            v-bind:fileSelectVisible.sync="fileSelectVisible"
-            v-bind:modelSelectVisible.sync="modelSelectVisible"
-            v-bind:msgFileName="msgFileName"
-            v-bind:msgModelName="msgModelName"
-            ref="refborder"
-            :style="{order:item.order}"
-          >
-          </param-border>
-        </div>
-        <div :class="node_show_data_box? 'data-view' : 'none-data-view'" id="data-box">
-          <div class='detail-top'>数据</div>
-          <div :class="node_show_table_box ? 'table-div' : 'none-table-div'" id="table-box"></div>
-        </div>
-        <!--<div :class='node_show_button_run ? "button-div" : "none-button-div"' id='button_run'>
-          <el-button class="bubbly-button" icon="el-icon-caret-right" @click="run_button()">运行全部</el-button>
-        </div>
-        <div :class='node_show_button_delete ? "delete-div" : "none-delete-div"' id='button_delete'>
-          <el-button class="bubbly-button-delete" icon="el-icon-delete" @click="delete_button()">删除节点</el-button>
-        </div>-->
-        <!--</el-scrollbar>-->
+        <el-scrollbar view-class="view-box" :native="false" style="height: 100%;">
+          <div :class="node_show_detail_box ? 'detail-view' : 'none-detail-view'"
+               id="detail-box">
+            <param-border v-for="(item, index) in border_items"
+                          :key="item.order"
+                          :border="item"
+                          :class="item.class"
+                          :curr_id="curr_id"
+                          :props_list="props_list"
+                          :back_flag="back_flag"
+                          v-bind:param_list.sync="param_list[index]"
+                          v-bind:last_lists.sync="last_lists[index]"
+                          v-bind:fileSelectVisible.sync="fileSelectVisible"
+                          v-bind:modelSelectVisible.sync="modelSelectVisible"
+                          v-bind:dialogUploadVisible.sync="dialogUploadVisible"
+                          v-bind:msgFileName="msgFileName"
+                          v-bind:msgModelName="msgModelName"
+                          v-bind:msgUploadName="msgUploadName"
+                          ref="refborder"
+                          :style="{order:item.order}"
+            ></param-border>
+          </div>
+          <div :class="node_show_data_box? 'data-view' : 'none-data-view'"
+               id="data-box">
+            <div class='detail-top'>数据</div>
+            <el-table :data="tableInBorder.data"
+                      style="width: 100%"
+                      v-if="dataTypeInBorder === 'DataFrame'">
+              <el-table-column v-for="(item, index) in tableInBorder.title"
+                               :key="index"
+                               :prop="item"
+                               :label="item"
+                               width="150"
+              ></el-table-column>
+            </el-table>
+            <div v-else-if="dataTypeInBorder === 'String'">{{stringInBorder}}</div>
+            <div v-else-if="dataTypeInBorder === 'Image'">
+              <p>{{imageInBorder.shape}}</p>
+              <el-scrollbar view-class="view-box" :native="false" style="height: 100%;">
+                <img :src="server+imageInBorder.url"/>
+              </el-scrollbar>
+            </div>
+            <div v-else-if="dataTypeInBorder === 'Address'">{{addressInBorder}}</div>
+          </div>
+        </el-scrollbar>
       </div>
     </div>
 
@@ -207,19 +265,40 @@
     </svg>
 
     <el-dialog title="选择文件" :visible.sync="fileSelectVisible">
-      <dragTreeTable :data="treeDataFile" :onDrag="onTreeDataChangeFile" v-bind:isdraggable="false"></dragTreeTable>
-      <p>已选中文件：{{selectFileInDialog}}</p>
+      <dragTreeTable :data="treeDataFile"
+                     :onDrag="onTreeDataChangeFile"
+                     v-bind:isdraggable="false"
+      ></dragTreeTable>
+      <!--<p>已选中文件：{{selectFileInDialog}}</p>-->
       <span slot="footer" class="dialog-footer">
         <el-button @click="fileSelectVisible = false">取 消</el-button>
         <el-button type="primary" @click="fileSelected">确 定</el-button>
       </span>
     </el-dialog>
+    <!-- 暂时共用 -->
     <el-dialog title="选择模型" :visible.sync="modelSelectVisible">
-      <dragTreeTable :data="treeDataModel" :onDrag="onTreeDataChangeModel" v-bind:isdraggable="false"></dragTreeTable>
-      <p>已选中文件：{{selectModelInDialog}}</p>
+      <dragTreeTable :data="treeDataModel"
+                     :onDrag="onTreeDataChangeModel"
+                     v-bind:isdraggable="false"
+      ></dragTreeTable>
+      <!--<p>已选中文件：{{selectModelInDialog}}</p>-->
       <span slot="footer" class="dialog-footer">
         <el-button @click="modelSelectVisible = false">取 消</el-button>
         <el-button type="primary" @click="modelSelected">确 定</el-button>
+      </span>
+    </el-dialog>
+    <el-dialog title="导出"
+               :visible.sync="dialogUploadVisible">
+      <dragTreeTable :data="treeDataUpload"
+                     :onDrag="onTreeDataUploadChange"
+                     v-bind:isdraggable="false"
+      ></dragTreeTable>
+      <p>导出到上述某目录下，或选择导出到 <el-button size="mini" @click="selectDatasetInDialog = '/'">根目录</el-button> 下</p>
+      <p>已选中目录：{{selectDatasetInDialog}}</p>
+      <el-input v-model="input" placeholder="请输入名称" minlength="1"></el-input>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="dialogUploadVisible = false">取 消</el-button>
+        <el-button type="primary" @click="nameUploadFolder">确 定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -232,9 +311,8 @@
   import circleDraggable from '../components/CircleDraggable.vue';
   import node from '../components/Node.vue';
   import paramBorder from '../components/paramBorder';
-  import border from '../components/border';
   import dragTreeTable from '../components/dragTreeTable'
-  // import Vue from 'vue'
+  // import VueDragResize from 'vue-drag-resize';
 
   const LINE_CIRCLE_X_BIAS = 8;
   const LINE_CIRCLE_Y_BIAS = 8;
@@ -246,11 +324,18 @@
       node,
       circleDraggable,
       paramBorder,
-      border,
       dragTreeTable,
+      //VueDragResize
     },
     data() {
       return {
+        server: 'http://web.ngrok.cutrain.top:8081/', //'http://10.141.2.231:8081/' ,  // TODO:
+        dataTypeInBorder: '',           // border: about data view
+        stringInBorder: '',
+        addressInBorder: '',
+        imageInBorder: {},
+        tableInBorder: {},              // { 'title': [ 'head1' , 'head2' ], 'data': [{ 'head1': 1, 'head2': 'a' }, { 'head1': 7, 'head2': 'b' }, { 'head1': 8, 'head2': 'c' }]}
+        heightDragResize: 50,           // 可拖动数据显示框的高度
         sum: 1,                         // 节点总数。无父节点，填0，故需从1开始编号
         levelNum: [],                   // 每层节点总数，从0开始(0,1,2,...)
         finished: true,                 // node state
@@ -280,7 +365,7 @@
             }]
           },
           ],
-        },           // file or model
+        },           // data in dialog
         treeDataFile: {
           radio: 0,
           lists: [],
@@ -308,22 +393,54 @@
           },
           ],
         },
-        msgFileName: '',
-        msgModelName: '',
+        treeDataUpload: {
+          radio: 0,
+          lists: [],
+          columns: [{
+            type: 'selection',
+            title: '文件夹',
+            field: 'name',
+            align: 'left',
+            flex: 1,
+            formatter: (item) => {
+              return '<a>'+item.name+'</a>'
+            }
+          },{
+            title: '',
+            type: 'action',
+            flex: 1,
+            align: 'center',
+            actions: [{
+              text: '选择',
+              onclick: this.folderUploadSelect,
+              formatter: (item) => {
+                return '<i>选择 </i>'
+              }
+            }]
+          },
+          ],
+        },
+        msgFileName: '',                // dialog: select file
         selectFileInDialog: '',
-        selectModelInDialog: '',
         fileSelectVisible: false,
+        msgModelName: '',               // dialog: select model
+        selectModelInDialog: '',
         modelSelectVisible: false,
+        msgUploadName: {                // dialog: export ,that's upload
+          dataset: '',
+          file: '',
+        },
+        selectDatasetInDialog: '/',
+        dialogUploadVisible: false,
+        input: '',
         back_flag: false,               // save the last node
         last_lists: [],
         show_button_lists: false,       // control the visibility of buttons
         show_detail_box: false,
         show_data_box: false,
-        show_table_box: false,
         node_show_button_lists: false,
         node_show_detail_box: false,
         node_show_data_box: false,
-        node_show_table_box: false,
         type_detail:new Map(),          // {param_name:param_value}
         curr_id:null,
         G: null,
@@ -337,79 +454,42 @@
         component_id: 1,                // draggable component id: 1,2,3,...
         param_list: [],
         props_list: [],
-        saved_value: [],
       }
     },
     watch: {
-      project_id(newValue, oldValue) {
+      project_id(newValue) {
         console.log('Current project id: ', newValue);
-        // console.log('Old project id: ', oldValue);
         if (newValue == null) {
-          /*this.$message({
-            message: "请回到主页，重新进入项目！" ,
-            type: "warning",
-            showClose: true,
-            duration: "3000"
-          })*/
           this.$router.push({name:"projectView"});
         }
-        //this.$router.push({name:"projectView"});
+      },
+
+      dataTypeInBorder(newValue) {
+
+          if (newValue === 'Image') {
+            this.imageInBorder = {};
+          }
+
       },
 
       curr_id(newValue, oldValue) {
-
-        /*if (oldValue === null) {
-          this.$nextTick(()=>{
-            setTimeout(() => {
-              this.this.show_detail_box = this.$refs.noderef.node_show_detail_box;
-              this.this.show_data_box = this.$refs.noderef.node_show_data_box;
-              this.this.show_table_box = this.$refs.noderef.node_show_table_box;
-              this.this.show_button_run = this.$refs.noderef.node_show_button_run;
-              this.this.show_button_deletebox = this.$refs.noderef.node_show_button_delete;
-            },100)});
-          this.getNodeParams(newValue);
-          this.props_list = this.G.getParam(newValue);
-        }*/
-
         let params = {};
         this.$nextTick(()=>{
           setTimeout(() => {
-            /*this.show_detail_box = this.$refs.noderef.node_show_detail_box;
-            this.show_data_box = this.$refs.noderef.node_show_data_box;
-            this.show_table_box = this.$refs.noderef.node_show_table_box;
-            this.show_button_run = this.$refs.noderef.node_show_button_run;
-            this.show_button_delete = this.$refs.noderef.node_show_button_delete;*/
             if (oldValue !== null && newValue !== null) {
               // 保存上一个node的所有参数
               console.log('---------old node-----------');
               for (let i=0;i < this.param_list.length; ++i) {
                 params[this.param_list[i].name] = this.param_list[i].value;
               }
-              /* // $ref 子组件数据
-              for (let j=0;j< this.$refs.refborder.length; ++j) {
-                //console.log(this.$refs.refborder[j].param_data);
-                params[this.$refs.refborder[j].param_data.name] = this.$refs.refborder[j].param_data.value;
-              }*/
-              //console.log(params);
               this.G.setParam(oldValue, params);
-              //console.log(this.G.getParam(oldValue));
               console.log('----------------------------');
             }
 
             if (newValue !== null) {
               console.log('---------current node-----------');
               // 获取当前点击node的参数，并传入border
-              let node_param = this.G.getParam(newValue);
-              this.props_list = node_param;
-
-              /* // 读取已有值
-              for (let i=0;i < this.saved_value.length; ++i) {
-                this.saved_value.pop();
-              }
-              for (let i=0;i< node_param.length; ++i) {
-                console.log(node_param[i]);
-                this.saved_value.push(node_param[i]);
-              }*/
+              this.props_list = this.G.getParam(newValue);
 
               // 更新border
               this.getNodeParams(newValue);
@@ -419,10 +499,9 @@
       }
     },
     created() {
-      var api = this.$api;
       const _this = this;
       this.project_id = this.$route.params['project_id'];
-// ====================================================== Renderer class ============================================
+// ==================================================== Renderer class =================================================
       class Renderer{
         constructor(container_selector = '.canvas') {
           this.svg_selector = '#svg';
@@ -471,12 +550,6 @@
           svg.html(svg.html());
 
           this.lines.push(id);
-
-          /*for (let i=0;i < _this.node_items.length; ++i) {
-            if (node_out === _this.node_items[i].node_id) {
-
-            }
-          }*/
 
           let new_line = {};
           new_line.id = node_out + "-" + node_in;
@@ -559,12 +632,12 @@
           for (let i in _this.node_items)
             node_list.push(_this.node_items[i]);
           for (let i in node_list) {
-            let inode = node_list[i];
+            let inode = node_list[i].node_id;
             this.delNode(inode);
           }
         }
       }
-// ======================================================= Graph class ===================================================
+// ===================================================== Graph class ===================================================
       class Graph {
         constructor() {
           console.log('Graph init');
@@ -811,7 +884,8 @@
           console.log('Graph call : setParam');
           // check node exist
           if (!this.node.has(node_id)) {
-            alert(node_id + ' not exist, please check');
+            console.log('WARNING!');
+            console.log(node_id + ' not exist, please check 1');
             return -1;
           }
           let node_param = this.node.get(node_id).param;
@@ -827,7 +901,8 @@
           console.log('Graph call : getParam');
           // check node exist
           if (!this.node.has(node_id)) {
-            alert(node_id + ' not exist, please check');
+            console.log('WARNING!');
+            console.log(node_id + ' not exist, please check 2');
             return {};
           }
           let node_param = this.node.get(node_id).param;
@@ -838,12 +913,11 @@
           console.log('Graph call : setPosition');
           // check node exist
           if (!this.node.has(node_id)) {
-            alert(node_id + ' not exist, please check');
+            console.log('WARNING!');
+            console.log(node_id + ' not exist, please check 3');
             return -1;
           }
-          let node_position = this.node.get(node_id).position;
-          node_position = [posiX, posiY];
-
+          this.node.get(node_id).position = [posiX, posiY];
           if (this.isrender)
             this.renderer.setPosition(node_id, posiX, posiY);
           return 0;
@@ -915,12 +989,13 @@
 
           for (let key in nodes) {
             let x = nodes[key];
-            console.log('yyy');
             let node_id = this.addNode(x.node_type, x.node_position[0], x.node_position[1], x.node_name);
-            console.log('xxx');
             if (node_id == -1) {
               alert('bug in loadJson');
               return -1;
+            }
+            if (this.type_count.get(x.node_type) <= parseInt(node_id.split('-')[1])) {
+              this.type_count.set(x.node_type, parseInt(node_id.split('-')[1]) + 1);
             }
             this.setParam(node_id, x.details);
           }
@@ -950,52 +1025,21 @@
           this.isrender = false;
           return 0;
         }
-
-        /*run(node_id=null, callback_func=null) {
-          console.log('Graph call : run');
-          if (typeof(node_id)=='function') {
-            callback_func = node_id;
-            node_id = null;
-          }
-          if (typeof(callback_func) != 'function')
-            callback_func = null;
-          if (node_id != null) {
-            if (!this.node.has(node_id)) {
-              alert(node_id + ' not exist, please check');
-              return -1;
-            }
-          }
-          // TODO : support single node
-          axios.post(api.graphRun, this.toJson())
-            .then((ret)=> {
-              if (callback_func != null)
-                callback_func(ret)
-            })
-            .catch(() => {});
-          return 0;
-        }*/
       }
-// ===================================================== init all ====================================================
+// ====================================================== init all =====================================================
       axios.post(this.$api.componentParameter)
         .then((data) => {
           data = data.data.component;
-          // TODO: check response format is right
-          // TODO: finished
           data.forEach(
             a => this.type_detail.set(a.name, a)
           );
-          console.log(4, data);
-          //console.log('type_detail:');
-          //console.log(this.type_detail);
+          console.log('component', data);
 
           this.G = new Graph();
           this.G.startRender();
 
-          // TODO :
-          // this.graph_init();
-          console.log('-----load button---------');
+          // console.log('-----load button---------');
           this.load_button();
-          console.log('-------------------------');
 
           this.component_init();
           console.log('READY');
@@ -1007,72 +1051,74 @@
       console.log('-----------------------------');
     },
     methods: {
-      graph_init() {
-        this.load_button();
-      },
+      /*activeEvent() {
+        console.log('activeEvent......');
+        // console.log(this.$refs['vueDrag'].focus());
+        console.log(this.$refs.vueDrag.$children[1].focus());
+        // this.$refs.vueDrag.focus();
+      },*/
 
-// ====================================================== buttons ==================================================
+// ====================================================== buttons ======================================================
       load_button() {
-        if (this.project_id !== null) {
-          let postData = JSON.stringify({
-            project_id: this.project_id,
-          });
-          axios.post(this.$api.graphGet, postData)
-            .then((res) => {
-              console.log('-----res----');
-              console.log(res);
-              console.log('------------');
-              res = res.data;
-              if (res.succeed === 0) {
-                let succeed_loadJson = this.G.loadJson(res);
-                if (succeed_loadJson === 1) {
-                  this.$message({
-                    message: 'Loading failed when creating graph',
-                    type: "error",
-                    showClose: true,
-                    duration: "2000"
-                  });
-                  console.log('load failed:');
-                  console.log(res);
-                }
-              } else {
+        if (this.project_id === null) {
+          return;
+        }
+
+        let postData = JSON.stringify({
+          project_id: this.project_id,
+        });
+        axios.post(this.$api.graphGet, postData)
+          .then((res) => {
+            console.log('-----res----');
+            console.log(res);
+            console.log('------------');
+            res = res.data;
+            if (res.succeed === 0) {
+
+              let succeed_loadJson = this.G.loadJson(res);
+              if (succeed_loadJson === 1) {
                 this.$message({
-                  message: '加载失败！',
+                  message: 'Loading failed when creating graph',
                   type: "error",
                   showClose: true,
                   duration: "2000"
                 });
+                console.log('load failed:');
+                console.log(res);
               }
-            })
-            .catch(() => {});
-        } else {
-          this.$message({
-            message: '无法获取项目id, 请回到主页重新进入项目！',
-            type: "warning",
-            showClose: true,
-            duration: "3000"
+            } else {
+              this.$message({
+                message: '请重试！',
+                type: "warning",
+                showClose: true,
+                duration: "1000"
+              });
+            }
+          })
+          .catch(() => {
           });
-        }
+
       },
 
       save_button() {
         if (this.project_id !== null) {
 
           this.back_flag = true;
+          console.log('set back_flag true.');
 
           this.$nextTick(()=>{
             setTimeout(() => {
               // 保存当前节点
-              let params = {};
-              console.log('set back_flag true.');
-              console.log('---------last node-----------');
-              for (let i=0;i < this.last_lists.length; ++i) {
-                params[this.last_lists[i].name] = this.last_lists[i].value;
+              if (this.curr_id !== null) {
+                let params = {};
+                console.log('---------last node-----------');
+                for (let i=0;i < this.last_lists.length; ++i) {
+                  params[this.last_lists[i].name] = this.last_lists[i].value;
+                }
+                // console.log(params);
+                this.G.setParam(this.curr_id, params);
+                console.log('----------------------------');
               }
-              console.log(params);
-              this.G.setParam(this.curr_id, params);
-              //console.log(this.G.getParam(oldValue));
-              console.log('----------------------------');
 
               let dataPost = JSON.stringify(this.G.toJson());
               axios.post(this.$api.graphSave, dataPost)
@@ -1134,8 +1180,8 @@
               console.log(res);
               console.log('------------');
               res = res.data;
-              if ((res.succeed === 0) || (ret.message.indexOf('not running') != -1)) {
-                finished = true;
+              if ((res.succeed === 0) || (res.message.indexOf('not running') != -1)) {
+                this.finished = true;
                 this.$message({
                   message: res.message,
                   type: "success",
@@ -1162,7 +1208,6 @@
         }
       },
 
-      // TODO: nodes?
       clear_button() {
         if (this.project_id !== null) {
           let postData = JSON.stringify({
@@ -1218,7 +1263,7 @@
             }
             else if (status == '1') {
               // wait
-              color = 'rgba(128,128,128,0)';
+              color = 'rgba(255,255,255,1)';
             }
             else if (status == '2') {
               // running
@@ -1237,7 +1282,6 @@
       },
 
       check_progress() {
-
         if (this.finished) {
           return;
         }
@@ -1247,7 +1291,9 @@
         axios.post(this.$api.graphProgress, dataPost)
           .then(res => {
             res = res.data;
-            // res = JSON.parse(res);
+            console.log('----res-----');
+            console.log(res);
+            console.log('111');
             if (res.status === 0) {
               this.finished = true;
             }
@@ -1255,6 +1301,7 @@
               setTimeout(() => {
                 this.check_progress();
               }, 1000);
+              console.log('222');
             }
             this.render_nodes(res.progress);
           })
@@ -1276,26 +1323,24 @@
 
         // 保存当前节点
         this.back_flag = true;
+        console.log('set back_flag true.');
 
         this.$nextTick(()=>{
           setTimeout(() => {
-
-            let params = {};
-            console.log('set back_flag true.');
-            console.log('---------last node-----------');
-            for (let i=0;i < this.last_lists.length; ++i) {
-              params[this.last_lists[i].name] = this.last_lists[i].value;
+            if (this.curr_id !== null) { // 保存当前右侧边栏填写的节点内容
+              let params = {};
+              console.log('---------last node-----------');
+              for (let i=0;i < this.last_lists.length; ++i) {
+                params[this.last_lists[i].name] = this.last_lists[i].value;
+              }
+              this.G.setParam(this.curr_id, params);
+              console.log('----------------------------');
             }
-            console.log(params);
-            this.G.setParam(this.curr_id, params);
-            //console.log(this.G.getParam(oldValue));
-            console.log('----------------------------');
 
             // 运行节点
             axios.post(this.$api.graphRun, JSON.stringify(this.G.toJson()))
               .then((res)=> {
                 console.log('run : get response');
-                console.log(res);
                 res = res.data;
                 if (res.succeed === 0) {
                   this.finished = false;
@@ -1329,37 +1374,92 @@
         })
       },
 
-      delete_button(){
+      delete_button() {
         // TODO ：删除节点和边 并输出检查是否正确删除
         // TODO : finished
         // 显示数据删除
         for (let i = 0;i < this.node_items.length; ++i)
           if (this.node_items.node_id === this.curr_id) {
             this.node_items[i] = null;
-            console.log('Succeed. '); // Find node needed to be deleted and delete it in node_items successfully.
+            console.log('Succeed. '); // Found the node need to be deleted and deleted it in list node_items successfully.
             break;
           }
         // G, 删除
         this.G.delNode(this.curr_id);
-        // console.log('set curr_id null.');
         this.curr_id = null;
         this.node_show_detail_box = false;
         this.node_show_data_box = false;
-
-        /*let detailBox = $("#detail-box");
-        detailBox.css("display","none");
-        let dataBox = $("#data-box");
-        dataBox.css("display","none");*/
       },
 
       run_single_button() {
-        save_detail();
-        // this.G.run(this.curr_id);
-        // TODO
-        // similar to method run_button()
+        if (!this.finished) {
+          this.$message({
+            message: '仍在运行中...',
+            type: "warning",
+            showClose: true,
+            duration: "2000"
+          });
+          return;
+        }
+
+        // 保存当前节点
+        this.back_flag = true;
+        console.log('set back_flag true.');
+
+        this.$nextTick(()=>{
+          setTimeout(() => {
+
+            if (this.curr_id !== null) {
+              let params = {};
+              console.log('---------last node-----------');
+              for (let i=0;i < this.last_lists.length; ++i) {
+                params[this.last_lists[i].name] = this.last_lists[i].value;
+              }
+              this.G.setParam(this.curr_id, params);
+              console.log('----------------------------');
+            }
+
+            // 运行节点
+            let dataPost = this.G.toJson();
+            let key = 'run';
+            dataPost[key] = [this.curr_id];
+            axios.post(this.$api.graphRun, JSON.stringify(dataPost))
+              .then((res)=> {
+                console.log('run : get response');
+                res = res.data;
+                if (res.succeed === 0) {
+                  this.finished = false;
+                  this.$message({
+                    message: '开始运行...' + res.message,
+                    type: "success",
+                    showClose: true,
+                    duration: "1000"
+                  });
+                  setTimeout(() => {
+                    this.check_progress();
+                  }, 1000);
+                } else {
+                  this.$message({
+                    message: '运行失败！' + res.message,
+                    type: "error",
+                    showClose: true,
+                    duration: "2000"
+                  });
+                }
+              })
+              .catch(() => {});
+          }, 500)
+        });
+
+        this.$nextTick(()=>{
+          setTimeout(() => {
+            this.back_flag = false;
+            console.log('set back_flag false.');
+          }, 550)
+        })
       },
 
-// ================================================= select file or model =========================================
+// ======================================================= dialog ======================================================
       isNumber(obj) {
         return (typeof obj === 'number');
       },
@@ -1367,7 +1467,7 @@
       dataInsertByParentId(dataList) {
         let point = dataList.length - 1;
         if (point === -1) {
-          console.log('dataList读取失败,查看dataViewTransformDragable()');
+          console.log('dataList is empty, check function dataViewTransformDraggable().');
         }
         while (point !== -1) {
           let pro_point = point - 1;
@@ -1406,13 +1506,19 @@
           let num = 0;
           for (let key in obj) {
             if (obj.hasOwnProperty(key)) {
-              if (_this.isNumber(obj[key])) { // folder
+              if (Array.isArray(obj[key])) { // file
+                let file_size = obj[key][0], file_type = obj[key][1];
                 let data = {};
                 data.id = _this.sum;
                 _this.sum++;
-                data.parent_id = preId[preId.length-1];
+                if (preId.length === 0) {
+                  data.parent_id = 0;
+                } else {
+                  data.parent_id = preId[preId.length-1];
+                }
                 data.name = key;
-                data.file_size = obj[key];
+                data.file_size = file_size;
+                data.file_type = file_type;
                 data.open = false;
                 data.directory = false; // file: false, folder: true
                 data.lists = [];
@@ -1470,6 +1576,8 @@
             let newDataTemple = [];
             this.dataListDeleteExceptRootLevel(dataTemple, newDataTemple);
             this.onTreeDataChangeFile(newDataTemple);
+            this.onTreeDataChangeModel(newDataTemple);
+            this.onTreeDataUploadChange(newDataTemple);
           })
           .catch(err => {});
       },
@@ -1493,12 +1601,6 @@
         this.modelSelectVisible = false;
       },
 
-      handleselectDataset() {
-        this.fileSelectVisible = true;
-        this.selectFileInDialog = this.selectDataset;
-
-      },
-
       dialogFileSelect(item) { // Dialog
         let datasetName = '';
         if (item.dataset_name === '') {
@@ -1518,6 +1620,40 @@
           datasetName = item.dataset_name + '/'+item.name;
         }
         this.selectModelInDialog = datasetName;
+        console.log(datasetName);
+      },
+
+      // upload
+      onTreeDataUploadChange(list) {
+        this.treeDataUpload.lists = list
+      },
+
+      nameUploadFolder() {
+        if (this.input !== '') {
+          this.msgUploadName.file = this.input;
+          this.msgUploadName.dataset = this.selectDatasetInDialog;
+          console.log('-------------msgUploadName------------');
+          console.log(this.msgUploadName);
+          this.dialogUploadVisible = false;
+          this.dialogView();
+        } else {
+          console.log('input need to be not empty.');
+        }
+      },
+
+      selectDataset_button() {
+        this.dialogUploadVisible = true;
+        this.selectDatasetInDialog = this.msgUploadName.dataset;
+      },
+
+      folderUploadSelect(item) { // Dialog
+        let datasetName = '';
+        if (item.dataset_name === '') {
+          datasetName = item.name;
+        } else {
+          datasetName = item.dataset_name + '/' + item.name;
+        }
+        this.selectDatasetInDialog = datasetName;
         console.log(datasetName);
       },
 // ================================================= component sizebar =========================================
@@ -1562,20 +1698,6 @@
                 data.lists = [];
                 data.isdraggable = true;
                 data.icon_type = key.split('_',1)[0];
-                /*let type = parentName[parentName.length - 1];
-                switch (type) {
-                  case '源/目标':
-                    data.icon_type = 1;
-                    break;
-                  case '数据预处理':
-                    data.icon_type = 2;
-                    break;
-                  case 's':
-                    data.icon_type = 3;
-                    break;
-                  default:
-                    data.icon_type = 4;
-                }*/
                 dataList.push(data);
               }
             }
@@ -1677,11 +1799,10 @@
       },
 
       getNodeParams(id) {
-        // TODO : fix bug : double click get wrong
-        // TODO : finished
 
         let params = this.G.getParam(id);
         let itype = this.type_detail.get(id.split('-')[0]);
+        console.log('itype: ',itype);
         let iparams = itype.params;
 
         this.border_items = JSON.parse(JSON.stringify(this.border_items));
@@ -1704,7 +1825,7 @@
           name.class = 'param-key';
           name.text = param_detail.display;
 
-          let type_list = ['text', 'list', 'file', 'model', 'richtext', 'password', 'int', 'float', 'number'];
+          let type_list = ['text', 'list', 'file', 'model', 'richtext', 'password', 'int', 'float', 'number', 'upload'];
 
           let param = {};
           switch (param_type) {
@@ -1757,6 +1878,12 @@
               param.type = 'richtext';
               break;
             }
+            case 'upload': {
+              param.html = 'input';
+              param.id = 'path';
+              param.type = 'text';
+              break;
+            }
             default: {
 
             }
@@ -1774,85 +1901,11 @@
           param.order = 2;
           border.order = i;
 
-          /*let bt = {};
-          if (param_type === 'file') {
-            bt.html = 'input';
-            bt.type = 'file';
-            bt.id = 'pathbt';
-            bt.order = 3;
-          } else {
-            bt.type = 'none';
-          }*/
-
           border.key = name;
           border.value = param;
-          //border.bt = bt;
           this.border_items.push(border);
-          // this.border_items.splice(i, 1, border);
-          //Vue.set(this.border_items, i, border);
         }
       },
-
-      /*save_input() {
-        let obj = {};
-        obj.name = this.border.value.name;
-
-        switch (this.border.value.data_type) {
-          case 'text': {
-            obj.value = this.input_text;
-            break;
-          }
-          case 'file': {
-            obj.value = this.input_file;
-            break;
-          }
-          case 'password': {
-            obj.value = this.input_password;
-            break;
-          }
-          case 'list': {
-            obj.value = this.input_list;
-            break;
-          }
-          case 'number': {
-            obj.value = this.input_number;
-            break;
-          }
-          case 'richtext': {
-            obj.value = this.input_richtext;
-            break;
-          }
-          default: {
-            obj.value = null;
-            console.log('There is no type of '+ this.border.value.data_type + '.');
-          }
-        }
-        /!*if (this.display_text) {
-          obj.value = this.input_text;
-        }
-        else if (this.input_file) {
-          obj.value = this.input_file;
-        }
-        else if (this.input_password) {
-          obj.value = this.input_password;
-        }
-        else if (this.input_list) {
-          obj.value = this.input_list;
-        }
-        else if (this.input_number) {
-          obj.value = this.input_number;
-        }
-        else if (this.input_richtext) {
-          obj.value = this.input_richtext;
-        }
-        else {
-          obj.value = null;
-          console.log('There is something wrong with display_xxx.');
-        }*!/
-
-        this.param_data = obj;
-
-      },*/
     }
   }
 </script>
@@ -1912,7 +1965,7 @@
   #states_list {
     text-align: left;
     padding-left: 10%;
-    padding-right: 10%;
+    padding-right: 15%;
   }
   #button-save {
     display: table-cell;
@@ -1926,7 +1979,7 @@
   }
   #button-run {
     display: table-cell;
-    width: 80px;
+    width: 100px;
     left: 110px;
   }
   #button-run-inactive {
@@ -1951,8 +2004,26 @@
   }
   #button-delete {
     display: table-cell;
-    width: 80px;
+    width: 100px;
     left: 200px;
   }
-
+  #button-run-single {
+    display: table-cell;
+    width: 100px;
+    left: 230px;
+  }
+  #data-box {
+    overflow: hidden;
+  }
+  .list-dragResize {
+    max-height: 100px;
+  }
+  .test {
+    overflow: hidden;
+    height: 100px;
+    width: 50px;
+  }
+  .testlist {
+    max-height: 100px;
+  }
 </style>

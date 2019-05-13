@@ -1,18 +1,26 @@
 <template>
   <div class="drag-tree-table" ref="table">
     <div class="drag-tree-table-header">
-      <column
-        v-for="(item, index) in data.columns"
-        :width="item.width"
-        :flex="item.flex"
-        :key="index" >
+      <column v-for="(item, index) in data.columns"
+              :width="item.width"
+              :flex="item.flex"
+              :key="index" 
+      >
         {{item.title}}
       </column>
     </div>
-    <div class="drag-tree-table-body" @dragover="draging" @dragend="drop"  :class="isDraing ? 'is-draging' : '' ">
-      <row depth="0" :columns="data.columns" :isdraggable="isdraggable"
-           :model="item" v-for="(item, index) in data.lists" :key="index">
-      </row>
+    <div class="drag-tree-table-body" 
+         @dragover="dragging" 
+         @dragend="drop"  
+         :class="isDraing ? 'is-dragging' : '' "
+    >
+      <row depth="0" 
+           :columns="data.columns" 
+           :isdraggable="isdraggable"
+           :model="item" 
+           v-for="(item, index) in data.lists" 
+           :key="index"
+      ></row>
     </div>
   </div>
 </template>
@@ -22,10 +30,12 @@
   import column from './column.vue'
   import space from './space.vue'
   import * as axios from "axios";
+  
   document.body.ondrop = function (event) {
     event.preventDefault();
     event.stopPropagation();
   };
+  
   export default {
     name: "dragTreeTable",
     components: {
@@ -53,24 +63,16 @@
       }
     },
     methods: {
-      getDragId() {
-        return window.dragId;
-      },
-      getCurDatasetName() {
-        return this.srcDatasetName;
-      },
-      getNewDatasetName() {
-        return this.destDatasetName;
-      },
       getElementLeft(element) {
         var actualLeft = element.offsetLeft;
         var current = element.offsetParent;
-        while (current !== null){
+        while (current !== null) {
           actualLeft += current.offsetLeft;
           current = current.offsetParent;
         }
         return actualLeft
       },
+      
       getElementTop(element) {
         // 如果表格在容器中滚动，需要做特殊计算
         let scrollTop = this.$refs.table.parentElement.scrollTop;
@@ -82,7 +84,8 @@
         }
         return actualTop
       },
-      draging(e) {
+      
+      dragging(e) {
         this.isDraing = true;
         if (e.pageX == this.dragX && e.pageY == this.dragY) return;
         this.dragX = e.pageX;
@@ -94,12 +97,14 @@
           window.scrollTo(0, scrollY + 6)
         }
       },
+
       drop(event) {
         this.clearHoverStatus();
         this.resetTreeData();
         this.isDraing = false;
       },
-      filter(x,y) {
+
+      filter(x, y) {
         var rows = document.querySelectorAll('.tree-row');
         this.targetId = undefined;
         const dragOriginElementTop = this.getElementTop(dragParentNode);
@@ -148,6 +153,7 @@
           }
         }
       },
+
       clearHoverStatus() {
         var rows = document.querySelectorAll('.tree-row');
         for(let i=0; i < rows.length; i++) {
@@ -159,6 +165,7 @@
           hoverBlock.children[2].style.opacity = 0.1;
         }
       },
+
       resetTreeData() {
         if (this.targetId === undefined) return ;
         let flag = true;
@@ -250,6 +257,7 @@
             .catch(() => {});
         }
       },
+
       resetOrder(list) {
         for (let i = 0; i< list.length; i++) {
           list[i].order = i;
@@ -258,6 +266,7 @@
           }
         }
       },
+
       deepClone (aObject) {
         if (!aObject) {
           return aObject;
@@ -272,32 +281,33 @@
         }
         return bObject;
       },
+
       getCurDragItem(lists, id) {
         var curItem = null;
-        var _this = this;
-        function getchild(curList) {
+        function getChild(curList) {
           for( let i = 0; i < curList.length; i++) {
             var item = curList[i];
             if (item.id == id) {
               curItem = JSON.parse(JSON.stringify(item));
-              break
+              break;
             } else if (item.lists && item.lists.length) {
-              getchild(item.lists)
+              getChild(item.lists)
             }
           }
         }
-        getchild(lists);
+        getChild(lists);
         return curItem;
       },
+
       getDatasetName(lists, id) { // 所在数据集名
         let preName = [];
         let datasetName = '';
-        function getchild(curList, preName) {
+        function getChild(curList, preName) {
           for (let i=0;i < curList.length;i++) {
             let item = curList[i];
             if (item.id == id) {
               if (preName.length === 0) { // root level
-                datasetName = '/';
+                datasetName = '';
               } else {
                 datasetName = preName.join('/');
               }
@@ -306,14 +316,14 @@
               break;
             } else if (item.lists && item.lists.length) {
               preName.push(item.name);
-              getchild(item.lists, preName);
+              getChild(item.lists, preName);
               preName.pop();
             }
           }
         }
-        getchild(lists, preName);
+        getChild(lists, preName);
         return datasetName;
-      }
+      },
     }
   }
 </script>
@@ -336,7 +346,7 @@
   .tree-icon-hidden{
     visibility: hidden;
   }
-  .is-draging .tree-row:hover{
+  .is-dragging .tree-row:hover{
     background: transparent !important;
   }
 </style>

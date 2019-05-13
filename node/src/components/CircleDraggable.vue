@@ -17,12 +17,6 @@
   export default {
     name: "circleDraggable",
     props: ['drag_data', 'G'],
-    created() {
-
-    },
-    mounted() {
-
-    },
     methods: {
 
       circle_dragstart(e) {

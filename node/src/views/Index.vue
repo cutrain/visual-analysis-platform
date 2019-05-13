@@ -9,11 +9,9 @@
     name: "index",
     data () {
       return {
-
       }
     },
     methods: {
-
     }
   }
 </script>

@@ -1,6 +1,9 @@
 <template>
   <span class="space-container">
-    <span class="space" v-for="(item, index) in spaces" v-bind:key="index"></span>
+    <span class="space"
+          v-for="(item, index) in spaces"
+          v-bind:key="index"
+    ></span>
   </span>
   
 </template>
@@ -10,18 +13,18 @@ export default {
   props: ['depth'],
   computed: {
       spaces() {
-        const aArr = []
-        for(let i=0; i<this.depth; i++){
-          aArr.push('')
+        const aArr = [];
+        for(let i=0; i < this.depth; i++) {
+          aArr.push('');
         }
-        return aArr
+        return aArr;
       }
   }
 }
 </script>
 <style>
-.space{
-  display: inline-block;
-  width: 15px;
-}
+  .space{
+    display: inline-block;
+    width: 15px;
+  }
 </style>

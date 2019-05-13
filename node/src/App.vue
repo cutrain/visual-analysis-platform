@@ -1,20 +1,24 @@
 <template>
   <div id="app">
-    <el-menu
-      :default-active="activeIndex"
-      class="el-menu-top"
-      mode="horizontal"
-      @select="handleSelect"
-      text-color="#7BBFEA"
-      active-text-color="#409EFF">
+    <el-menu :default-active="activeIndex"
+             class="el-menu-top"
+             mode="horizontal"
+             @select="handleSelect"
+             text-color="#7BBFEA"
+             active-text-color="#409EFF"
+    >
       <el-menu-item index="index">主页</el-menu-item>
       <el-menu-item index="database">数据</el-menu-item>
-      <section id='user'>
+      <section id='user' v-show="$route.path !== '/'">
         <section>
-          <img id="logo" src="./assets/logo.jpg" alt="logo"/>
+          <img id="logo"
+               src="./assets/logo.jpg"
+               alt="logo"/>
           <section>
-            <section id="name" align="right">可视化数据分析平台</section>
-            <section id="actions" align="right"><a>Visual Analysis Platform</a></section>
+            <section id="name"
+                     align="right">可视化数据分析平台</section>
+            <section id="actions"
+                     align="right"><a>Visual Analysis Platform</a></section>
           </section>
         </section>
       </section>

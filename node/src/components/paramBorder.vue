@@ -9,28 +9,16 @@
       <!--type="file">-->
     <!--</el-input>-->
 
-    <el-input
-      v-show="border.value.data_type === 'text'"
-      v-bind:class="[border.value.data_type === 'text' ? 'param-value' : 'param-value-inactive']"
-      type="text"
-      :name="border.value.name"
-      :data_type="border.value.data_type"
-      v-model="input_text"
-      :style="{order: border.value.order}"
+    <el-input v-show="border.value.data_type === 'text'"
+              v-bind:class="[border.value.data_type === 'text' ? 'param-value' : 'param-value-inactive']"
+              type="text"
+              :name="border.value.name"
+              :data_type="border.value.data_type"
+              v-model="input_text"
+              :style="{order: border.value.order}"
     >
     </el-input>
 
-    <!--<el-input
-      v-show="border.value.data_type === 'file'"
-      v-bind:class="[border.value.data_type === 'file' ? 'param-value' : 'param-value-inactive']"
-      type="text"
-      :name="border.value.name"
-      :data_type="border.value.data_type"
-      v-model="input_file"
-      :id="border.value.id"
-      :style="{order: border.value.order}"
-    >
-    </el-input>-->
     <div v-show="border.value.data_type === 'file'"
          :style="{order: border.value.order}"
     >
@@ -42,20 +30,23 @@
 
                  @click="fileSelect()"
       >文件目录</el-button>
-      已选择：{{this.msgFileName}}
+      已选择：{{this.input_file}}
     </div>
 
-    <!--<el-input
-      v-show="border.value.data_type === 'model'"
-      v-bind:class="[border.value.data_type === 'model' ? 'param-value' : 'param-value-inactive']"
-      type="text"
-      :name="border.value.name"
-      :data_type="border.value.data_type"
-      v-model="input_file"
-      :id="border.value.id"
-      :style="{order: border.value.order}"
+    <div v-show="border.value.data_type === 'upload'"
+         :style="{order: border.value.order}"
     >
-    </el-input>-->
+      <el-button v-show="border.value.data_type === 'upload'"
+                 v-bind:class="[border.value.data_type === 'upload' ? 'param-value' : 'param-value-inactive']"
+                 :name="border.value.name"
+                 :data_type="border.value.data_type"
+                 :id="border.value.id"
+
+                 @click="uploadSelect()"
+      >导出目录</el-button>
+      导出到：{{this.input_upload}}
+    </div>
+
     <div v-show="border.value.data_type === 'model'"
          :style="{order: border.value.order}"
     >
@@ -67,87 +58,78 @@
 
                  @click="modelSelect()"
       >模型目录</el-button>
-      已选择：{{this.msgModelName}}
+      已选择：{{this.input_model}}
     </div>
 
-    <el-input
-      v-show="border.value.data_type === 'password'"
-      v-bind:class="[border.value.data_type === 'password' ? 'param-value' : 'param-value-inactive']"
-      type="password"
-      :name="border.value.name"
-      :data_type="border.value.data_type"
-      v-model="input_password"
-      :style="{order: border.value.order}"
-
+    <el-input v-show="border.value.data_type === 'password'"
+              v-bind:class="[border.value.data_type === 'password' ? 'param-value' : 'param-value-inactive']"
+              type="password"
+              :name="border.value.name"
+              :data_type="border.value.data_type"
+              v-model="input_password"
+              :style="{order: border.value.order}"
     ><!--show-password-->
     </el-input>
 
-    <el-select
-      v-show="border.value.data_type === 'list'"
-      v-bind:class="[border.value.data_type === 'list' ? 'param-value' : 'param-value-inactive']"
-      :name="border.value.name"
-      :data_type="border.value.data_type"
-      v-model="input_list"
-      placeholder="请选择"
-      :style="{order:border.value.order}">
-      <el-option
-        v-for="(item, index) in border.value.lists"
-        :key="index"
-        :label="item.value"
-        :value="item.value">
+    <el-select v-show="border.value.data_type === 'list'"
+               v-bind:class="[border.value.data_type === 'list' ? 'param-value' : 'param-value-inactive']"
+               :name="border.value.name"
+               :data_type="border.value.data_type"
+               v-model="input_list"
+               placeholder="请选择"
+               :style="{order:border.value.order}">
+      <el-option v-for="(item, index) in border.value.lists"
+                 :key="index"
+                 :label="item.value"
+                 :value="item.value">
       </el-option>
     </el-select>
 
     <!-- number: int, float -->
-    <el-input
-      v-show="border.value.data_type === 'number'"
-      v-bind:class="[border.value.data_type === 'number' ? 'param-value' : 'param-value-inactive']"
-      :name="border.value.name"
-      :data_type="border.value.data_type"
-      v-model="input_int"
-      type="number"
-      :style="{order: border.value.order}"
+    <el-input v-show="border.value.data_type === 'number'"
+              v-bind:class="[border.value.data_type === 'number' ? 'param-value' : 'param-value-inactive']"
+              :name="border.value.name"
+              :data_type="border.value.data_type"
+              v-model="input_int"
+              type="number"
+              :style="{order: border.value.order}"
     >
     </el-input>
 
-    <el-input
-      v-show="border.value.data_type === 'int'"
-      v-bind:class="[border.value.data_type === 'int' ? 'param-value' : 'param-value-inactive']"
-      :name="border.value.name"
-      :data_type="border.value.data_type"
-      v-model="input_int"
-      type="number"
-      :style="{order: border.value.order}"
+    <el-input v-show="border.value.data_type === 'int'"
+              v-bind:class="[border.value.data_type === 'int' ? 'param-value' : 'param-value-inactive']"
+              :name="border.value.name"
+              :data_type="border.value.data_type"
+              v-model="input_int"
+              type="number"
+              :style="{order: border.value.order}"
     >
     </el-input>
 
-    <el-input
-      v-show="border.value.data_type === 'float'"
-      v-bind:class="[border.value.data_type === 'float' ? 'param-value' : 'param-value-inactive']"
-      :name="border.value.name"
-      :data_type="border.value.data_type"
-      v-model="input_float"
-      type="number"
-      :style="{order: border.value.order}"
+    <el-input v-show="border.value.data_type === 'float'"
+              v-bind:class="[border.value.data_type === 'float' ? 'param-value' : 'param-value-inactive']"
+              :name="border.value.name"
+              :data_type="border.value.data_type"
+              v-model="input_float"
+              type="number"
+              :style="{order: border.value.order}"
     >
     </el-input>
 
-    <el-input
-      v-show="border.value.data_type === 'richtext'"
-      v-bind:class="[border.value.data_type === 'richtext' ? 'param-value' : 'param-value-inactive']"
-      :name="border.value.name"
-      :data_type="border.value.data_type"
-      type="textarea"
-      :autosize="{ minRows: 3}"
-      placeholder="请输入内容"
-      v-model="input_richtext"
-      :style="{order: border.value.order}"
+    <el-input v-show="border.value.data_type === 'richtext'"
+              v-bind:class="[border.value.data_type === 'richtext' ? 'param-value' : 'param-value-inactive']"
+              :name="border.value.name"
+              :data_type="border.value.data_type"
+              type="textarea"
+              :autosize="{ minRows: 3}"
+              placeholder="请输入内容"
+              v-model="input_richtext"
+              :style="{order: border.value.order}"
     >
     </el-input>
 
-    <div
-      class="param-key"
-      :style="{order: border.key.order}"
+    <div class="param-key"
+         :style="{order: border.key.order}"
     >
       {{border.key.text}}
     </div>
@@ -157,7 +139,7 @@
 <script>
   export default {
     name: "paramBorder",
-    props:['border', 'curr_id', 'props_list', 'back_flag', 'msgFileName', 'msgModelName'],
+    props:['border', 'curr_id', 'props_list', 'back_flag', 'msgFileName', 'msgModelName', 'msgUploadName'],
     data() {
       return {
         param_data: {                  // have to be saved
@@ -173,6 +155,7 @@
         input_float: 0,
         input_number: 0,
         input_richtext: '',
+        input_upload: '',
       }
     },
     created() {
@@ -216,6 +199,10 @@
                 this.input_richtext = this.props_list[key];
                 break;
               }
+              case 'upload': {
+                this.input_upload = this.props_list[key];
+                break;
+              }
               default: {
                 console.log('There is no type of '+ this.border.value.data_type + '.');
               }
@@ -225,6 +212,17 @@
           }
         }
       }
+    },
+    computed: {
+      msgUpload: {
+        get() {
+          return this.border.value.data_type === 'upload' ? (this.msgUploadName.dataset === '' ? this.msgUploadName.dataset : this.msgUploadName.dataset + '/' + this.msgUploadName.dataset) : '';
+        },
+        set() {
+
+        }
+      }
+
     },
     watch: {
       curr_id(newValue, oldValue) {
@@ -276,6 +274,10 @@
                       this.input_richtext = this.props_list[key];
                       break;
                     }
+                    case 'upload': {
+                      this.input_upload = this.props_list[key];
+                      break;
+                    }
                     default: {
                       console.log('There is no type of '+ this.border.value.data_type + '.');
                     }
@@ -289,6 +291,7 @@
         });
 
       },
+
       back_flag(newValue, oldValue) {
         if (newValue === true) {
           this.save_input();
@@ -296,22 +299,30 @@
           console.log('save the last node.');
         }
       },
+
       msgFileName(newValue, oldValue) {
         this.input_file = newValue;
-      }
-    },
-    methods: {
-      // TODO: input file v-model; delete border.bt
-      file_name(){
-        /*if (this.border.bt.type === 'file') {
-          let file = document.getElementById('pathbt');
-          $("#path").val(file.name);
-        }
-        else {
-
-        }*/
       },
 
+      msgModelName(newValue, oldValue) {
+        this.input_model = newValue;
+      },
+
+      msgUploadName: {
+        handler: function(newValue,oldValue){
+          let file = '';
+          if (newValue.dataset === '/') {
+            file = newValue.file;
+          } else {
+            file = newValue.dataset + '/' + newValue.file;
+          }
+          this.input_upload = file;
+        },
+        deep: true
+      }
+
+    },
+    methods: {
       save_input() {
         let obj = {};
         obj.name = this.border.value.name;
@@ -349,6 +360,10 @@
             obj.value = this.input_richtext;
             break;
           }
+          case 'upload': {
+            obj.value = this.input_upload;
+            break;
+          }
           default: {
             obj.value = null;
             console.log('There is no type of '+ this.border.value.data_type + '.');
@@ -359,13 +374,27 @@
       },
 
       fileSelect() {
-        //this.$emit('update:selectFileInDialog', this.input_file);
+        this.$emit('update:selectFileInDialog', this.input_file);
         this.$emit('update:fileSelectVisible', true);
       },
 
       modelSelect() {
-        //this.$emit('update:selectModelInDialog', this.input_model);
+        this.$emit('update:selectModelInDialog', this.input_model);
         this.$emit('update:modelSelectVisible', true);
+      },
+
+      uploadSelect() {
+        let arr = this.input_upload.split('/');
+        let len = arr.length;
+        let file = '', dataset = '';
+        if (len > 0) {
+          file = arr[len-1];
+        }
+        if (arr.pop() > 0) {
+          dataset = arr.join('/');
+        }
+        this.$emit('update:selectDatasetInDialog', file);
+        this.$emit('update:dialogUploadVisible', true);
       }
     }
   }

@@ -1,46 +1,44 @@
 <template>
   <div class="projectView">
-    <el-table
-      :data="tableData"
-      class="el-table-graph-detail"
-      style="width: 100%"
-      :cell-style="cellStyle"
-      :header-cell-style="headerCellStyle"
-      :default-sort = "{prop: 'date', order: 'descending'}">
-      <el-table-column
-        prop="name"
-        label="项目名"
-        sortable
-        width="180">
+    <el-table :data="tableData"
+              class="el-table-graph-detail"
+              style="width: 100%"
+              :cell-style="cellStyle"
+              :header-cell-style="headerCellStyle"
+              :default-sort = "{prop: 'date', order: 'descending'}">
+      <el-table-column prop="name"
+                       label="项目名"
+                       sortable
+                       width="180">
       </el-table-column>
-      <el-table-column
-        prop="date"
-        label="创建时间"
-        sortable
-        width="180">
+      <el-table-column prop="date"
+                       label="创建时间"
+                       sortable
+                       width="180">
       </el-table-column>
       <el-table-column>
         <template slot-scope="scope">
-          <el-button
-            size="mini"
-            type="primary"
-            @click="projectRename(scope.$index, scope.row)">重命名</el-button>
-          <el-button
-            size="mini"
-            type="danger"
-            @click="projectDelete(scope.$index, scope.row)">删除</el-button>
-          <el-button
-            size="mini"
-            @click="projectEnter(scope.$index, scope.row)">进入项目</el-button>
+          <el-button size="mini"
+                     type="primary"
+                     @click="projectRename(scope.$index, scope.row)"
+          >重命名</el-button>
+          <el-button size="mini"
+                     type="danger"
+                     @click="projectDelete(scope.$index, scope.row)"
+          >删除</el-button>
+          <el-button size="mini"
+                     @click="projectEnter(scope.$index, scope.row)"
+          >进入项目</el-button>
         </template>
       </el-table-column>
     </el-table>
 
     <br />
-    <el-button
-      type="primary"
-      icon="el-icon-circle-plus-outline"
-      @click="projectCreate">创建新项目</el-button>
+    <el-button type="primary"
+               icon="el-icon-circle-plus-outline"
+               @click="projectCreate">
+      创建新项目
+    </el-button>
   </div>
 </template>
 
@@ -59,13 +57,11 @@
         this.projectView();
       },
       methods: {
-        // TODO: fix project creation, input project name
-        // TODO: finished
+// ====================================================== project ======================================================
         projectView() {
           axios.post(this.$api.projectView)
             .then(res => {
               res = res.data;
-              // console.log('projectView-res:', res);
               if (res.succeed === 0) {
                 let dataTemple = [];
                 for (let key in res) {
@@ -80,7 +76,7 @@
                 this.tableData = dataTemple;
               } else {
                 this.$message({
-                  message: "获取项目列表失败。" + res.message,
+                  message: "获取项目列表失败！" + res.message,
                   type: "error",
                   showClose: true,
                   duration: "2000"
@@ -91,24 +87,16 @@
         },
 
         projectEnter (index, row) {
-          /*let dataRoute = JSON.stringify({
-            project_id: row.id,
-            project_name: row.name
-          });*/
-
           this.$router.push({name:"projectDetail", params: {project_id: row.id}});
         },
-        
-        //inputPattern:
-        //inputErrorMessage: '数据名长度不符，1至10个字符！',
+
         projectRename (index, row) {
           this.$prompt('请输入数据集名称', '重命名', {
             confirmButtonText: '确定',
             cancelButtonText: '取消',
             inputValue: row.name
           }).then(({ value }) => {
-            // console.log(value);
-            let postData = JSON.stringify({ // JSON格式，或qs.stringify (即xxx&xxx格式)
+            let postData = JSON.stringify({ // JSON格式，另 qs.stringify (xxx&xxx格式)
               project_id: row.id,
               project_name: value
             });
@@ -146,7 +134,7 @@
             });
             axios.post(this.$api.projectDelete, postData)
               .then(res => {
-                if (res.data.succeed === 0) { // 删除项目成功
+                if (res.data.succeed === 0) { // delete successfully
                   this.$message({
                     message: res.data.message,
                     type: "success",
@@ -177,20 +165,17 @@
             + ':' + date.getSeconds().toString();
         },
 
-        projectCreate: function () {
+        projectCreate() {
           let name = this.getDefaultFileName();
           let dataPost = JSON.stringify({
             project_name: name
           });
-          // console.log(dataPost);
 
           axios.post(this.$api.projectCreate, dataPost)
             .then(res => {
-              // console.log(res);
-              if (res.data.succeed == 0) {
-                // TODO: 不用跳進去 直接添加一個項目， 時間為剛才
-                // TODO: finished
+              if (res.data.succeed === 0) {
                 this.projectView();
+                // route
                 // this.$router.push({path:"/index/graphNew", params: {project_id: id}});
               } else {
                 this.$message({
@@ -204,6 +189,7 @@
             .catch(err => {});
         },
 
+// ==================================================== table style ====================================================
         cellStyle() {
           return "text-align:center"
         },

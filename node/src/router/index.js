@@ -1,12 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import HelloWorld from '@/components/HelloWorld'
+import HelloWorld from '../components/HelloWorld'
 import Index from '../views/Index.vue'
 import Database from '../views/Database.vue'
 import ProjectDetail from '../views/ProjectDetail.vue'
 import ProjectView from "../views/ProjectView.vue"
 
-Vue.use(Router)
+Vue.use(Router);
 
 export default new Router({
   mode: 'history',
@@ -33,15 +33,10 @@ export default new Router({
             component: ProjectView
         }
       ],
-
     }, {
       path: '/database',
       name: 'database',
       component: Database
-    }/*, {
-      path: '*',
-      component: HelloWorld,
-      redirect: '/index'
-    }*/
+    }
   ]
 })

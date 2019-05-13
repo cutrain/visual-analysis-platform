@@ -1,23 +1,36 @@
 <template>
-  <div class="tree-block" :draggable="!!isdraggable" @dragstart="dragstart($event)"
-       @dragend="dragend($event)">
+  <div class="tree-block"
+       :draggable="!!isdraggable"
+       @dragstart="dragstart($event)"
+       @dragend="dragend($event)"
+  >
     <div class="tree-row"
          @click="toggle"
          :tree-id="model.id"
-         :tree-p-id="model.parent_id">
-      <column
-        v-for="(subItem, subIndex) in columns"
-        v-bind:class="'align-' + subItem.align"
-        :field="subItem.field"
-        :width="subItem.width"
-        :flex="subItem.flex"
-        :key="subIndex">
+         :tree-p-id="model.parent_id"
+    >
+      <column v-for="(subItem, subIndex) in columns"
+              v-bind:class="'align-' + subItem.align"
+              :field="subItem.field"
+              :width="subItem.width"
+              :flex="subItem.flex"
+              :key="subIndex"
+      >
         <span v-if="subItem.type === 'selection'">
           <space :depth="depth"/>
-          <span v-if = "model.lists && model.lists.length" class="zip-icon" v-bind:class="[model.open ? 'arrow-bottom' : 'arrow-right']"></span>
-          <span v-else class="zip-icon arrow-transparent"></span>
-          <span v-if="subItem.formatter" v-html="subItem.formatter(model)"></span>
-          <span v-else v-html="model[subItem.field]"></span>
+          <span v-if = "model.lists && model.lists.length"
+                class="zip-icon-row"
+                v-bind:class="[model.open ? 'arrow-bottom-row' : 'arrow-right-row']"
+          ></span>
+          <span v-else
+                class="zip-icon-row arrow-transparent-row"
+          ></span>
+          <span v-if="subItem.formatter"
+                v-html="subItem.formatter(model)"
+          ></span>
+          <span v-else
+                v-html="model[subItem.field]"
+          ></span>
         </span>
 
         <span v-else-if="subItem.type === 'action'">
@@ -26,13 +39,23 @@
              :key="acIndex"
              type="text" size="small"
              @click.stop.prevent="acItem.onclick(model)">
-            <i v-if="!model.directory" :class="acItem.icon" v-html="acItem.formatter(model)" v-show="judgeAdd(acItem.text)"></i>
-            <i v-else :class="acItem.icon" v-html="acItem.formatter(model)" v-show="judge(acItem.text)"></i>
+            <i v-if="!model.directory"
+               :class="acItem.icon"
+               v-html="acItem.formatter(model)"
+               v-show="judgeAdd(acItem.text)"
+            ></i>
+            <i v-else
+               :class="acItem.icon"
+               v-html="acItem.formatter(model)"
+               v-show="judge(acItem.text)"
+            ></i>
           </a>
         </span>
 
         <span v-else>
-          <span v-if="subItem.formatter" v-html="subItem.formatter(model)"></span>
+          <span v-if="subItem.formatter"
+                v-html="subItem.formatter(model)"
+          ></span>
           <span v-else>{{model[subItem.field]}}</span>
         </span>
       </column>
@@ -48,16 +71,15 @@
         </div>
       </div>
     </div>
-    <row
-      v-show="model.open"
-      v-for="(item, index) in model.lists"
-      :model="item"
-      :columns="columns"
-      :key="index"
-      :isdraggable="isdraggable"
-      :depth="depth * 1 + 1"
-      v-if="isFolder">
-    </row>
+    <row v-show="model.open"
+         v-for="(item, index) in model.lists"
+         :model="item"
+         :columns="columns"
+         :key="index"
+         :isdraggable="isdraggable"
+         :depth="depth * 1 + 1"
+         v-if="isFolder"
+    ></row>
   </div>
 
 </template>
@@ -85,31 +107,19 @@
     },
     methods: {
       judge(title) {
-        if (title !== '查看') {
-          return true;
-        } else {
-          return false;
-        }
+        return title !== '查看';
       },
+
       judgeAdd(title) {
-        if (title !== '添加') {
-          return true;
-        } else {
-          return false;
-        }
+        return title !== '添加';
       },
-      judgeDialogInBorder(title) {
-        if (title !== 'border_dialog') {
-          return true;
-        } else {
-          return false;
-        }
-      },
+
       toggle() {
         if(this.isFolder) {
           this.model.open = !this.model.open
         }
       },
+
       dragstart(e) {
         if (navigator.userAgent.indexOf('Firefox') >= 0) { // 浏览器
           // Firefox drag have a bug
@@ -119,12 +129,15 @@
         window.dragParentNode = e.target
         e.target.style.opacity = 0.2
       },
+
       dragend(e) {
         e.target.style.opacity = 1;
       }
+
     },
   }
 </script>
+
 <style lang="scss">
   .tree-block{
     width: 100%;
@@ -188,7 +201,7 @@
       font-style: normal;
     }
   }
-  .zip-icon{
+  .zip-icon-row{
     display: inline-block;
     width: 8px;
     height: 8px;
@@ -196,13 +209,13 @@
     background: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAf0lEQVQ4T7XT0Q2AMAhF0dvNdALdSEdzBB3BDXQD85LGRNMCauS7nAKBxMdIhfwemIAtYpeAEeiANoLUgAGYI4gFqAMX8QAXiQBCNFDNRBVdIgpUkSfADjT3KqLACmg/XrWw5J+Li+VVYCZrMBbgJluA+tXA3Hv45ZgiR3i+OQBeSyYRPEyeUAAAAABJRU5ErkJggg==') no-repeat center;
     background-size: cover;
   }
-  .arrow-transparent{
+  .arrow-transparent-row{
     visibility: hidden;
   }
-  .arrow-right{
+  .arrow-right-row{
 
   }
-  .arrow-bottom{
+  .arrow-bottom-row{
     transform: rotate(90deg)
   }
   [draggable=true] {

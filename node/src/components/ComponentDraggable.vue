@@ -1,28 +1,37 @@
 <template>
-  <div v-if="!model.isdraggable" class="component-directory">
+  <div v-if="!model.isdraggable"
+       class="component-directory">
     <ul>
-      <div class="directory-row" @click="toggle">
+      <div class="directory-row"
+           @click="toggle">
         <br/>
         <b>
-          <span v-if = "model.lists && model.lists.length" class="zip-icon" v-bind:class="[model.open ? 'arrow-bottom' : 'arrow-right']"></span>
-          <span v-else class="zip-icon arrow-transparent"></span>
-          <svg class="icon" aria-hidden="true" v-if="!model.open">
+          <span v-if = "model.lists && model.lists.length"
+                class="zip-icon"
+                v-bind:class="[model.open ? 'arrow-bottom' : 'arrow-right']"
+          ></span>
+          <span v-else
+                class="zip-icon arrow-transparent"
+          ></span>
+          <svg class="icon"
+               aria-hidden="true"
+               v-if="!model.open">
             <use xlink:href="#icon-putongwenjianjia"></use>
           </svg>
-          <svg class="icon" aria-hidden="true" v-if="model.open">
+          <svg class="icon"
+               aria-hidden="true"
+               v-if="model.open">
             <use xlink:href="#icon-wenjianjia"></use>
           </svg>
           <span>{{model.display}}</span>
         </b>
       </div>
-      <component-draggable
-        v-show="model.open"
-        v-for="(item, index) in model.lists"
-        :key="index"
-        :model="item"
-        :drag_data="drag_data"
-      >
-      </component-draggable>
+      <component-draggable v-show="model.open"
+                           v-for="(item, index) in model.lists"
+                           :key="index"
+                           :model="item"
+                           :drag_data="drag_data"
+      ></component-draggable>
     </ul>
   </div>
   <li v-else="model.isdraggable">
@@ -77,9 +86,6 @@
         icon_database: false,
         icon_others: false,
       }
-    },
-    created() {
-
     },
     computed: {
       isFolder() {
