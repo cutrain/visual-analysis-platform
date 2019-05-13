@@ -65,12 +65,18 @@ class Node:
         print('node :', self._name, 'function :', node_type, eval(node_type), flush=True)
         self._func = func_pack(eval(node_type))
         self._thread = None
+        self._saveable = True
+        for i in self._out:
+            if i.type == 'Video':
+                self._saveable = False
 
     @property
     def data(self):
         return self._out
 
     def save(self, dirpath):
+        if not self._saveable:
+            return
         data = {
             'name':self._name,
             'detail':self._detail,
