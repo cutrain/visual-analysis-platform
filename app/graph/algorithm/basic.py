@@ -14,6 +14,8 @@ __all__ = [
     'image_outstream',
     'graph_instream',
     'graph_outstream',
+    'video_instream',
+    'video_outstream',
 ]
 
 def data_instream(**kwargs):
@@ -138,4 +140,72 @@ def graph_outstream(graph, **kwargs):
     data = graph2json(graph)
     with open(os.path.join(DATA_DIR, path), 'wb') as f:
         f.write(data)
+
+def video_instream(**kwargs):
+    global DATA_DIR
+    import cv2
+    path = kwargs.pop('path')
+    path = safepath(path)
+    path = os.path.join(DATA_DIR, path)
+    video = cv2.VideoCapture(path)
+    if video.isOpened() == False:
+        raise FileNotFoundError
+    video.release()
+    return [path]
+
+def video_outstream(video_opt_list, **kwargs):
+    global DATA_DIR
+    import cv2
+    path = kwargs.pop('path')
+    path = safepath(path)
+    path = os.path.join(DATA_DIR, path)
+    fourcc = kwargs.pop('codecc')
+    fps = int(kwargs.pop('fps'))
+    width = int(kwargs.pop('width'))
+    height = int(kwargs.pop('height'))
+    frame_start = int(kwargs.pop('frame_start'))
+    frame_length = int(kwargs.pop('frame_length'))
+
+    cap = cv2.VideoCapture(video_opt_list[0])
+    if fps == 0:
+        fps = cap.get(cv2.CAP_PROP_FPS)
+    else:
+        cap.set(cv2.CAP_PROP_FPS, fps)
+    if width == 0:
+        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH) + 0.5)
+    if height == 0:
+        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT) + 0.5)
+
+    if frame_start != 0:
+        cap.set(cv2.CAP_PROP_POS_FRAMES, frame_start)
+
+
+    funcs = []
+    for i in range(1, len(video_opt_list)):
+        if callable(video_opt_list[i]):
+            funcs.append(video_opt_list[i])
+        else:
+            raise NotImplementedError
+
+    videoWriter = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*fourcc), fps, (width, height))
+    cnt = 0
+    while (cap.isOpened()):
+        ret, frame = cap.read()
+        if ret and (frame_length != 0):
+            cnt += 1
+            if cnt % 10 == 0:
+                print('have solve {} frames'.format(cnt), flush=True)
+            for func in funcs:
+                frame = func(frame)
+            if frame.shape[0] != height or frame.shape[1] != width:
+                print('-'*100, flush=True)
+                print('change size', flush=True)
+                frame = cv2.resize(frame, (width, height))
+            videoWriter.write(frame)
+            frame_length -= 1
+        else:
+            break
+    cap.release()
+    videoWriter.release()
+
 

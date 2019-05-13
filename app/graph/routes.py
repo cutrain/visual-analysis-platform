@@ -80,7 +80,7 @@ def run():
     for node in all_nodes:
         ret = G.add_node(node['node_name'], node['node_type'], node['details'])
         if not ret:
-            message = 'add node fail ' + node['node_name'] + ' ' +  node['node_type'] + ' ' + node['details']
+            message = 'add node fail ' + node['node_name'] + ' ' +  node['node_type'] + ' ' + str(node['details'])
             fail['message'] = message
             return fail
     for line in all_lines:

@@ -200,7 +200,7 @@ function select_component(obj) {
   paramBox.clear();
   // addAttr(id, text, default_val, hover_text, type, list_choice, onchange_func) {
   paramBox.addAttr('save', '', '保存', '', 'button', null, 'onclick=saving()');
-  paramBox.addAttr('name', '组件名', detail.name, '符合变量命名规范，与后台函数名相同', 'text');
+  paramBox.addAttr('name', '组件函数名', detail.name, '符合变量命名规范，与后台函数名相同', 'text');
   paramBox.addAttr('display', '组件显示名', detail.display, '组件在组件表显示的名称', 'text');
   paramBox.addAttr('input_num', '输入数量', detail.in_port.length, '', 'number', null, 'data_num_onchange("input")');
   paramBox.addAttr('input_types', '', '', '', 'div');

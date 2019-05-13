@@ -1,6 +1,6 @@
 import os
 import json
-from flask import render_template, request
+from flask import render_template, request, send_file
 import numpy as np
 import pandas as pd
 
@@ -117,9 +117,13 @@ def get():
             }
         }
     elif outtype == 'Graph':
-        pass
+        ret = {
+            'type':'Graph',
+        }
     elif outtype == 'Video':
-        pass
+        ret = {
+            'type':'Video',
+        }
     else:
         raise NotImplementedError
 
@@ -155,3 +159,10 @@ def delete():
     else:
         os.remove(path)
 
+@data.route('/download/<string:path>', methods=['GET'])
+def download(path):
+    print(path)
+    global DATA_DIR
+    path = safepath(path)
+    path = os.path.join(os.getcwd(), DATA_DIR, path)
+    return send_file(path, as_attachment=True)
