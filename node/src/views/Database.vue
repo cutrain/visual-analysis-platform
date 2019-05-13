@@ -92,6 +92,7 @@
 <script>
   import * as axios from "axios";
   import dragTreeTable from "../components/dragTreeTable";
+  import api from "../utils/api-config.js";
   import { Loading } from 'element-ui';
 
   export default {
@@ -101,7 +102,7 @@
     },
     data () {
       return {
-        server:'http://web.ngrok.cutrain.top:8081/',  //'http://10.141.2.231:8081/',  // 图片地址
+        server: api.server,  // 图片地址
         tableData: [],                                // dataset_name 数据集名（即目录） file_name 文件名 file_size 文件大小
         sum: 1,                                       // 节点总数。无父节点，填0，故需从1开始编号
         levelNum: [],                                 // 每层节点总数，从0开始(0,1,2,...)
@@ -778,7 +779,14 @@
       },
 
       fileDownload(item) {
-
+        let path = '';
+        if (item.dataset_name === '') {
+          path = item.name;
+        } else {
+          path = item.dataset_name + '/' + item.name;
+        }
+//        axios.get(this.$api.dataDownload +'/'+path);
+        window.open(this.$api.dataDownload +'/'+path, '_');
       },
 
       returnSrc() {

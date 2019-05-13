@@ -311,7 +311,8 @@
   import circleDraggable from '../components/CircleDraggable.vue';
   import node from '../components/Node.vue';
   import paramBorder from '../components/paramBorder';
-  import dragTreeTable from '../components/dragTreeTable'
+  import dragTreeTable from '../components/dragTreeTable';
+  import api from '../utils/api-config.js';
   // import VueDragResize from 'vue-drag-resize';
 
   const LINE_CIRCLE_X_BIAS = 8;
@@ -329,7 +330,7 @@
     },
     data() {
       return {
-        server: 'http://web.ngrok.cutrain.top:8081/', //'http://10.141.2.231:8081/' ,  // TODO:
+        server: api.server,
         dataTypeInBorder: '',           // border: about data view
         stringInBorder: '',
         addressInBorder: '',

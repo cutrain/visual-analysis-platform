@@ -1,9 +1,11 @@
-// const server = 'http://localhost:8081/';
- const server = 'http://web.ngrok.cutrain.top:8081/';
+const server = 'http://10.141.2.231:8081/';
+//const server = 'http://localhost:8081/';
+ //const server = 'http://web.ngrok.cutrain.top:8081/';
 //const server = "https://easy-mock.com/mock/5c7fb3586498b753ed1f9cd0/vap/";
 //const server = 'http://10.141.2.231:8081/';
 
 const api = {
+  server : server,
   /**
    * project
    */
@@ -32,6 +34,7 @@ const api = {
   dataDelete : server + "data/delete",
   dataView : server + "data/view",
   dataCreateSet : server + "data/createset",
+  dataDownload : server + "data/download",
 
   /**
    * component
