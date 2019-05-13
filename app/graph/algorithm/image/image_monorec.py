@@ -48,7 +48,7 @@ def image_monorec(images, **kwargs):
     result_images = []
     for image in images:
         if len(image.shape) == 3:
-            image = image[:,:,::-1]
+            image = image[:,:,::-1].copy()
         bbox = detect(image, class_)
         image = draw_boxes(image, bbox, copy=False)
         if len(image.shape) == 3:

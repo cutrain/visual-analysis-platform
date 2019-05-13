@@ -1,6 +1,6 @@
 {
   "name": "image_monorec",
-  "display": "物体识别",
+  "display": "物体检测",
   "in_port": [
     "Image"
   ],

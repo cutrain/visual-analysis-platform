@@ -1,0 +1,24 @@
+{
+  "name": "accuracy",
+  "display": "准确率",
+  "in_port": [
+    "DataFrame",
+    "DataFrame"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": [
+    {
+      "name": "true_posi",
+      "display": "GroundTruth位置",
+      "type": "list",
+      "default": "left",
+      "note": "",
+      "list": [
+        "left",
+        "right"
+      ]
+    }
+  ]
+}

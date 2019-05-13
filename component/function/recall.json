@@ -1,0 +1,24 @@
+{
+  "name": "recall",
+  "display": "召回率",
+  "in_port": [
+    "DataFrame",
+    "DataFrame"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": [
+    {
+      "name": "true_posi",
+      "display": "GroudTruth位置",
+      "type": "list",
+      "default": "left",
+      "note": "",
+      "list": [
+        "left",
+        "right"
+      ]
+    }
+  ]
+}
