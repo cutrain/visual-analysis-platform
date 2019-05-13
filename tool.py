@@ -46,7 +46,11 @@ def get_type(filepath=None, data=None):
             ans = filetype.guess_mime(filepath)
             print('filetype : ', filepath, ans)
             if ans is None:
-                return 'DataFrame'
+                if filepath[-5:] == '.json' or filepath[-4:] == '.mat':
+                    return "Graph"
+                elif filepath[-4:] == '.csv':
+                    return "DataFrame"
+                return "Unknown"
             if ans.find('image') != -1:
                 return "Image"
             if ans.find('video') != -1:
