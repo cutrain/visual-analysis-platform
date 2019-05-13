@@ -1,11 +1,11 @@
 {
-  "name": "image_monorec",
+  "name": "video_monorec",
   "display": "物体检测",
   "in_port": [
-    "Image"
+    "Video"
   ],
   "out_port": [
-    "Image"
+    "Video"
   ],
   "params": [
     {

@@ -12,6 +12,55 @@
       "type": "upload",
       "default": "0",
       "note": ""
+    },
+    {
+      "name": "codecc",
+      "display": "编码",
+      "type": "list",
+      "default": "XVID",
+      "note": "",
+      "list": [
+        "XVID",
+        "mp4v",
+        "X264",
+        "FLV1",
+        "I420"
+      ]
+    },
+    {
+      "name": "fps",
+      "display": "帧率",
+      "type": "int",
+      "default": "0",
+      "note": "0表示与原帧率相同"
+    },
+    {
+      "name": "width",
+      "display": "分辨率（宽）",
+      "type": "int",
+      "default": "0",
+      "note": "0表示与原宽度相同"
+    },
+    {
+      "name": "height",
+      "display": "分辨率（高）",
+      "type": "int",
+      "default": "0",
+      "note": "0表示与原宽度相同"
+    },
+    {
+      "name": "frame_start",
+      "display": "起始帧",
+      "type": "int",
+      "default": "0",
+      "note": ""
+    },
+    {
+      "name": "frame_length",
+      "display": "视频长度（帧）",
+      "type": "int",
+      "default": "-1",
+      "note": "-1代表直到视频结束"
     }
   ]
 }

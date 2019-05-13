@@ -11,7 +11,7 @@
   "params": [
     {
       "name": "true_posi",
-      "display": "GroudTruth位置",
+      "display": "GroundTruth端口",
       "type": "list",
       "default": "left",
       "note": "",

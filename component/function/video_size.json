@@ -9,10 +9,31 @@
   ],
   "params": [
     {
-      "name": "size",
-      "display": "大小",
-      "type": "text",
-      "default": "1280x720",
+      "name": "left",
+      "display": "left",
+      "type": "int",
+      "default": "0",
+      "note": ""
+    },
+    {
+      "name": "top",
+      "display": "top",
+      "type": "int",
+      "default": "0",
+      "note": ""
+    },
+    {
+      "name": "right",
+      "display": "right",
+      "type": "int",
+      "default": "640",
+      "note": ""
+    },
+    {
+      "name": "bottom",
+      "display": "bottom",
+      "type": "int",
+      "default": "480",
       "note": ""
     }
   ]

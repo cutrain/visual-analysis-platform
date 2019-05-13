@@ -1,0 +1,19 @@
+{
+  "name": "graph_kcore",
+  "display": "K-core",
+  "in_port": [
+    "Graph"
+  ],
+  "out_port": [
+    "Graph"
+  ],
+  "params": [
+    {
+      "name": "k",
+      "display": "k",
+      "type": "int",
+      "default": "2",
+      "note": "k连通度"
+    }
+  ]
+}
