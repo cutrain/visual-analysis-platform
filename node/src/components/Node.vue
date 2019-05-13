@@ -271,7 +271,7 @@
         // before loading, clear
         this.$emit('update:stringInBorder', '');
         this.$emit('update:imageInBorder', {url:'',shape:''});
-        this.$emit('update:addressInBorder', '');
+        this.$emit('update:addressInBorder','');
 
         let $detail_top = $("<div class='detail-top' style='order:0;'>属性</div>")
         let dataPost =JSON.stringify({

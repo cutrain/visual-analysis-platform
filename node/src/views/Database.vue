@@ -172,6 +172,12 @@
               formatter: (item) => {
                 return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-shanchu1"></use></svg>'+'删除 </i>'
               }
+            }, {
+              text: '查看',
+              onclick: this.fileDownload,
+              formatter: (item) => {
+                return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-xiazai"></use></svg>'+'下载 </i>'
+              }
             }]
           },
           ],
@@ -769,6 +775,10 @@
               console.log(err.message);
             });
         }).catch(() => {})
+      },
+
+      fileDownload(item) {
+
       },
 
       returnSrc() {
