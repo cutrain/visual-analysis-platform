@@ -109,7 +109,7 @@ def image_instream(**kwargs):
 def image_outstream(images, **kwargs):
     import cv2
     path = kwargs.pop('path')
-    if len(imaegs) == 1:
+    if len(images) == 1:
         cv2.imwrite(os.path.join(DATA_DIR, path), images[0])
     else:
         cnt = 0
@@ -198,8 +198,6 @@ def video_outstream(video_opt_list, **kwargs):
             for func in funcs:
                 frame = func(frame)
             if frame.shape[0] != height or frame.shape[1] != width:
-                print('-'*100, flush=True)
-                print('change size', flush=True)
                 frame = cv2.resize(frame, (width, height))
             videoWriter.write(frame)
             frame_length -= 1

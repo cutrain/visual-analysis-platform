@@ -15,8 +15,8 @@ __all__ = [
 ]
 def image_resolution(images, **kwargs):
     import cv2
-    reso = kwargs.pop('reso')
-    width, height = map(int, reso.split(','))
+    width = int(kwargs.pop('width'))
+    height = int(kwargs.pop('height'))
     result_images = list(map(lambda x:cv2.resize(x, (width, height)), images))
     return result_images
 
@@ -85,7 +85,6 @@ def image_close(images, **kwargs):
     import cv2
     import numpy as np
     kernel_size = tuple(map(int, kwargs.pop('kernel_size').split(',')))
-    iter_n = int(kwargs.pop('iterations'))
     kernel = np.ones(kernel_size, np.uint8)
     result_images = list(map(lambda x:cv2.morphologyEx(x, cv2.MORPH_CLOSE, kernel), images))
     return result_images
@@ -94,10 +93,9 @@ def image_open(images, **kwargs):
     import cv2
     import numpy as np
     kernel_size = tuple(map(int, kwargs.pop('kernel_size').split(',')))
-    iter_n = int(kwargs.pop('iterations'))
     kernel = np.ones(kernel_size, np.uint8)
     result_images = list(map(lambda x:cv2.morphologyEx(x, cv2.MORPH_OPEN, kernel), images))
-    return result_imkernels
+    return result_images
 
 def image_noiseness(images, **kwargs):
     import cv2

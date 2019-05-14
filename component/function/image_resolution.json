@@ -9,11 +9,18 @@
   ],
   "params": [
     {
-      "name": "reso",
-      "display": "分辨率",
-      "type": "text",
-      "default": "1280x760",
-      "note": "用x分隔，如1960x1080，640x480"
+      "name": "width",
+      "display": "分辨率(宽)",
+      "type": "int",
+      "default": "640",
+      "note": ""
+    },
+    {
+      "name": "height",
+      "display": "分辨率（高）",
+      "type": "int",
+      "default": "480",
+      "note": ""
     }
   ]
 }
