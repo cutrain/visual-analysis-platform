@@ -242,8 +242,6 @@ class Graph:
         else:
             for key in run_node:
                 if key in self.nodes:
-                    print(key)
-                    print(self.nodes[key], flush=True)
                     last.update({key : self.nodes[key]})
                     self.nodes[key].status = 1
 
@@ -256,7 +254,7 @@ class Graph:
                 for pre in val._in_port:
                     if pre is not None:
                         name = pre.node._name
-                        if name not in last:
+                        if name not in last and pre.node.status != 0:
                             new_dict.update({name : self.nodes[name]})
                             changed = True
             last.update(new_dict)
