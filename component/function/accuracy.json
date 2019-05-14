@@ -19,6 +19,20 @@
         "left",
         "right"
       ]
+    },
+    {
+      "name": "truth_column",
+      "display": "测试集label列名",
+      "type": "text",
+      "default": "label",
+      "note": "如果不存在则使用第一列"
+    },
+    {
+      "name": "pred_column",
+      "display": "预测列名",
+      "type": "text",
+      "default": "predict",
+      "note": "如果不存在则使用第一列"
     }
   ]
 }

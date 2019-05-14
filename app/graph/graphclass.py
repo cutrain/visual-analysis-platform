@@ -288,7 +288,6 @@ class Graph:
                 if val.status == 1:
                     val()
                 elif val.status == 0:
-                    print('saving')
                     val.save(os.path.join(CACHE_DIR, self.pid))
                     delkey.append(key)
                 elif val.status == -1:

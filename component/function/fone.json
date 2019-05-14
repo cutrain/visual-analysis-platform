@@ -19,6 +19,32 @@
         "left",
         "right"
       ]
+    },
+    {
+      "name": "average",
+      "display": "average",
+      "type": "list",
+      "default": "macro",
+      "note": "",
+      "list": [
+        "micro",
+        "macro",
+        "weighted"
+      ]
+    },
+    {
+      "name": "truth_column",
+      "display": "测试集label列名",
+      "type": "text",
+      "default": "label",
+      "note": ""
+    },
+    {
+      "name": "pred_column",
+      "display": "预测列名",
+      "type": "text",
+      "default": "predict",
+      "note": ""
     }
   ]
 }

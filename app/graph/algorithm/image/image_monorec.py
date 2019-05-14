@@ -52,6 +52,6 @@ def image_monorec(images, **kwargs):
         bbox = detect(image, class_)
         image = draw_boxes(image, bbox, copy=False)
         if len(image.shape) == 3:
-            image = image[:,:,::-1]
+            image = image[:,:,::-1].copy()
         result_images.append(image)
     return result_images
