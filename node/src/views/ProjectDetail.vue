@@ -1714,7 +1714,7 @@
               }
               if (pro_point !== -1) {
                 if (dataList[pro_point].id === parent) {
-                  dataList[pro_point].lists.push(dataList[point]);
+                  dataList[pro_point].lists.splice(0, 0, dataList[point]);
                 }
               }
             }
