@@ -3,7 +3,8 @@
        class="component-directory">
     <ul>
       <div class="directory-row"
-           @click="toggle">
+           @click="toggle"
+           :style="{paddingLeft: padding + '%'}">
         <br/>
         <b>
           <span v-if = "model.lists && model.lists.length"
@@ -23,7 +24,7 @@
                v-if="model.open">
             <use xlink:href="#icon-wenjianjia"></use>
           </svg>
-          <span>{{model.display}}</span>
+          <span :style="{fontSize:depth+'px'}">{{model.display}}</span>
         </b>
       </div>
       <component-draggable v-show="model.open"
@@ -31,6 +32,8 @@
                            :key="index"
                            :model="item"
                            :drag_data="drag_data"
+                           :depth="depth - 5"
+                           :padding="padding + 1"
       ></component-draggable>
     </ul>
   </div>
@@ -80,7 +83,7 @@
   import $ from 'jquery';
   export default {
     name: "componentDraggable",
-    props: ['drag_data', 'model', 'node_items'],
+    props: ['drag_data', 'model', 'node_items', 'depth', 'padding'],
     data() {
       return {
         icon_database: false,

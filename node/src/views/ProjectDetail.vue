@@ -14,6 +14,8 @@
           :drag_data="drag_data"
           :node_items="node_items"
           :key="index"
+          depth="20"
+          padding="0"
           :draggable="item.isdraggable">
         </component-draggable>
       </el-scrollbar>
@@ -53,26 +55,6 @@
                       :native="false">
 
         </el-scrollbar>
-        <!--<VueDragResize
-          :isActive="true"
-          :w="200"
-          :h="heightDragResize"
-          @activated="activeEvent()"
-          ref="vueDrag"
-          :class="node_show_data_box? 'data-view' : 'none-data-view'" id="data-box">
-          <div class='detail-top'>数据</div>
-          <el-button id="testButton" @click="msg += 1">{{msg}}</el-button>
-          <el-input v-model="test1"></el-input>
-          <el-table :data="tableInBorder.data"
-                      style="width: 100%">
-              <el-table-column v-for="(item, index) in tableInBorder.title"
-                               :key="index"
-                               :prop="item"
-                               :label="item"
-                               width="150"
-              ></el-table-column>
-            </el-table>
-        </VueDragResize>-->
 
         <node v-for="(item, index) in node_items"
               :style="{top:item.posiY+'px', left:item.posiX+'px'}"
@@ -93,7 +75,6 @@
               v-bind:node_show_button_lists.sync="node_show_button_lists"
               v-bind:node_show_detail_box.sync="node_show_detail_box"
               v-bind:node_show_data_box.sync="node_show_data_box"
-              v-bind:heightDragResize.sync="heightDragResize"
               v-bind:tableInBorder.sync="tableInBorder"
               v-bind:imageInBorder.sync="imageInBorder"
               v-bind:stringInBorder.sync="stringInBorder"
@@ -269,19 +250,16 @@
                      :onDrag="onTreeDataChangeFile"
                      v-bind:isdraggable="false"
       ></dragTreeTable>
-      <!--<p>已选中文件：{{selectFileInDialog}}</p>-->
       <span slot="footer" class="dialog-footer">
         <el-button @click="fileSelectVisible = false">取 消</el-button>
         <el-button type="primary" @click="fileSelected">确 定</el-button>
       </span>
     </el-dialog>
-    <!-- 暂时共用 -->
     <el-dialog title="选择模型" :visible.sync="modelSelectVisible">
       <dragTreeTable :data="treeDataModel"
                      :onDrag="onTreeDataChangeModel"
                      v-bind:isdraggable="false"
       ></dragTreeTable>
-      <!--<p>已选中文件：{{selectModelInDialog}}</p>-->
       <span slot="footer" class="dialog-footer">
         <el-button @click="modelSelectVisible = false">取 消</el-button>
         <el-button type="primary" @click="modelSelected">确 定</el-button>
@@ -311,9 +289,8 @@
   import circleDraggable from '../components/CircleDraggable.vue';
   import node from '../components/Node.vue';
   import paramBorder from '../components/paramBorder';
-  import dragTreeTable from '../components/dragTreeTable';
-  import api from '../utils/api-config.js';
-  // import VueDragResize from 'vue-drag-resize';
+  import dragTreeTable from '../components/dragTreeTable'
+  import api from '../utils/api-config.js'
 
   const LINE_CIRCLE_X_BIAS = 8;
   const LINE_CIRCLE_Y_BIAS = 8;
@@ -326,20 +303,21 @@
       circleDraggable,
       paramBorder,
       dragTreeTable,
-      //VueDragResize
     },
     data() {
       return {
-        server: api.server,
+        server: api.server, //'http://10.141.2.231:8081/' ,  // TODO:
         dataTypeInBorder: '',           // border: about data view
         stringInBorder: '',
         addressInBorder: '',
         imageInBorder: {},
         tableInBorder: {},              // { 'title': [ 'head1' , 'head2' ], 'data': [{ 'head1': 1, 'head2': 'a' }, { 'head1': 7, 'head2': 'b' }, { 'head1': 8, 'head2': 'c' }]}
-        heightDragResize: 50,           // 可拖动数据显示框的高度
         sum: 1,                         // 节点总数。无父节点，填0，故需从1开始编号
         levelNum: [],                   // 每层节点总数，从0开始(0,1,2,...)
         finished: true,                 // node state
+        curr_model_id: 0,
+        curr_file_id: 0,
+        curr_upload_id: 0,
         treeDataModel: {
           radio: 0,
           lists: [],
@@ -361,7 +339,10 @@
               text: 'border_dialog',
               onclick: this.dialogModelSelect,
               formatter: (item) => {
-                return '<i>选择 </i>'
+                if (item.id === this.curr_model_id)
+                  return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-radio-select"></use></svg>'+'</i>';
+                else
+                  return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-radio-empty"></use></svg>'+'</i>'
               }
             }]
           },
@@ -388,7 +369,10 @@
               text: 'border_dialog',
               onclick: this.dialogFileSelect,
               formatter: (item) => {
-                return '<i>选择 </i>'
+                if (item.id === this.curr_file_id)
+                  return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-radio-select"></use></svg>'+'</i>';
+                else
+                  return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-radio-empty"></use></svg>'+'</i>'
               }
             }]
           },
@@ -415,7 +399,10 @@
               text: '选择',
               onclick: this.folderUploadSelect,
               formatter: (item) => {
-                return '<i>选择 </i>'
+                if (item.id === this.curr_upload_id)
+                  return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-radio-select"></use></svg>'+'</i>';
+                else
+                  return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-radio-empty"></use></svg>'+'</i>'
               }
             }]
           },
@@ -466,10 +453,9 @@
       },
 
       dataTypeInBorder(newValue) {
-
-          if (newValue === 'Image') {
-            this.imageInBorder = {};
-          }
+        if (newValue === 'Image') {
+          this.imageInBorder = {};
+        }
 
       },
 
@@ -1052,12 +1038,6 @@
       console.log('-----------------------------');
     },
     methods: {
-      /*activeEvent() {
-        console.log('activeEvent......');
-        // console.log(this.$refs['vueDrag'].focus());
-        console.log(this.$refs.vueDrag.$children[1].focus());
-        // this.$refs.vueDrag.focus();
-      },*/
 
 // ====================================================== buttons ======================================================
       load_button() {
@@ -1603,6 +1583,7 @@
       },
 
       dialogFileSelect(item) { // Dialog
+        this.curr_file_id = item.id;
         let datasetName = '';
         if (item.dataset_name === '') {
           datasetName = item.name;
@@ -1614,6 +1595,7 @@
       },
 
       dialogModelSelect(item) { // Dialog
+        this.curr_model_id = item.id;
         let datasetName = '';
         if (item.dataset_name === '') {
           datasetName = item.name;
@@ -1648,6 +1630,7 @@
       },
 
       folderUploadSelect(item) { // Dialog
+        this.curr_upload_id = item.id;
         let datasetName = '';
         if (item.dataset_name === '') {
           datasetName = item.name;
@@ -1657,7 +1640,7 @@
         this.selectDatasetInDialog = datasetName;
         console.log(datasetName);
       },
-// ================================================= component sizebar =========================================
+// ================================================== component ========================================================
       component_init() {
         let _this = this;
         function nodes_build(dataList, parentId, parentName, lis) {
@@ -1752,7 +1735,7 @@
           })
           .catch(() => {});
       },
-// ==================================================== canvas functions =========================================
+// =============================================== canvas functions ====================================================
       getX(obj) {
         let parObj = obj;
         let left = obj.offsetLeft;

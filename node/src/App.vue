@@ -6,10 +6,11 @@
              @select="handleSelect"
              text-color="#7BBFEA"
              active-text-color="#409EFF"
+
     >
-      <el-menu-item index="index">主页</el-menu-item>
-      <el-menu-item index="database">数据</el-menu-item>
-      <section id='user' v-show="$route.path !== '/'">
+      <el-menu-item index="index" v-show="$route.path !== '/' && $route.path !== '/Login' && $route.path !== '/welcome'">主页</el-menu-item>
+      <el-menu-item index="database" v-show="$route.path !== '/' && $route.path !== '/Login' && $route.path !== '/welcome'">数据</el-menu-item>
+      <section id='user' v-show="$route.path !== '/' && $route.path !== '/Login' && $route.path !== '/welcome'">
         <section>
           <img id="logo"
                src="./assets/logo.jpg"

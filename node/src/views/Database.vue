@@ -36,7 +36,7 @@
       <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
       <div class="el-upload__tip" slot="tip">
         <!--<p>上传格式包括</p>-->
-        <p>上传前请先选择 <el-button type="primary" size="mini" @click="selectDataset_button()">目录</el-button>，已选中目录： {{selectDataset}}</p>
+        <p>请先选择上传目录 <el-button type="primary" size="mini" @click="selectDataset_button()" round>浏览</el-button>，已选中： {{selectDataset}}</p>
       </div>
     </el-upload>
 
@@ -60,10 +60,10 @@
         </el-scrollbar>
       </div>
       <div v-show="VideoVisible">
-        <p>下载：{{videoDownload}}</p>
+        <p>当前类型不支持查看，请下载</p>
       </div>
       <div v-show="GraphVisible">
-        <p>下载：{{graphDownload}}</p>
+        <p>当前类型不支持查看，请下载</p>
       </div>
 
     </el-dialog>
@@ -78,8 +78,8 @@
         ></dragTreeTable>
       </el-scrollbar>
 
-      <p>选择上述目录，或选择 <el-button size="mini" @click="selectDatasetInDialog = '/'">根目录</el-button></p>
-      <p>已选中目录：{{selectDatasetInDialog}}</p>
+      <p>选择上述目录，或选择 <el-button size="mini" @click="dialogUploadSelectRoot" round>根目录</el-button></p>
+      <p>已选中：{{selectDatasetInDialog}}</p>
       <span slot="footer" class="dialog-footer">
         <el-button @click="dialogTableUploadVisible = false">取 消</el-button>
         <el-button type="primary" @click="handleHasSelected">确 定</el-button>
@@ -92,7 +92,7 @@
 <script>
   import * as axios from "axios";
   import dragTreeTable from "../components/dragTreeTable";
-  import api from "../utils/api-config.js";
+  import api from '../utils/api-config.js';
   import { Loading } from 'element-ui';
 
   export default {
@@ -102,9 +102,10 @@
     },
     data () {
       return {
-        server: api.server,  // 图片地址
+        server: api.server,  //'http://10.141.2.231:8081/',  // 图片地址
         tableData: [],                                // dataset_name 数据集名（即目录） file_name 文件名 file_size 文件大小
         sum: 1,                                       // 节点总数。无父节点，填0，故需从1开始编号
+        curr_file_id: 0,                              // 单选：选中节点id, id从1开始
         levelNum: [],                                 // 每层节点总数，从0开始(0,1,2,...)
         gridData:  [],                                // "查看"弹出对话框
         col_num: 0,                                   // DataFrame类型返回参数
@@ -171,7 +172,7 @@
               text: '编辑',
               onclick: this.fileOrFolderDelete,
               formatter: (item) => {
-                return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-shanchu1"></use></svg>'+'删除 </i>'
+                return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-shanchu1"></use></svg>'+'删除    </i>'
               }
             }, {
               text: '查看',
@@ -204,7 +205,10 @@
               text: '选择',
               onclick: this.folderUploadSelect,
               formatter: (item) => {
-                return '<i>选择 </i>'
+                if (item.id === this.curr_file_id)
+                  return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-radio-select"></use></svg>'+'</i>';
+                else
+                  return '<i>'+'<svg class="icon" aria-hidden="true"><use xlink:href="#icon-radio-empty"></use></svg>'+'</i>'
               }
             }]
           },
@@ -272,67 +276,6 @@
         }
       },
 
-      folderView() { // 上传：选择需要上传的目录
-        let dataTemple = [];
-        const _this = this;
-
-        function transform(obj, dataList, preId, preName) {
-
-          for (let key in obj) {
-            if (obj.hasOwnProperty(key)) {
-              if (!Array.isArray(obj[key])) { // isFolder
-                let data = {};
-                data.id = _this.sum;
-                _this.sum++;
-                if (preId.length === 0) {
-                  data.parent_id = 0;
-                } else {
-                  data.parent_id = preId[preId.length-1]; // the last one
-                }
-                preId.push(data.id);
-                data.name = key;
-                data.open = true;
-                data.directory = true;
-                data.lists = [];
-                //levelNum
-                let len = _this.levelNum.length;
-                if (len === 0) {
-                  _this.levelNum.push(0);
-                } else {
-                  if(len === preId.length) {
-                    _this.levelNum[len-1]++;
-                  } else { // len < preId.length
-                    _this.levelNum.push(0);
-                  }
-                }
-                data.order = _this.levelNum[_this.levelNum.length-1];
-                data.dataset_name = preName.join('/');
-                dataList.push(data);
-                preName.push(key);
-                transform(obj[key], dataList, preId, preName);
-                preId.pop();
-                preName.pop();
-              }
-            }
-          }
-        }
-
-        axios.post(this.$api.dataView)
-          .then(res => {
-            let structure = res.data.structure;
-            structure = JSON.parse(structure);
-            if (typeof structure === 'object' && typeof structure !== 'number') { // object对象
-              let preId = [], preName = [];
-              transform(structure, dataTemple, preId, preName);
-            }
-            this.dataInsertByParentId(dataTemple);
-            let newDataTemple = [];
-            this.dataListDeleteExceptRootLevel(dataTemple, newDataTemple);
-            this.onTreeDataUploadChange(newDataTemple);
-          })
-          .catch(err => {});
-      },
-
       dataView() {
         let dataTemple = [];
         const _this = this;
@@ -390,6 +333,67 @@
               dataT[i] = obj;
             }
             this.tableData = dataT;
+          })
+          .catch(err => {});
+      },
+
+      folderView() { // 上传：选择需要上传的目录
+        let dataTemple = [];
+        const _this = this;
+
+        function transform(obj, dataList, preId, preName) {
+
+          for (let key in obj) {
+            if (obj.hasOwnProperty(key)) {
+              if (!Array.isArray(obj[key])) { // isFolder
+                let data = {};
+                data.id = _this.sum;
+                _this.sum++;
+                if (preId.length === 0) {
+                  data.parent_id = 0;
+                } else {
+                  data.parent_id = preId[preId.length-1]; // the last one
+                }
+                preId.push(data.id);
+                data.name = key;
+                data.open = true;
+                data.directory = true;
+                data.lists = [];
+                //levelNum
+                let len = _this.levelNum.length;
+                if (len === 0) {
+                  _this.levelNum.push(0);
+                } else {
+                  if(len === preId.length) {
+                    _this.levelNum[len-1]++;
+                  } else { // len < preId.length
+                    _this.levelNum.push(0);
+                  }
+                }
+                data.order = _this.levelNum[_this.levelNum.length-1];
+                data.dataset_name = preName.join('/');
+                dataList.push(data);
+                preName.push(key);
+                transform(obj[key], dataList, preId, preName);
+                preId.pop();
+                preName.pop();
+              }
+            }
+          }
+        }
+
+        axios.post(this.$api.dataView)
+          .then(res => {
+            let structure = res.data.structure;
+            structure = JSON.parse(structure);
+            if (typeof structure === 'object' && typeof structure !== 'number') { // object对象
+              let preId = [], preName = [];
+              transform(structure, dataTemple, preId, preName);
+            }
+            this.dataInsertByParentId(dataTemple);
+            let newDataTemple = [];
+            this.dataListDeleteExceptRootLevel(dataTemple, newDataTemple);
+            this.onTreeDataUploadChange(newDataTemple);
           })
           .catch(err => {});
       },
@@ -530,6 +534,7 @@
                     duration: "1000"
                   });
                   this.draggableDataView();
+                  this.folderView();
                 } else {
                   this.$message({
                     message: "创建文件夹失败！" + res.message,
@@ -575,6 +580,7 @@
                     duration: "1000"
                   });
                   this.draggableDataView();
+                  this.folderView();
                 } else {
                   this.$message({
                     message: "创建文件夹失败！" + res.message,
@@ -618,6 +624,8 @@
 
       fileGet (item) { // 查看
         let datasetName = this.getDatasetName(item);
+        console.log('------------------');
+        console.log(item);
 
         let dataPost = JSON.stringify({
           dataset: datasetName,
@@ -763,6 +771,7 @@
                   duration: "1000"
                 });
                 this.draggableDataView();
+                this.folderView();
               } else {
                 this.$message({
                   message: res.data.message,
@@ -779,13 +788,14 @@
       },
 
       fileDownload(item) {
+
         let path = '';
         if (item.dataset_name === '') {
           path = item.name;
         } else {
           path = item.dataset_name + '/' + item.name;
         }
-//        axios.get(this.$api.dataDownload +'/'+path);
+        axios.get(this.$api.dataDownload +'/'+path);
         window.open(this.$api.dataDownload +'/'+path, '_');
       },
 
@@ -844,15 +854,17 @@
       handleHasSelected() {
         this.selectDataset = this.selectDatasetInDialog;
         this.dialogTableUploadVisible = false;
+        // this.curr_file_id = 0;
       },
 
       selectDataset_button() {
         this.dialogTableUploadVisible = true;
         this.selectDatasetInDialog = this.selectDataset;
-        this.folderView(); // 显示“选择目录对话框”时(即dialogTableUploadVisible为true)，刷新目录
+        // this.folderView(); // 显示“选择目录对话框”时(即dialogTableUploadVisible为true)，刷新目录
       },
 
       folderUploadSelect(item) { // Dialog
+        this.curr_file_id = item.id; // 单选
         let datasetName = '';
         if (item.dataset_name === '') {
           datasetName = item.name;
@@ -860,7 +872,12 @@
           datasetName = item.dataset_name + '/'+item.name;
         }
         this.selectDatasetInDialog = datasetName;
-        console.log(datasetName);
+        // console.log(datasetName);
+      },
+
+      dialogUploadSelectRoot() { // 选中根目录
+        this.selectDatasetInDialog = '/';
+        this.curr_file_id = 0;
       },
 
       uploadSuccess() {
@@ -927,5 +944,13 @@
   #textAddFolder {
     font-size: 12px;
     color: #606266;
+  }
+
+  .icon-show {
+    display: block;
+  }
+
+  .icon-hidden {
+    display: none;
   }
 </style>

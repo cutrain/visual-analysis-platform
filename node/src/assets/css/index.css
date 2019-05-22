@@ -28,11 +28,13 @@ body {
   flex:auto;
   position:absolute;
   width:300px;
-  height:1000px;
+  height:93.5vh;
   right:200px;
   top:0px;
   background:#ffffff;
+
 }
+
 .detail-view{
   height:auto;
   background:#ffffff;
@@ -53,12 +55,14 @@ body {
   border: 1px solid rgb(129, 179, 224);
   padding: 2px;
   margin-top:10px;
+  overflow: scroll;
 }
 .table-div{
   width: 100%;
   height: auto;
   max-height:350px;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y: auto;
 }
 
 .delete-div{
@@ -143,7 +147,7 @@ span {
   padding-right: 10px;
   border-radius: 20px;
   border: 2px solid rgb(160, 207, 255);
-  background-color: #f2f6fc;
+  background-color: #ffffff;
   color: rgb(80,80,80);
 }
 
@@ -162,20 +166,18 @@ span {
 .node-select {
   cursor: pointer;
   position:absolute;
-
   padding-right: 10px;
   border-radius: 20px;
   border: 2px solid rgb(160, 207, 255);
-
-  background : linear-gradient(
-  rgba(0, 0, 0, 0.12),
-  rgba(0, 0, 0, 0.12)
+  background: #ffffff linear-gradient(
+    rgba(0, 0, 0, 0.12),
+    rgba(0, 0, 0, 0.12)
   );
 }
 
 .node-select:hover{
   cursor: pointer;
-  background: linear-gradient(
+  background: #ffffff linear-gradient(
     rgba(0, 0, 0, 0.1),
     rgba(0, 0, 0, 0.1)
   );
@@ -184,7 +186,7 @@ span {
 
 .node-select:active{
   cursor: pointer;
-  background:linear-gradient(
+  background: #ffffff linear-gradient(
   rgba(0, 0, 0, 0.12),
   rgba(0, 0, 0, 0.12)
   );
@@ -252,7 +254,50 @@ span {
   margin:10px;
   padding:10px;
 }
+
 .catalogy:hover{
   background:#0080ff;
   cursor:pointer;
+}
+
+/* 文字提示, 边框、箭头 */
+.el-tooltip__popper.is-light {
+  border: 1px solid #81b3e0;
+}
+
+.el-tooltip__popper.is-light[x-placement^=bottom] .popper__arrow {
+  border-bottom-color: #81b3e0;
+}
+
+.el-tooltip__popper.is-dark {
+  background: #81b3e0;
+  color: #FFF;
+}
+
+.el-tooltip__popper.is-dark[x-placement^=bottom] .popper__arrow {
+  border-bottom-color: #81b3e0;
+}
+
+/*chrome滚动条颜色设置*/
+
+*::-webkit-scrollbar { /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+  width:8px;
+  height:8px;
+  background-color:transparent;
+}
+
+*::-webkit-scrollbar-track { /*定义滚动条轨道 内阴影+圆角*/
+  background-color:#f0f6ff;
+}
+
+*::-webkit-scrollbar-thumb { /*定义滑块 内阴影+圆角*/
+  background-color: #cdcfd3;
+  border-radius:8px;
+}
+.scrollbarHide::-webkit-scrollbar {
+  display: none
+}
+
+.scrollbarShow::-webkit-scrollbar {
+  display: block
 }

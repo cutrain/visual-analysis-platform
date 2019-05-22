@@ -1,0 +1,20 @@
+{
+  "name":"fillna",
+  "display":"填充缺失值",
+  "inout":"in1out1",
+  "attr": [
+    {
+      "name":"fill_type",
+      "display":"填充方式",
+      "type":"list",
+      "default":"all",
+      "list":["all","specific","ffill"]
+    },
+    {
+      "name":"value",
+      "display":"值(all,specific)",
+      "type":"text",
+      "default":"0"
+    }
+  ]
+}

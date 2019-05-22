@@ -22,14 +22,19 @@
     <div v-show="border.value.data_type === 'file'"
          :style="{order: border.value.order}"
     >
-      <el-button v-show="border.value.data_type === 'file'"
-                 v-bind:class="[border.value.data_type === 'file' ? 'param-value' : 'param-value-inactive']"
-                 :name="border.value.name"
-                 :data_type="border.value.data_type"
-                 :id="border.value.id"
-
-                 @click="fileSelect()"
-      >文件目录</el-button>
+      <el-tooltip class="item" effect="light" placement="bottom-start">
+        <div slot="content">所需文件为多张图片时，<br/>请选择仅包含所需图片的文件夹</div>
+        <el-button v-show="border.value.data_type === 'file'"
+                   v-bind:class="[border.value.data_type === 'file' ? 'param-value' : 'param-value-inactive']"
+                   :name="border.value.name"
+                   :data_type="border.value.data_type"
+                   :id="border.value.id"
+                   size="mini"
+                   round
+                   type="primary"
+                   @click="fileSelect()"
+        >浏览</el-button>
+      </el-tooltip>
       已选择：{{this.input_file}}
     </div>
 
@@ -41,9 +46,11 @@
                  :name="border.value.name"
                  :data_type="border.value.data_type"
                  :id="border.value.id"
-
+                 size="mini"
+                 round
+                 type="primary"
                  @click="uploadSelect()"
-      >导出目录</el-button>
+      >浏览</el-button>
       导出到：{{this.input_upload}}
     </div>
 
@@ -55,9 +62,11 @@
                  :name="border.value.name"
                  :data_type="border.value.data_type"
                  :id="border.value.id"
-
+                 size="mini"
+                 round
+                 type="primary"
                  @click="modelSelect()"
-      >模型目录</el-button>
+      >浏览</el-button>
       已选择：{{this.input_model}}
     </div>
 
@@ -401,5 +410,9 @@
 </script>
 
 <style scoped>
+
+  .item {
+    margin: 4px;
+  }
 
 </style>

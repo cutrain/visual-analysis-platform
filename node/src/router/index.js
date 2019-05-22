@@ -1,10 +1,12 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '../components/HelloWorld'
-import Index from '../views/Index.vue'
-import Database from '../views/Database.vue'
-import ProjectDetail from '../views/ProjectDetail.vue'
-import ProjectView from "../views/ProjectView.vue"
+import Index from '../views/Index'
+import Database from '../views/Database'
+import ProjectDetail from '../views/ProjectDetail'
+import ProjectView from "../views/ProjectView"
+import Login from '../views/Login'
+import Welcome from '../views/Welcome'
 
 Vue.use(Router);
 
@@ -13,24 +15,38 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'HelloWorld',
+      //name: 'HelloWorld',
       component: HelloWorld,
-      //redirect: '/index'
+      children: [
+        {
+          path: 'login',
+          name: 'login',
+          component: Login,
+        },
+        {
+          path: 'welcome',
+          name: 'welcome',
+          component: Welcome,
+        },
+      ],
+      redirect: '/welcome'
     }, {
       path: '/index',
       component: Index,
       children: [
-          {
-            path: 'projectDetail',
-            name: 'projectDetail',
-            component: ProjectDetail,
-          }, {
-            path: 'projectView',
-            name: 'projectView',
-            component: ProjectView
-          }, {
-            path: '',
-            component: ProjectView
+        {
+          path: 'projectDetail',
+          name: 'projectDetail',
+          component: ProjectDetail,
+        },
+        {
+          path: 'projectView',
+          name: 'projectView',
+          component: ProjectView
+        },
+        {
+          path: '',
+          component: ProjectView
         }
       ],
     }, {

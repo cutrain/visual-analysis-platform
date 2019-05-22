@@ -11,7 +11,6 @@ import './assets/css/index.css';
 import './assets/css/graph.css';
 import api from './utils/api-config';
 
-
 Vue.prototype.$api = api;
 
 Vue.use(ElementUI);

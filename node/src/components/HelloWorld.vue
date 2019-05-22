@@ -50,25 +50,7 @@
     </el-carousel>
     <br/>
 
-    <div id="title">
-      <div class="left">
-        <img id="welcome_logo" src="../assets/logo.jpg" alt="logo">
-      </div>
-      <div class="middle">
 
-      </div>
-      <div class="right">
-        <h1>{{ msg }}</h1>
-        <h2>{{ msgEn }}</h2>
-        <div class="right-bottom">
-          <el-button id="toIndex_button" @click="toIndex" round>
-            <svg class="icon" aria-hidden="true">
-              <use xlink:href="#icon-jinru"></use>
-            </svg> 进入主页
-          </el-button>
-        </div>
-      </div>
-    </div>
     <br/><br/>
     <router-view/>
   </div>
@@ -102,11 +84,6 @@
         ]
       }
     },
-    methods: {
-      toIndex() {
-        this.$router.push('/index/projectView');
-      }
-    }
   }
 </script>
 
@@ -117,40 +94,6 @@
 
   .image_list .image_item {
     mix-blend-mode: overlay;
-  }
-
-  #title {
-    display: block;
-  }
-
-  #title .left #welcome_logo {
-    height: 151px;
-    width: 148px;
-    -webkit-clip-path: circle(50% at 50% 50%);
-    clip-path: circle(50% at 50% 50%);
-    margin-left: 10px;
-    min-height: 51px;
-    min-width: 48px;
-    -webkit-box-align: end;
-    -ms-flex-align: end;
-    align-items: flex-end;
-  }
-
-  #title .right h1, h2 {
-    font-weight: normal;
-    font-size: 30px;
-    text-align: left;
-
-  }
-  #title .right .right-bottom {
-    display: block;
-    text-align: left;
-  }
-
-  #title .left, #title .middle, #title .right {
-    display: inline-block;
-    vertical-align: baseline;
-    margin-left: 10px;
   }
 
   ul {
