@@ -1,1 +1,2 @@
-from .graph_line import graph_line
+from .graph_nn import *
+from .graph_basic import *

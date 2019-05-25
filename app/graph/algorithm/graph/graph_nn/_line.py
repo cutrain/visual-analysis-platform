@@ -19,24 +19,35 @@ import networkx as nx
 class _LINE(object):
 
     def __init__(self, graph, rep_size=128, batch_size=1000, negative_ratio=5, order=3):
+        print('11')
         self.cur_epoch = 0
         self.order = order
         self.g = graph
+        print('12')
         self.node_size = graph.G.number_of_nodes()
+        print('13')
         self.rep_size = rep_size
         self.batch_size = batch_size
         self.negative_ratio = negative_ratio
+        print('14')
 
         self.gen_sampling_table()
+        print('15')
         self.sess = tf.Session()
+        print('16')
         cur_seed = random.getrandbits(32)
+        print('17')
         #tf.reset_default_graph()
         initializer = tf.contrib.layers.xavier_initializer(
             uniform=False, seed=cur_seed)
+        print('18')
         with tf.variable_scope("model", reuse=None, initializer=initializer):
+            print('19')
             self.build_graph()
+            print('20')
+        print('21')
         self.sess.run(tf.global_variables_initializer())
-        self.sess.close()
+
 
     def build_graph(self):
         self.h = tf.placeholder(tf.int32, [None])
@@ -132,72 +143,107 @@ class _LINE(object):
                 end_index = min(start_index+self.batch_size, data_size)
 
     def gen_sampling_table(self):
+        print('31')
         table_size = 1e8
         power = 0.75
         numNodes = self.node_size
 
         #print("Pre-procesing for non-uniform negative sampling!")
+        print('32')
         node_degree = np.zeros(numNodes)  # out degree
+        print('33')
 
         look_up = self.g.look_up_dict
         for edge in self.g.G.edges():
+            print('34')
+            print('-'*100)
+            print(self.g, flush=True)
+            print('-'*100)
             node_degree[look_up[edge[0]]
                         ] += self.g.G[edge[0]][edge[1]]["weight"]
+        print('35')
 
         norm = sum([math.pow(node_degree[i], power) for i in range(numNodes)])
+        print('36')
 
         self.sampling_table = np.zeros(int(table_size), dtype=np.uint32)
+        print('37')
 
         p = 0
         i = 0
         for j in range(numNodes):
             p += float(math.pow(node_degree[j], power)) / norm
             while i < table_size and float(i) / table_size < p:
+                if i % 100000 == 0:
+                    print(i, table_size, float(i) / table_size, p, j, numNodes)
                 self.sampling_table[i] = j
                 i += 1
 
+        print('40')
         data_size = self.g.G.number_of_edges()
+        print('41')
         self.edge_alias = np.zeros(data_size, dtype=np.int32)
+        print('42')
         self.edge_prob = np.zeros(data_size, dtype=np.float32)
+        print('43')
         large_block = np.zeros(data_size, dtype=np.int32)
+        print('44')
         small_block = np.zeros(data_size, dtype=np.int32)
+        print('45')
 
         total_sum = sum([self.g.G[edge[0]][edge[1]]["weight"]
                          for edge in self.g.G.edges()])
+        print('46')
         norm_prob = [self.g.G[edge[0]][edge[1]]["weight"] *
                      data_size/total_sum for edge in self.g.G.edges()]
+        print('47')
         num_small_block = 0
         num_large_block = 0
         cur_small_block = 0
         cur_large_block = 0
         for k in range(data_size-1, -1, -1):
+            print('48')
             if norm_prob[k] < 1:
+                print('49')
                 small_block[num_small_block] = k
                 num_small_block += 1
             else:
+                print('50')
                 large_block[num_large_block] = k
                 num_large_block += 1
         while num_small_block and num_large_block:
+            print('51')
             num_small_block -= 1
             cur_small_block = small_block[num_small_block]
             num_large_block -= 1
             cur_large_block = large_block[num_large_block]
+            print('52')
             self.edge_prob[cur_small_block] = norm_prob[cur_small_block]
+            print('53')
             self.edge_alias[cur_small_block] = cur_large_block
+            print('54')
             norm_prob[cur_large_block] = norm_prob[cur_large_block] + norm_prob[cur_small_block] - 1
+            print('55')
             if norm_prob[cur_large_block] < 1:
+                print('56')
                 small_block[num_small_block] = cur_large_block
                 num_small_block += 1
             else:
+                print('57')
                 large_block[num_large_block] = cur_large_block
                 num_large_block += 1
 
+        print('58')
         while num_large_block:
+            print('59')
             num_large_block -= 1
             self.edge_prob[large_block[num_large_block]] = 1
+            print('60')
         while num_small_block:
+            print('61')
             num_small_block -= 1
             self.edge_prob[small_block[num_small_block]] = 1
+            print('62')
 
     def get_embeddings(self):
         vectors = {}
@@ -235,6 +281,8 @@ class LINE(object):
                         self.best_ite=i
                         if auto_save:
                             self.best_vector = self.vectors
+            self.model1.sess.close()
+            self.model2.sess.close()
 
         else:
             self.model = _LINE(graph, rep_size, batch_size,
@@ -247,11 +295,11 @@ class LINE(object):
                     self.best_ite = i
                     if auto_save:
                         self.best_vector=self.vectors
+            self.model.sess.close()
 
-
-        self.get_embeddings()
         if auto_save:
             self.vectors = self.best_vector
+
 
     def get_embeddings(self):
         self.last_vectors = self.vectors
@@ -270,19 +318,53 @@ class LINE(object):
             df=df.append({'node': node, 'vector': vec}, ignore_index=True)
         df.to_csv(filename,index=False)
 
-    def to_df(self):
-        df = pd.DataFrame(columns=['node', 'vector'])
-        for node, vec in self.vectors.items():
-            df = df.append({'node': node, 'vector': vec}, ignore_index=True)
-        return df
 
-def graph_line(graph, **kwargs):
-    model = LINE(graph, epoch=100, rep_size=128, order=3)
-    df = model.to_df()
-    return df
+class Graph(object):
+    def __init__(self):
+        self.G = None
+        self.look_up_dict = {}
+        self.look_back_list = []
+        self.node_size = 0
+
+    def encode_node(self):
+        look_up = self.look_up_dict
+        look_back = self.look_back_list
+        for node in self.G.nodes():
+            look_up[node] = self.node_size
+            look_back.append(node)
+            self.node_size += 1
+            self.G.nodes[node]['status'] = ''
+
+    def read_g(self, g):
+        self.G = g
+        print('1')
+        self.encode_node()
+        print('2')
+
+    def read_graph(self,df):
+        G = nx.Graph()
+        def load_single_entry(x):
+            G.add_node(x['node1'], type=x['node1_type'])
+            G.add_node(x['node2'], type=x['node2_type'])
+            G.add_edge(x['node1'], x['node2'], weight=float(x['weight']))
+        df.apply(load_single_entry, axis=1)
+        self.G=G
+        self.encode_node()
+
+
+
+
+
+
+
 
 
 
 if __name__ == "__main__":
-    model = LINE(graph,epoch=100,rep_size=128, order=3)
-    model.save_embeddings(filename) #filename为要写入的文件名及路径
+    input_csv="~/project/visual-analysis-platform/data/GD_human.csv"#文件路径名称
+    graph_df = pd.read_csv(input_csv, names=['node1', 'node1_type', 'node2', 'node2_type', 'weight'],
+                          dtype={'node1': str, 'node2': str, 'weight': float})
+    g = Graph()
+    g.read_graph(graph_df)
+    model = LINE(g,epoch=1,rep_size=128, order=3)
+    model.save_embeddings("./test.csv") #filename为要写入的文件名及路径

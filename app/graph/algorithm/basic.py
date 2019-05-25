@@ -120,27 +120,6 @@ def image_outstream(images, **kwargs):
             cv2.imwrite(os.path.join(realpath, str(cnt)+'.png'), i)
             cnt += 1
 
-def graph_instream(**kwargs):
-    from .graph.graphio import from_json_dicts, from_json_lists, from_mat_matrix
-    path = kwargs.pop('path')
-    path = safepath(path)
-    graph = from_json_dicts(path)
-    if graph is None:
-        graph = from_json_lists(path)
-    if graph is None:
-        graph = from_mat_matrix(path)
-    if graph is None:
-        raise NotImplementedError
-    return graph
-
-def graph_outstream(graph, **kwargs):
-    from .graph.graphio import graph2json
-    path = kwargs.pop('path')
-    path = safepath(path)
-    data = graph2json(graph)
-    with open(os.path.join(DATA_DIR, path), 'wb') as f:
-        f.write(data)
-
 def video_instream(**kwargs):
     global DATA_DIR
     import cv2
@@ -206,4 +185,30 @@ def video_outstream(video_opt_list, **kwargs):
     cap.release()
     videoWriter.release()
 
+def graph_instream(**kwargs):
+    global DATA_DIR
+    from .graph.graphio import from_json_dicts, from_json_lists, from_mat_matrix
+    path = kwargs.pop('path')
+    path = safepath(path)
+    path = os.path.join(DATA_DIR, path)
+    graph = from_json_dicts(path)
+    if graph is None:
+        graph = from_json_lists(path)
+    if graph is None:
+        graph = from_mat_matrix(path)
+    if graph is None:
+        raise NotImplementedError
+    return graph
+
+def graph_outstream(graph, **kwargs):
+    global DATA_DIR
+    import networkx
+    import json
+    path = kwargs.pop('path')
+    path = safepath(path)
+    path = os.path.join(DATA_DIR, path)
+    graph_json = networkx.to_dict_of_dicts(graph)
+    data = json.dumps(graph_json)
+    with open(path, 'w') as f:
+        f.write(data)
 
