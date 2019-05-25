@@ -64,6 +64,7 @@ def run():
 
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
+    print(req)
     pid = req.pop('project_id')
     global processing_manager
     # check the project not running yet
