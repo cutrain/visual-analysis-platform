@@ -17,12 +17,20 @@
       "name": "codecc",
       "display": "编码",
       "type": "list",
-      "default": "XVID",
+      "default": "mp4v",
       "note": "",
       "list": [
-        "XVID",
-        "mp4v",
+        "origin",
+        "HEVC",
+        "H264",
         "X264",
+        "H260",
+        "XVID",
+        "DIVX",
+        "MJPG",
+        "WMV1",
+        "WMV2",
+        "mp4v",
         "FLV1",
         "I420"
       ]

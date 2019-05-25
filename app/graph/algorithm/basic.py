@@ -146,6 +146,7 @@ def video_outstream(video_opt_list, **kwargs):
     frame_length = int(kwargs.pop('frame_length'))
 
     cap = cv2.VideoCapture(video_opt_list[0])
+
     if fps == 0:
         fps = cap.get(cv2.CAP_PROP_FPS)
     else:
@@ -166,7 +167,13 @@ def video_outstream(video_opt_list, **kwargs):
         else:
             raise NotImplementedError
 
-    videoWriter = cv2.VideoWriter(path, cv2.VideoWriter_fourcc(*fourcc), fps, (width, height))
+    if fourcc == 'origin':
+        fourcc = int(cap.get(cv2.CAP_PROP_FOURCC))
+    else:
+        fourcc = cv2.VideoWriter_fourcc(*fourcc)
+    videoWriter = cv2.VideoWriter(path, fourcc, fps, (width, height))
+    if not videoWriter.isOpened():
+        raise Exception("Video couldn't not write, please check codec, path or storage")
     cnt = 0
     while (cap.isOpened()):
         ret, frame = cap.read()
