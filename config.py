@@ -23,9 +23,7 @@ class Config:
 
     @staticmethod
     def init_app(app):
-        handler = RotatingFileHandler('back.log', maxBytes=10000, backupCount=1)
-        handler.setLevel(logging.WARNING)
-        app.logger.addHandler(handler)
+        return
 
 
 class DevelopmentConfig(Config):
