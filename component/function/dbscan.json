@@ -1,0 +1,44 @@
+{
+  "name": "dbscan",
+  "display": "dbscan",
+  "in_port": [
+    "DataFrame"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": [
+    {
+      "name": "eps",
+      "display": "ε (eps)",
+      "type": "float",
+      "default": "3",
+      "note": ""
+    },
+    {
+      "name": "minpts",
+      "display": "minPts",
+      "type": "int",
+      "default": "2",
+      "note": ""
+    },
+    {
+      "name": "predict_labels",
+      "display": "聚类结果列名",
+      "type": "text",
+      "default": "predict",
+      "note": ""
+    },
+    {
+      "name": "store_origin",
+      "display": "输出保留原数据",
+      "type": "list",
+      "default": "True",
+      "note": "",
+      "list": [
+        "True",
+        "False"
+      ]
+    }
+  ]
+}

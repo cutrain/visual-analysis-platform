@@ -1,5 +1,5 @@
 {
-  "name": "graph_count_triple",
+  "name": "graph_count_triangle",
   "display": "计数三角",
   "in_port": [
     "Graph"

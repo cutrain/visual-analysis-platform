@@ -15,7 +15,7 @@
     },
     {
       "name": "path",
-      "display": "文件名",
+      "display": "选择文件",
       "type": "file",
       "default": "",
       "note": ""

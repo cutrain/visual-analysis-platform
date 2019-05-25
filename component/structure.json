@@ -8,35 +8,39 @@
     "video_outstream": "导出视频数据",
     "graph_instream": "导入图数据",
     "graph_outstream": "导出图数据",
-    "sql_outstream": "导出SQL数据",
     "sql_instream": "导入SQL数据",
-    "data_outstream": "导出结构化数据",
-    "data_instream": "导入结构化数据"
+    "sql_outstream": "导出SQL数据",
+    "data_instream": "导入结构化数据",
+    "data_outstream": "导出结构化数据"
   },
   "结构化数据": {
     "机器学习": {
-      "多分类": {
+      "分类": {
         "classify_adaboost": "adaboost",
         "classify_svm": "支持向量机",
         "classify_neural_network": "神经网络",
         "classify_knn": "k近邻",
         "classify_naive_bayes": "朴素贝叶斯",
-        "classify_decision_tree": "决策树"
+        "classify_decision_tree": "决策树",
+        "classify_predict": "分类预测"
       },
-      "聚类": {},
+      "聚类": {
+        "dbscan": "dbscan",
+        "kmeans": "kmeans"
+      },
       "回归": {
         "regression_adaboost": "adaboost",
         "regression_svm": "支持向量机",
         "regression_neural_network": "神经网络",
         "regression_naive_bayes": "朴素贝叶斯",
-        "regression_decision_tree": "决策树"
+        "regression_decision_tree": "决策树",
+        "regression_predict": "回归预测"
       },
       "评估": {
         "accuracy": "准确率",
         "recall": "召回率",
         "fone": "F1"
-      },
-      "predict": "预测"
+      }
     },
     "数据预处理": {
       "sort": "排序",
@@ -54,7 +58,7 @@
   },
   "非结构化数据": {
     "图像": {
-      "图像处理": {
+      "图像预处理": {
         "image_resolution": "指定分辨率",
         "image_channel": "改变通道",
         "image_large": "上采样",
@@ -93,10 +97,10 @@
     },
     "图": {
       "graph_line": "LINE",
-      "graph_count_triple": "计数三角",
       "graph_kcore": "K-core",
       "graph_count_kcycle": "计数k-cycle",
-      "graph_pagerank": "PageRank"
+      "graph_pagerank": "PageRank",
+      "graph_count_triangle": "计数三角"
     }
   }
 }

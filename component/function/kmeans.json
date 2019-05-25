@@ -1,0 +1,44 @@
+{
+  "name": "kmeans",
+  "display": "kmeans",
+  "in_port": [
+    "DataFrame"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": [
+    {
+      "name": "n_cluster",
+      "display": "簇数",
+      "type": "int",
+      "default": "8",
+      "note": ""
+    },
+    {
+      "name": "max_iter",
+      "display": "迭代次数",
+      "type": "int",
+      "default": "300",
+      "note": ""
+    },
+    {
+      "name": "predict_labels",
+      "display": "聚类结果列名",
+      "type": "text",
+      "default": "predict",
+      "note": ""
+    },
+    {
+      "name": "store_origin",
+      "display": "输出保留原数据",
+      "type": "list",
+      "default": "True",
+      "note": "",
+      "list": [
+        "True",
+        "False"
+      ]
+    }
+  ]
+}
