@@ -1,5 +1,6 @@
 /venv/
 *.swp
+*.swo
 __pycache__/
 back.log
 *.pyc
