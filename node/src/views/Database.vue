@@ -795,8 +795,14 @@
         } else {
           path = item.dataset_name + '/' + item.name;
         }
-        axios.get(this.$api.dataDownload +'/'+path);
-        window.open(this.$api.dataDownload +'/'+path, '_');
+        const elink = document.createElement('a');
+        elink.download = item.name;
+        elink.style.display = 'none';
+        elink.href = this.$api.dataDownload + '/' + path;
+        document.body.appendChild(elink);
+        elink.click();
+        URL.revokeObjectURL(elink.href);
+        document.body.removeChild(elink);
       },
 
       returnSrc() {
