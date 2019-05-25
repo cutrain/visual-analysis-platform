@@ -1,6 +1,6 @@
 import os
 import json
-from flask import render_template, request, send_file
+from flask import render_template, request, send_file, Response
 import numpy as np
 import pandas as pd
 
@@ -159,10 +159,20 @@ def delete():
     else:
         os.remove(path)
 
-@data.route('/download/<string:path>', methods=['GET'])
+@data.route('/download', defaults={'path':''}, methods=['GET'])
+@data.route('/download/<path:path>', methods=['GET'])
 def download(path):
-    print(path)
+    import io
     global DATA_DIR
+    print(path)
     path = safepath(path)
     path = os.path.join(os.getcwd(), DATA_DIR, path)
-    return send_file(path, as_attachment=True)
+    print(path)
+    def send_chunk(filepath):
+        with open(filepath, 'rb') as f:
+            while True:
+                chunk = f.read(20 * 1024 * 1024)
+                if not chunk:
+                    break
+                yield chunk
+    return Response(send_chunk(path), content_type='application/octet-stream')
