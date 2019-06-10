@@ -56,7 +56,17 @@
       <div v-show="ImageVisible">
         <p>Shape: {{image_shape[0]}}X{{image_shape[1]}}X{{image_shape[2]}}</p>
         <el-scrollbar view-class="view-box" :native="false" style="height: 100%;">
-          <img :src="server+imageUrl" alt=""/>
+
+          <div v-if="imageUrl !== ''">
+            <img :src="server+imageUrl"
+                 alt=""
+                 draggable="false"/>
+          </div>
+          <div v-else>
+            <svg class="icon" aria-hidden="true">
+              <use xlink:href="#icon-loading"></use>
+            </svg>
+          </div>
         </el-scrollbar>
       </div>
       <div v-show="VideoVisible">

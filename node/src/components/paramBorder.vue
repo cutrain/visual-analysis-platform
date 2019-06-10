@@ -164,7 +164,7 @@
         input_float: 0,
         input_number: 0,
         input_richtext: '',
-        input_upload: '',
+        input_upload: 'default.avi',
       }
     },
     created() {
@@ -210,6 +210,9 @@
               }
               case 'upload': {
                 this.input_upload = this.props_list[key];
+                if (this.input_upload === '0') {
+                  this.input_upload = '';
+                }
                 break;
               }
               default: {

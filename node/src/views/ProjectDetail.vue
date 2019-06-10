@@ -119,7 +119,7 @@
               <svg class="icon" aria-hidden="true">
                 <use xlink:href="#icon-qingkonghuancun"></use>
               </svg>
-              清空</el-button>
+              清空缓存</el-button>
           </div>
           <div id="button-delete" v-show="curr_id !== null">
             <el-button class="bubbly-button-delete" type="text" icon="el-icon-delete" @click="delete_button()">删除节点</el-button>
@@ -211,7 +211,15 @@
             <div v-else-if="dataTypeInBorder === 'Image'">
               <p>{{imageInBorder.shape}}</p>
               <el-scrollbar view-class="view-box" :native="false" style="height: 100%;">
-                <img :src="server+imageInBorder.url"/>
+                <div v-if="imageInBorder.url !== ''">
+                  <img :src="server+imageInBorder.url"
+                       draggable="false"/>
+                </div>
+                <div v-else>
+                  <svg class="icon" aria-hidden="true">
+                    <use xlink:href="#icon-loading"></use>
+                  </svg>
+                </div>
               </el-scrollbar>
             </div>
             <div v-else-if="dataTypeInBorder === 'Address'">{{addressInBorder}}</div>
@@ -306,7 +314,7 @@
     },
     data() {
       return {
-        server: api.server, //'http://10.141.2.231:8081/' ,  // TODO:
+        server: api.server,             //'http://10.141.2.231:8081/'
         dataTypeInBorder: '',           // border: about data view
         stringInBorder: '',
         addressInBorder: '',
@@ -1093,7 +1101,10 @@
               if (this.curr_id !== null) {
                 let params = {};
                 console.log('---------last node-----------');
-                for (let i=0;i < this.last_lists.length; ++i) {
+                let len = this.last_lists.length;
+                if (this.border_items.length < len)
+                  len = this.border_items.length;
+                for (let i=0;i < len; ++i) {
                   params[this.last_lists[i].name] = this.last_lists[i].value;
                 }
                 // console.log(params);
@@ -1311,7 +1322,10 @@
             if (this.curr_id !== null) { // 保存当前右侧边栏填写的节点内容
               let params = {};
               console.log('---------last node-----------');
-              for (let i=0;i < this.last_lists.length; ++i) {
+              let len = this.last_lists.length;
+              if (this.border_items.length < len)
+                len = this.border_items.length;
+              for (let i=0;i < len; ++i) {
                 params[this.last_lists[i].name] = this.last_lists[i].value;
               }
               this.G.setParam(this.curr_id, params);
@@ -1393,7 +1407,10 @@
             if (this.curr_id !== null) {
               let params = {};
               console.log('---------last node-----------');
-              for (let i=0;i < this.last_lists.length; ++i) {
+              let len = this.last_lists.length;
+              if (this.border_items.length < len)
+                len = this.border_items.length;
+              for (let i=0;i < len; ++i) {
                 params[this.last_lists[i].name] = this.last_lists[i].value;
               }
               this.G.setParam(this.curr_id, params);
@@ -1404,6 +1421,9 @@
             let dataPost = this.G.toJson();
             let key = 'run';
             dataPost[key] = [this.curr_id];
+            console.log('++++++++++++++++dataPost++++++++++++++');
+            console.log(dataPost);
+            console.log('+++++++++++++++++++++++++++++++++++++++');
             axios.post(this.$api.graphRun, JSON.stringify(dataPost))
               .then((res)=> {
                 console.log('run : get response');
@@ -1692,6 +1712,7 @@
           for (let i=0;i<dataList.length;i++) {
             if (dataList[i].parent_id === 0) { // 保留级别最高的节点
               newDataList.push(dataList[i]);
+              //newDataList.splice(0, 0, dataList[i]);
             }
           }
         }
@@ -1714,7 +1735,8 @@
               }
               if (pro_point !== -1) {
                 if (dataList[pro_point].id === parent) {
-                  dataList[pro_point].lists.push(dataList[point]);
+                  // dataList[pro_point].lists.push(dataList[point]);
+                  dataList[pro_point].lists.splice(0, 0, dataList[point]);
                 }
               }
             }
@@ -1731,7 +1753,7 @@
             let newDataList = [];
             dataListDeleteExceptRootLevel(dataList, newDataList);
             this.component_items = newDataList;
-            console.log(this.component_items);
+            console.log('component:',this.component_items);
           })
           .catch(() => {});
       },

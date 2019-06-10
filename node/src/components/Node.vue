@@ -269,7 +269,13 @@
         }
 
         // before loading, clear
-        this.$emit('update:stringInBorder', '');
+        let table = {}, data = [], title = [];
+        let key = 'title';
+        table[key] = title;
+        key = 'data';
+        table[key] = data;
+        this.$emit('update:tableInBorder', table);
+        this.$emit('update:stringInBorder', '正在读取...');
         this.$emit('update:imageInBorder', {url:'',shape:''});
         this.$emit('update:addressInBorder','');
 
@@ -278,6 +284,7 @@
           "project_id": this.project_id,
           "node_id": id
         });
+
         axios.post(this.$api.graphSample, dataPost)
           .then(ret => {
             ret = ret.data;
