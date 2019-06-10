@@ -1,0 +1,13 @@
+{
+  "name":"model-instream",
+  "display":"导入模型",
+  "inout":"in0out1",
+  "attr": [
+    {
+      "name":"path",
+      "display":"文件名",
+      "type":"text",
+      "default":""
+    }
+  ]
+}

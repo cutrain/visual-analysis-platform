@@ -1,0 +1,13 @@
+{
+  "name":"data-outstream",
+  "display":"导出数据",
+  "inout":"in1out0",
+  "attr": [
+    {
+      "name":"path",
+      "display":"文件名",
+      "type":"text",
+      "default":""
+    }
+  ]
+}

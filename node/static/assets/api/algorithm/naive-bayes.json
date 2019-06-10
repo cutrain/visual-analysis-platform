@@ -1,0 +1,13 @@
+{
+  "name":"naive-bayes",
+  "display":"朴素贝叶斯",
+  "inout":"in1out1",
+  "attr": [
+    {
+      "name":"label_columns",
+      "display":"标签列",
+      "type":"text",
+      "default":"label"
+    }
+  ]
+}

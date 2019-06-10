@@ -1,0 +1,7 @@
+{
+  "name":"merge-row",
+  "display":"合并行",
+  "inout":"in2out1",
+  "attr": [
+  ]
+}
