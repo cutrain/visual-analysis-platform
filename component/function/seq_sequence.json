@@ -1,5 +1,5 @@
 {
-  "name": "graph_sequence",
+  "name": "seq_sequence",
   "display": "序列分类(GRU)",
   "in_port": [
     "DataFrame",

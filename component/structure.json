@@ -92,8 +92,8 @@
       "video_monorec": "物体检测"
     },
     "序列": {
-      "graph_sequence": "序列分类(GRU)"
-	},
+      "seq_sequence": "序列分类(GRU)"
+    },
     "图": {
       "graph_line": "LINE",
       "graph_kcore": "K-core",
@@ -101,7 +101,6 @@
       "graph_pagerank": "PageRank",
       "graph_count_triangle": "计数三角"
     },
-    "异质网络": {
-	}
+    "异质网络": {}
   }
 }
