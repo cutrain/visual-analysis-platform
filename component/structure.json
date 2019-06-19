@@ -92,7 +92,8 @@
       "video_monorec": "物体检测"
     },
     "序列": {
-      "seq_sequence": "序列分类(GRU)"
+      "seq_sequence": "序列分类(GRU)",
+      "seq_predict": "预测"
     },
     "图": {
       "graph_line": "LINE",

@@ -6,7 +6,7 @@ import pandas as pd
 
 from config import DATA_DIR
 from . import data
-from tool import msgwrap, get_type, safepath, gen_random_string
+from tool import msgwrap, get_type, safepath, gen_random_string, sample_data
 
 
 @data.route('/upload', methods=['POST'])
@@ -75,57 +75,7 @@ def get():
             'succeed':0,
             'message':path+ ' is not a file',
         }
-    outtype = get_type(path)
-    if outtype == 'DataFrame':
-        idata = pd.read_csv(path, nrows=10)
-        num = 10
-        index = list(idata.columns)
-        df = idata[0:num]
-        df = df.round(3)
-        types = [str(df[index[j]].dtype) for j in range(len(index))]
-        df = df.fillna('NaN')
-        df = np.array(df).tolist()
-        ret = {
-            'type':'DataFrame',
-            'shape':list(idata.shape),
-            'col_num':len(index),
-            'col_index':index,
-            'col_type':types,
-            'row_num':num,
-            'data': df
-        }
-    elif outtype == 'Image':
-        import cv2
-        savename = gen_random_string() + '.png'
-        savedir = os.path.join('app', 'static', 'cache')
-        if not os.path.exists(savedir):
-            os.mkdir(savedir)
-        idata = cv2.imread(path)
-        shape = list(idata.shape)
-        shape[0], shape[1] = shape[1], shape[0]
-        resize_shape = shape[:2]
-        while resize_shape[0] > 640 or resize_shape[1] > 480:
-            resize_shape[0] //= 2
-            resize_shape[1] //= 2
-        idata = cv2.resize(idata, tuple(resize_shape))
-        cv2.imwrite(os.path.join(savedir, savename), idata)
-        ret = {
-            'type':'Image',
-            'data':{
-                'url':'static/cache/'+savename,
-                'shape':shape,
-            }
-        }
-    elif outtype == 'Graph':
-        ret = {
-            'type':'Graph',
-        }
-    elif outtype == 'Video':
-        ret = {
-            'type':'Video',
-        }
-    else:
-        raise NotImplementedError
+    ret = sample_data(path, type_='path')
 
     return ret
 

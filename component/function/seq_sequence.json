@@ -2,11 +2,11 @@
   "name": "seq_sequence",
   "display": "序列分类(GRU)",
   "in_port": [
-    "DataFrame",
-    "DataFrame"
+    "Sequence",
+    "Sequence"
   ],
   "out_port": [
-    "DataFrame"
+    "pytorchModel"
   ],
   "params": [
     {

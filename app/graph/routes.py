@@ -10,7 +10,7 @@ from flask import render_template, request
 
 from . import graph
 from .graphclass import Graph
-from tool import msgwrap, safepath, gen_random_string
+from tool import msgwrap, safepath, gen_random_string, sample_data
 from config import CACHE_DIR, REDIS_HOST, REDIS_DB, REDIS_PORT, PROJECT_DIR, STATIC_PATH
 from common import component_detail
 
@@ -180,52 +180,10 @@ def sample():
     for i in range(len(out)):
         outtype = out[i]
         idata = data['out'][i]
-        if outtype == 'DataFrame':
-            num = max(num, 0)
-            num = min(num, idata.shape[0])
-            index = list(idata.columns)
-            df = idata[0:num]
-            df = df.round(3)
-            types = [str(df[index[j]].dtype) for j in range(len(index))]
-            df = df.fillna('NaN')
-            df = np.array(df).tolist()
-            retdata.append({
-                'type':'DataFrame',
-                'shape':list(idata.shape),
-                'col_num':len(index),
-                'col_index':index,
-                'col_type':types,
-                'row_num':num,
-                'data': df
-            })
-        elif outtype == 'Image':
-            import cv2
-            savename = pid + nid + gen_random_string() + '.png'
-            savedir = os.path.join('app', 'static', 'cache')
-            if not os.path.exists(savedir):
-                os.mkdir(savedir)
-            idata = idata[0]
-            shape = list(idata.shape)
-            shape[0], shape[1] = shape[1], shape[0]
-            resize_shape = shape[:2]
-            while resize_shape[0] > 640 or resize_shape[1] > 480:
-                resize_shape[0] //= 2
-                resize_shape[1] //= 2
-            idata = cv2.resize(idata, tuple(resize_shape))
-            cv2.imwrite(os.path.join(savedir, savename), idata)
-            retdata.append({
-                'type':'Image',
-                'data':{
-                    'url':'static/cache/'+savename,
-                    'shape':shape,
-                }
-            })
-        elif outtype == 'Graph':
-            pass
-        elif outtype == 'Video':
-            pass
+        if outtype == 'Image':
+            retdata.append(sample_data(idata[0], type_='Image'))
         else:
-            raise NotImplementedError
+            retdata.append(sample_data(idata, type_=outtype))
 
     return ret
 

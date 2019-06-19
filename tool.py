@@ -3,7 +3,7 @@ import time
 import random
 import string
 import filetype
-import json as js
+import json
 from functools import wraps
 
 def msgwrap(func):
@@ -24,7 +24,7 @@ def msgwrap(func):
                 'message':str(e),
             }
         print(ret, flush=True)
-        return js.dumps(ret).encode('utf-8')
+        return json.dumps(ret).encode('utf-8')
     return wrap
 
 def gen_random_string(length=8, *, number=True, abc=True, upper_case=False, lower_case=False):
@@ -46,8 +46,16 @@ def get_type(filepath=None, data=None):
             ans = filetype.guess_mime(filepath)
             print('filetype : ', filepath, ans)
             if ans is None:
-                if filepath[-5:] == '.json' or filepath[-4:] == '.mat':
+                if filepath[-5:] == '.json':
+                    with open(filepath, 'r') as f:
+                        data = json.load(f)
+                    if type(data) == list:
+                        return 'Sequence'
+                    else:
+                        return 'Graph'
                     return "Graph"
+                elif filepath[-4:] == '.mat':
+                    return 'Graph'
                 elif filepath[-4:] == '.csv':
                     return "DataFrame"
                 return "Unknown"
@@ -69,3 +77,70 @@ def safepath(path):
     path = path.lstrip('/')
     path = path.replace('/', os.path.sep)
     return path
+
+def sample_data(data, type_=None, num=10):
+    if type_ == 'path':
+        type_ = get_type(path)
+        if type_ == 'DataFrame':
+            data = pd.read_csv(data, nrows=10)
+        elif type_ == 'Image':
+            data = cv2.imread(data)
+        elif type_ == 'Sequence':
+            with open(data, 'r') as f:
+                data = json.load(f)
+    ret = {}
+    if type_ == 'DataFrame':
+        num = max(num, 0)
+        index = list(data.columns)
+        df = data[0:num]
+        df = df.round(3)
+        types = [str(df[index[j]].dtype) for j in range(len(index))]
+        df = df.fillna('NaN')
+        df = np.array(df).tolist()
+        ret = {
+            'type':'DataFrame',
+            'shape':list(data.shape),
+            'col_num':len(index),
+            'col_index':index,
+            'col_type':types,
+            'row_num':num,
+            'data': df
+        }
+    elif type_ == 'Image':
+        import cv2
+        savename = gen_random_string() + '.png'
+        savedir = os.path.join('app', 'static', 'cache')
+        if not os.path.exists(savedir):
+            os.mkdir(savedir)
+        shape = list(data.shape)
+        shape[0], shape[1] = shape[1], shape[0]
+        resize_shape = shape[:2]
+        while resize_shape[0] > 640 or resize_shape[1] > 480:
+            resize_shape[0] //= 2
+            resize_shape[1] //= 2
+        data = cv2.resize(data, tuple(resize_shape))
+        cv2.imwrite(os.path.join(savedir, savename), data)
+        ret = {
+            'type':'Image',
+            'data':{
+                'url':'static/cache/'+savename,
+                'shape':shape,
+            }
+        }
+    elif type_ == 'Graph':
+        ret = {
+            'type':'Graph',
+        }
+    elif type_ == 'Video':
+        ret = {
+            'type':'Video',
+        }
+    elif type_ == 'Sequence':
+        ret = {
+            'type':'Sequence',
+            'len':len(data),
+            'data':data,
+        }
+    else:
+        raise NotImplementedError
+    return ret
