@@ -1,0 +1,55 @@
+{
+  "name": "graph_sequence",
+  "display": "序列分类(GRU)",
+  "in_port": [
+    "DataFrame",
+    "DataFrame"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": [
+    {
+      "name": "embedding_dim",
+      "display": "嵌入维数",
+      "type": "int",
+      "default": "16",
+      "note": "嵌入维数"
+    },
+    {
+      "name": "hidden_dim",
+      "display": "隐藏层维数",
+      "type": "int",
+      "default": "16",
+      "note": "默认16"
+    },
+    {
+      "name": "learning_rate",
+      "display": "学习率",
+      "type": "float",
+      "default": "0.01",
+      "note": ""
+    },
+    {
+      "name": "max_seq_len",
+      "display": "最长序列长",
+      "type": "int",
+      "default": "100",
+      "note": "序列最长长度，超出截断"
+    },
+    {
+      "name": "batch_size",
+      "display": "批训练数",
+      "type": "int",
+      "default": "128",
+      "note": ""
+    },
+    {
+      "name": "epochs",
+      "display": "训练轮数",
+      "type": "int",
+      "default": "100",
+      "note": ""
+    }
+  ]
+}

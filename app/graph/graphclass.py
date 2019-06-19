@@ -11,7 +11,7 @@ from queue import Queue
 from collections import defaultdict
 
 from config import CACHE_DIR, REDIS_PORT, REDIS_DB, REDIS_HOST
-from .algorithm import *
+from algorithm import *
 from common import component_detail
 from functools import wraps
 

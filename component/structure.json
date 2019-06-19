@@ -2,18 +2,31 @@
   "源/目标": {
     "model_instream": "导入模型",
     "model_outstream": "导出模型",
+    "data_instream": "导入结构化数据",
+    "data_outstream": "导出结构化数据",
+    "sql_instream": "导入SQL数据",
+    "sql_outstream": "导出到SQL",
     "image_instream": "导入图像数据",
     "image_outstream": "导出图像数据",
     "video_instream": "导入视频数据",
     "video_outstream": "导出视频数据",
     "graph_instream": "导入图数据",
-    "graph_outstream": "导出图数据",
-    "sql_instream": "导入SQL数据",
-    "sql_outstream": "导出SQL数据",
-    "data_instream": "导入结构化数据",
-    "data_outstream": "导出结构化数据"
+    "graph_outstream": "导出图数据"
   },
   "结构化数据": {
+    "数据预处理": {
+      "sort": "排序",
+      "random": "打乱数据",
+      "normalization": "标准化",
+      "drop_duplicate": "删除重复行",
+      "fillna": "填充缺失值",
+      "dropna": "丢弃缺失值",
+      "split_col": "拆分列",
+      "split_row": "拆分行",
+      "merge_row": "合并行",
+      "merge_col": "合并列",
+      "sql_execute": "SQL语句"
+    },
     "机器学习": {
       "分类": {
         "classify_adaboost": "adaboost",
@@ -41,19 +54,6 @@
         "recall": "召回率",
         "fone": "F1"
       }
-    },
-    "数据预处理": {
-      "sort": "排序",
-      "random": "打乱数据",
-      "normalization": "标准化",
-      "drop_duplicate": "删除重复行",
-      "fillna": "填充缺失值",
-      "dropna": "丢弃缺失值",
-      "split_col": "拆分列",
-      "split_row": "拆分行",
-      "merge_row": "合并行",
-      "merge_col": "合并列",
-      "sql_execute": "SQL语句"
     }
   },
   "非结构化数据": {
@@ -73,10 +73,6 @@
         "image_blend": "图片混合",
         "image_brightness_contrast": "亮度/对比度"
       },
-      "机器学习": {
-        "image_svm": "svm",
-        "image_predict": "预测"
-      },
       "深度学习": {
         "image_cnn": "CNN",
         "image_resnet": "ResNet",
@@ -95,12 +91,17 @@
       "video_size": "裁剪大小",
       "video_monorec": "物体检测"
     },
+    "序列": {
+      "graph_sequence": "序列分类(GRU)"
+	},
     "图": {
       "graph_line": "LINE",
       "graph_kcore": "K-core",
       "graph_count_kcycle": "计数k-cycle",
       "graph_pagerank": "PageRank",
       "graph_count_triangle": "计数三角"
-    }
+    },
+    "异质网络": {
+	}
   }
 }
