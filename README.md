@@ -1,4 +1,8 @@
-# Visual Analysis Platform
+# Visual Analysis Platform Backend
+
+# 前端
+[这里][https://github.com/yjwang12/front]
+
 
 ## 使用指南
 见[wiki](https://github.com/cutrain/visual-analysis-platform/wiki "数据分析平台wiki")
@@ -41,7 +45,7 @@ download yolov3 weights from https://pjreddie.com/media/files/yolov3.weights, an
 ```
 
 
-## 运行
+## 运行后端
 ```bash
 python3 manage.py runserver -p 8080
 ```
@@ -49,10 +53,7 @@ or
 ```bash
 make run
 ```
-访问 http://localhost:8080 可以使用
-
-# 参与开发
-查看[手册](https://github.com/cutrain/visual-analysis-platform/blob/master/manual.doc "手册")
+访问 http://localhost:8081/component 可以进入组件管理界面
 
 
 bug反馈或其它问题请联系 duanyuge@qq.com 或 微信 cutrain_
