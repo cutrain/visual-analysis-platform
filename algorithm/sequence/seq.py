@@ -1,5 +1,6 @@
 __all__ = [
     'seq_sequence',
+    'seq_predict',
 ]
 
 def seq_sequence(seq1, seq2, **kwargs):
@@ -14,10 +15,9 @@ def seq_sequence(seq1, seq2, **kwargs):
     model = SequenceClassification(embedding_dim=embedding_dim, hidden_dim=hidden_dim)
     model.fit(seq1, seq2, max_seq_len=max_seq_len, learning_rate=learning_rate, batch_size=batch_size,
               epochs=epochs, verbose=True)
-    # TODO
-    pass
+    return model
 
-def seq_predict(seq_model, seq, **kwargs):
+def seq_predict(model, seq, **kwargs):
     import pandas as pd
     type_ = kwargs.pop('type_')
     predict_label = kwargs.pop('predict_label')

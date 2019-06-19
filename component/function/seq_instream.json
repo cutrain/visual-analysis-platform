@@ -1,9 +1,9 @@
 {
-  "name": "image_instream",
-  "display": "导入图像数据",
+  "name": "seq_instream",
+  "display": "导入序列数据",
   "in_port": [],
   "out_port": [
-    "Image"
+    "Sequence"
   ],
   "params": [
     {

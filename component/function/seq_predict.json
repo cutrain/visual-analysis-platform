@@ -2,7 +2,8 @@
   "name": "seq_predict",
   "display": "预测",
   "in_port": [
-    "pytorchModel"
+    "pytorchModel",
+    "Sequence"
   ],
   "out_port": [
     "DataFrame"

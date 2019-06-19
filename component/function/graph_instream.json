@@ -10,7 +10,7 @@
       "name": "path",
       "display": "选择文件",
       "type": "file",
-      "default": "0",
+      "default": "",
       "note": ""
     }
   ]

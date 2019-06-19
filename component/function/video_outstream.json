@@ -8,9 +8,9 @@
   "params": [
     {
       "name": "path",
-      "display": "文件名",
+      "display": "导出路径",
       "type": "upload",
-      "default": "0",
+      "default": "",
       "note": ""
     },
     {

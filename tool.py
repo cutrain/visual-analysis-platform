@@ -1,9 +1,12 @@
 import os
+import cv2
+import json
 import time
 import random
 import string
 import filetype
-import json
+import numpy as np
+import pandas as pd
 from functools import wraps
 
 def msgwrap(func):
@@ -107,7 +110,6 @@ def sample_data(data, type_=None, num=10):
             'data': df
         }
     elif type_ == 'Image':
-        import cv2
         savename = gen_random_string() + '.png'
         savedir = os.path.join('app', 'static', 'cache')
         if not os.path.exists(savedir):

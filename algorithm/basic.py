@@ -1,4 +1,5 @@
 import os
+import json
 
 from tool import safepath
 from config import DATA_DIR
@@ -212,7 +213,6 @@ def graph_instream(**kwargs):
 
 def graph_outstream(graph, **kwargs):
     import networkx
-    import json
     path = kwargs.pop('path')
     path = datapath(path)
     graph_json = networkx.to_dict_of_dicts(graph)

@@ -1,8 +1,8 @@
 {
-  "name": "model_outstream",
-  "display": "导出模型",
+  "name": "seq_outstream",
+  "display": "导出序列数据",
   "in_port": [
-    "skModel"
+    "Sequence"
   ],
   "out_port": [],
   "params": [

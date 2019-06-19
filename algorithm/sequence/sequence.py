@@ -76,9 +76,9 @@ class SequenceClassification():
         dataset = SeqDataset(X, y, max_seq_len=max_seq_len)
         sample_strategy = torch.utils.data.WeightedRandomSampler([1.0 / len(dataset) for _ in range(len(dataset))],
                                                                  len(dataset), False)
-        dataset_loader = DataLoader(dataset, batch_size=batch_size, num_workers=4, sampler=sample_strategy)
+        dataset_loader = DataLoader(dataset, batch_size=batch_size, num_workers=0, sampler=sample_strategy)
         input_dim = len(X[0][0])
-        output_dim = self._check_num_category([x[-1] for x in data])
+        output_dim = self._check_num_category(y)
         self.model = Model(input_dim, self.embedding_dim, self.hidden_dim, output_dim)
         optimizer = torch.optim.Adam(self.model.parameters(), lr=learning_rate)
         self.model.train()
@@ -109,7 +109,7 @@ class SequenceClassification():
 
     def predict_porba(self, X, max_seq_len=100, batch_size=128):
         dataset = SeqDataset(X, max_seq_len=max_seq_len)
-        dataset_loader = DataLoader(dataset, batch_size=batch_size, num_workers=4, shuffle=False, sampler=None)
+        dataset_loader = DataLoader(dataset, batch_size=batch_size, num_workers=0, shuffle=False, sampler=None)
 
         self.model.eval()
         proba = None
