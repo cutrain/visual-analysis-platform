@@ -53,6 +53,7 @@
         "regression_decision_tree": "决策树",
         "regression_predict": "回归预测"
       },
+      "异常分析": {},
       "评估": {
         "accuracy": "准确率",
         "recall": "召回率",
@@ -96,8 +97,13 @@
       "video_monorec": "物体检测"
     },
     "序列": {
-      "seq_sequence": "序列分类(GRU)",
-      "seq_predict": "预测"
+      "关联分析": {
+        "fpgrowth": "fp-growth"
+      },
+      "序列分类": {
+        "seq_sequence": "序列分类(GRU)",
+        "seq_predict": "预测"
+      }
     },
     "图": {
       "graph_line": "LINE",

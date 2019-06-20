@@ -1,0 +1,26 @@
+{
+  "name": "fpgrowth",
+  "display": "fp-growth",
+  "in_port": [
+    "Sequence"
+  ],
+  "out_port": [
+    "Sequence"
+  ],
+  "params": [
+    {
+      "name": "sup",
+      "display": "支持度",
+      "type": "int",
+      "default": "2",
+      "note": ""
+    },
+    {
+      "name": "conf",
+      "display": "置信度",
+      "type": "float",
+      "default": "0.7",
+      "note": ""
+    }
+  ]
+}
