@@ -83,7 +83,7 @@ def safepath(path):
 
 def sample_data(data, type_=None, num=10):
     if type_ == 'path':
-        type_ = get_type(path)
+        type_ = get_type(data)
         if type_ == 'DataFrame':
             data = pd.read_csv(data, nrows=10)
         elif type_ == 'Image':
