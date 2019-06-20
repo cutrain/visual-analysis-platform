@@ -13,7 +13,9 @@
     "graph_instream": "导入图数据",
     "graph_outstream": "导出图数据",
     "seq_instream": "导入序列数据",
-    "seq_outstream": "导出序列数据"
+    "seq_outstream": "导出序列数据",
+    "text_instream": "导入/输入文本",
+    "text_outstream": "导出文本"
   },
   "结构化数据": {
     "数据预处理": {
@@ -104,6 +106,16 @@
       "graph_pagerank": "PageRank",
       "graph_count_triangle": "计数三角"
     },
-    "异质网络": {}
+    "异质网络": {
+      "hetero_metapath2vec": "metapath2vec",
+      "hetero_line": "LINE"
+    },
+    "文本": {
+      "text_substr": "截取",
+      "text_replace": "替换",
+      "text_split": "分割",
+      "text_count": "统计",
+      "text_lda": "lda"
+    }
   }
 }

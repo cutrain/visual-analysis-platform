@@ -1,0 +1,33 @@
+{
+  "name": "text_replace",
+  "display": "替换",
+  "in_port": [
+    "Text"
+  ],
+  "out_port": [
+    "Text"
+  ],
+  "params": [
+    {
+      "name": "src",
+      "display": "被替换文本内容",
+      "type": "text",
+      "default": "",
+      "note": ""
+    },
+    {
+      "name": "dest",
+      "display": "替换至",
+      "type": "text",
+      "default": "",
+      "note": ""
+    },
+    {
+      "name": "count",
+      "display": "最大替换次数",
+      "type": "int",
+      "default": "-1",
+      "note": ""
+    }
+  ]
+}

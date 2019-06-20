@@ -54,22 +54,19 @@ def get_type(filepath=None, data=None):
                         data = json.load(f)
                     if type(data) == list:
                         return 'Sequence'
-                    else:
-                        return 'Graph'
                     return "Graph"
                 elif filepath[-4:] == '.mat':
                     return 'Graph'
                 elif filepath[-4:] == '.csv':
                     return "DataFrame"
-                return "Unknown"
+                return "Text"
             if ans.find('image') != -1:
                 return "Image"
             if ans.find('video') != -1:
                 return 'Video'
             if ans.find('audio') != -1:
                 return 'Audio'
-            # TODO : more type
-        return "DataFrame"
+        raise NotImplementedError
     except Exception as e:
         print("Guess Type Error :", e)
         print(filepath)
@@ -91,6 +88,9 @@ def sample_data(data, type_=None, num=10):
         elif type_ == 'Sequence':
             with open(data, 'r') as f:
                 data = json.load(f)
+        elif type_ == 'Text':
+            with open(data, 'r') as f:
+                data = f.read()
     ret = {}
     if type_ == 'DataFrame':
         num = max(num, 0)
@@ -141,6 +141,11 @@ def sample_data(data, type_=None, num=10):
         ret = {
             'type':'Sequence',
             'len':len(data),
+            'data':data,
+        }
+    elif type_ == 'Text':
+        ret = {
+            'type':'Text',
             'data':data,
         }
     else:

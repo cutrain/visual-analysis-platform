@@ -4,3 +4,4 @@ from .dataframe import *
 from .image import *
 from .video import *
 from .sequence import *
+from .text import *

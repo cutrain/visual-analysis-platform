@@ -1,0 +1,17 @@
+{
+  "name": "text_outstream",
+  "display": "导出文本",
+  "in_port": [
+    "Text"
+  ],
+  "out_port": [],
+  "params": [
+    {
+      "name": "path",
+      "display": "导出路径",
+      "type": "upload",
+      "default": "",
+      "note": ""
+    }
+  ]
+}

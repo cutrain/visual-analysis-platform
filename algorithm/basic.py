@@ -19,6 +19,8 @@ __all__ = [
     'video_outstream',
     'seq_instream',
     'seq_outstream',
+    'text_instream',
+    'text_outstream',
 ]
 
 def datapath(path):
@@ -27,6 +29,13 @@ def datapath(path):
     path = os.path.join(DATA_DIR, path)
     return path
 
+def remake_path(path, suffix):
+    s = os.path.splitext(path)[1]
+    if s == '':
+        return path + '.' + suffix
+    if s == '.':
+        return path + suffix
+    return path
 
 def data_instream(**kwargs):
     import pandas as pd
@@ -42,6 +51,7 @@ def data_outstream(data, **kwargs):
     import pandas as pd
     path = kwargs.pop('path')
     path = datapath(path)
+    path = remake_path(path, 'csv')
     data.to_csv(path, encoding='utf-8', index=False)
 
 def sql_instream(**kwargs):
@@ -103,6 +113,7 @@ def model_outstream(model, **kwargs):
     from sklearn.externals import joblib
     path = kwargs.pop('path')
     path = datapath(path)
+    path = remake_path(path, 'model')
     joblib.dump(model, path)
 
 def image_instream(**kwargs):
@@ -120,6 +131,7 @@ def image_outstream(images, **kwargs):
     import cv2
     path = kwargs.pop('path')
     path = datapath(path)
+    path = remake_path(path, 'jpg')
     if len(images) == 1:
         cv2.imwrite(path, images[0])
     else:
@@ -144,6 +156,7 @@ def video_outstream(video_opt_list, **kwargs):
     import cv2
     path = kwargs.pop('path')
     path = datapath(path)
+    path = remake_path(path, 'avi')
     fourcc = kwargs.pop('codecc')
     fps = int(kwargs.pop('fps'))
     width = int(kwargs.pop('width'))
@@ -215,6 +228,7 @@ def graph_outstream(graph, **kwargs):
     import networkx
     path = kwargs.pop('path')
     path = datapath(path)
+    path = remake_path(path, 'json')
     graph_json = networkx.to_dict_of_dicts(graph)
     data = json.dumps(graph_json)
     with open(path, 'w') as f:
@@ -230,5 +244,24 @@ def seq_instream(**kwargs):
 def seq_outstream(seq, **kwargs):
     path = kwargs.pop('path')
     path = datapath(path)
+    path = remake_path(path, 'json')
     with open(path, 'w') as f:
         json.dump(seq, f)
+
+def text_instream(**kwargs):
+    method = kwargs.pop('method')
+    if method == 'file':
+        path = kwargs.pop('path')
+        path = datapath(path)
+        with open(path, 'r') as f:
+            text = f.read()
+    else:
+        text = kwargs.pop('text')
+    return text
+
+def text_outstream(text, **kwargs):
+    path = kwargs.pop('path')
+    path = datapath(path)
+    path = remake_path(path, 'txt')
+    with open(path, 'w') as f:
+        f.write(text)

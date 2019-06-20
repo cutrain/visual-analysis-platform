@@ -1,0 +1,7 @@
+{
+  "name": "hetero_metapath2vec",
+  "display": "metapath2vec",
+  "in_port": [],
+  "out_port": [],
+  "params": []
+}

@@ -1,0 +1,19 @@
+{
+  "name": "text_lda",
+  "display": "lda",
+  "in_port": [
+    "Sequence"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": [
+    {
+      "name": "k",
+      "display": "主题数量",
+      "type": "int",
+      "default": "1",
+      "note": ""
+    }
+  ]
+}

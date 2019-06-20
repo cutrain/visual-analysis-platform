@@ -1,0 +1,26 @@
+{
+  "name": "text_substr",
+  "display": "截取",
+  "in_port": [
+    "Text"
+  ],
+  "out_port": [
+    "Text"
+  ],
+  "params": [
+    {
+      "name": "start",
+      "display": "左区间",
+      "type": "text",
+      "default": "",
+      "note": "为空默认从第0位开始，可以为负"
+    },
+    {
+      "name": "end",
+      "display": "右区间",
+      "type": "text",
+      "default": "",
+      "note": "为空默认到最后一位，可以为负"
+    }
+  ]
+}

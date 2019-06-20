@@ -1,0 +1,19 @@
+{
+  "name": "text_count",
+  "display": "统计",
+  "in_port": [
+    "Text"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": [
+    {
+      "name": "pattern",
+      "display": "统计文本内容",
+      "type": "text",
+      "default": "",
+      "note": "为空则返回文本长度"
+    }
+  ]
+}

@@ -52,6 +52,19 @@ def save_graph():
     with open(os.path.join(PROJECT_DIR, pid+'.pickle'), 'wb') as f:
         f.write(pickle.dumps(p_data))
 
+def check_param(params, comp_type):
+    global component_detail
+    icomp = component_detail[comp_type]
+    name_list = []
+    for param in icomp['params']:
+        name_list.append(param['name'])
+    ret = {
+    }
+    for param in params:
+        if param in name_list:
+            ret.update({param:params[param]})
+    return ret
+
 
 @graph.route('/run', methods=['POST'])
 @msgwrap
@@ -79,6 +92,7 @@ def run():
     all_nodes = req.pop('all_nodes')
     all_lines = req.pop('all_lines')
     for node in all_nodes:
+        node['details'] = check_param(node['details'], node['node_type'])
         ret = G.add_node(node['node_name'], node['node_type'], node['details'])
         if not ret:
             message = 'add node fail ' + node['node_name'] + ' ' +  node['node_type'] + ' ' + str(node['details'])
@@ -88,7 +102,7 @@ def run():
         print(line, flush=True)
         ret = G.add_edge(line['line_from'], int(line['line_from_port']), line['line_to'], int(line['line_to_port']))
         if not ret:
-            message = 'add edge fail' + \
+            message = 'add edge fail:' + \
                     line['line_from'] + ' ' + \
                     line['line_from_port'] + ' ' + \
                     line['line_to'] + ' ' + \

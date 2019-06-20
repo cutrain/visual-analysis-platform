@@ -1,0 +1,26 @@
+{
+  "name": "text_split",
+  "display": "分割",
+  "in_port": [
+    "Text"
+  ],
+  "out_port": [
+    "Sequence"
+  ],
+  "params": [
+    {
+      "name": "pattern",
+      "display": "分割模板",
+      "type": "text",
+      "default": "",
+      "note": "默认为空字符(空格,\\n,\\t等)，可以为多个字符"
+    },
+    {
+      "name": "count",
+      "display": "最大分割次数",
+      "type": "int",
+      "default": "-1",
+      "note": ""
+    }
+  ]
+}

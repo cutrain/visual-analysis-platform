@@ -1,0 +1,35 @@
+{
+  "name": "text_instream",
+  "display": "导入/输入文本",
+  "in_port": [],
+  "out_port": [
+    "Text"
+  ],
+  "params": [
+    {
+      "name": "method",
+      "display": "文本导入方式",
+      "type": "list",
+      "default": "file",
+      "note": "file方式从文件导入，input方式直接从参数输入",
+      "list": [
+        "file",
+        "input"
+      ]
+    },
+    {
+      "name": "path",
+      "display": "选择文件",
+      "type": "file",
+      "default": "",
+      "note": ""
+    },
+    {
+      "name": "text",
+      "display": "输入文本",
+      "type": "text",
+      "default": "",
+      "note": ""
+    }
+  ]
+}
