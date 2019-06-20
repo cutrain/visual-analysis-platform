@@ -53,7 +53,9 @@
         "regression_decision_tree": "决策树",
         "regression_predict": "回归预测"
       },
-      "异常分析": {},
+      "异常分析": {
+        "outlier_iforest": "IsolationForest"
+      },
       "评估": {
         "accuracy": "准确率",
         "recall": "召回率",

@@ -1,0 +1,19 @@
+{
+  "name": "outlier_iforest",
+  "display": "IsolationForest",
+  "in_port": [
+    "DataFrame"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": [
+    {
+      "name": "contamination",
+      "display": "异常值占比",
+      "type": "float",
+      "default": "0.1",
+      "note": ""
+    }
+  ]
+}

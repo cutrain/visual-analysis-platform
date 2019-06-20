@@ -4,3 +4,4 @@ from .predict import classify_predict, regression_predict
 from .process import sort, random, normalization, drop_duplicate, fillna, dropna, merge_row, merge_col, split_row, split_col, sql_execute
 from .evaluation import fone, accuracy, recall
 from .cluster import dbscan, kmeans
+from .outlier import outlier_iforest
