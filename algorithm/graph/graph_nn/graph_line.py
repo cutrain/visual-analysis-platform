@@ -2,6 +2,8 @@ __all__ = [
     'graph_line',
 ]
 
+import networkx
+
 def graph_line(graph, **kwargs):
     from ._line import LINE, Graph
     import pandas as pd
