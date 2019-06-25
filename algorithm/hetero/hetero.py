@@ -4,15 +4,18 @@ __all__ = [
 ]
 
 def hetero_metapath2vec(data, **kwargs):
+    import pandas as pd
     from .metapath2vec import Meta2Vec
     m = Meta2Vec()
     m.df = data
     m.init_model()
     m.train_model(10, 10, 5, None, num_iter=1, rewalk=True)
-    ret = m.get_emb_df()
-    return ret
+    nd = m.get_emb_df()
+    df = pd.DataFrame(nd)
+    return df
 
 def hetero_line(data, ** kwargs):
+    import pandas as pd
     from .line import Graph, LINE
     g = Graph()
     g.read_graph(data)

@@ -87,7 +87,7 @@ class _LINE(object):
     def batch_iter(self):
         look_up = self.g.look_up_dict
 
-        table_size = 1e8
+        table_size = 1e7
         numNodes = self.node_size
 
         edges = [(look_up[x[0]], look_up[x[1]]) for x in self.g.G.edges()]
@@ -132,7 +132,7 @@ class _LINE(object):
                 end_index = min(start_index+self.batch_size, data_size)
 
     def gen_sampling_table(self):
-        table_size = 1e8
+        table_size = 1e7
         power = 0.75
         numNodes = self.node_size
 

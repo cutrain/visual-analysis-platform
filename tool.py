@@ -100,6 +100,7 @@ def sample_data(data, type_=None, num=10):
         types = [str(df[index[j]].dtype) for j in range(len(index))]
         df = df.fillna('NaN')
         df = np.array(df).tolist()
+        df = list(map(lambda x:list(map(lambda y:str(y) if len(str(y))< 100 else str(y)[:97]+'...',x)), df))
         ret = {
             'type':'DataFrame',
             'shape':list(data.shape),
@@ -138,6 +139,8 @@ def sample_data(data, type_=None, num=10):
             'type':'Video',
         }
     elif type_ == 'Sequence':
+        data = data[:num]
+        data = list(map(str, data))
         ret = {
             'type':'Sequence',
             'len':len(data),
@@ -150,4 +153,5 @@ def sample_data(data, type_=None, num=10):
         }
     else:
         raise NotImplementedError
+    print(ret)
     return ret
