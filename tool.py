@@ -100,7 +100,7 @@ def sample_data(data, type_=None, num=10):
         types = [str(df[index[j]].dtype) for j in range(len(index))]
         df = df.fillna('NaN')
         df = np.array(df).tolist()
-        df = list(map(lambda x:list(map(lambda y:str(y) if len(str(y))< 100 else str(y)[:97]+'...',x)), df))
+        df = list(map(lambda x:list(map(lambda y:str(y) if len(str(y))< 16 else str(y)[:13]+'...',x)), df))
         ret = {
             'type':'DataFrame',
             'shape':list(data.shape),

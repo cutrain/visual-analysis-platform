@@ -87,7 +87,9 @@
         "image_vgg": "VGG",
         "image_alexnet": "AlexNet",
         "image_squeezenet": "SqueezeNet",
-        "image_pytorch_predict": "预测"
+        "image_pytorch_predict": "预测",
+        "image_gan": "GAN",
+        "image_gan_apply": "GAN应用"
       },
       "其它": {
         "image_edge": "边缘检测",

@@ -39,6 +39,7 @@ def createset():
 @msgwrap
 def view():
     global DATA_DIR
+    file_limit = 20
     def oswalk(obj, path):
         dirs = sorted(os.listdir(path))
         for i in dirs:
@@ -46,10 +47,14 @@ def view():
             if os.path.isdir(new_path):
                 obj[i] = {}
                 oswalk(obj[i], new_path)
+        cnt = 0
         for i in dirs:
             new_path = os.path.join(path, i)
             if os.path.isfile(new_path):
                 obj[i] = [os.path.getsize(new_path) // 1024, get_type(new_path)]
+                cnt += 1
+                if cnt >= file_limit:
+                    break
     structure = {}
     oswalk(structure, DATA_DIR)
     return {

@@ -1,0 +1,40 @@
+{
+  "name": "image_gan",
+  "display": "GAN",
+  "in_port": [
+    "Image"
+  ],
+  "out_port": [
+    "pytorchModel"
+  ],
+  "params": [
+    {
+      "name": "latent_dim",
+      "display": "隐层维度",
+      "type": "int",
+      "default": "100",
+      "note": ""
+    },
+    {
+      "name": "num_round",
+      "display": "训练轮数",
+      "type": "int",
+      "default": "1",
+      "note": ""
+    },
+    {
+      "name": "learning_rate",
+      "display": "学习率",
+      "type": "float",
+      "default": "0.1",
+      "note": ""
+    },
+    {
+      "name": "batch_size",
+      "display": "batch_size",
+      "type": "int",
+      "default": "32",
+      "note": ""
+    }
+  ]
+}

@@ -119,19 +119,34 @@ def model_outstream(model, **kwargs):
 def image_instream(**kwargs):
     import cv2
     path = kwargs.pop('path')
-    if type(path) == str:
-        path = [path]
+    gray = kwargs.pop('gray')
+    path = datapath(path)
     images = []
-    for i in path:
-        i = datapath(i)
-        images.append(cv2.imread(i))
+    if os.path.isdir(path):
+        for f in sorted(os.listdir(path)):
+            p = os.path.join(path, f)
+            if os.path.isfile(p):
+                if gray == 'true':
+                    image = cv2.imread(p, cv2.IMREAD_GRAYSCALE)
+                else:
+                    image = cv2.imread(p)
+                if image is not None:
+                    images.append(image)
+    else:
+        if gray == 'true':
+            image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+        else:
+            image = cv2.imread(path)
+        if image is not None:
+            images.append(image)
+    if len(images) == 0:
+        raise FileNotFoundError("There is no images")
     return images
 
 def image_outstream(images, **kwargs):
     import cv2
     path = kwargs.pop('path')
     path = datapath(path)
-    path = remake_path(path, 'jpg')
     if len(images) == 1:
         cv2.imwrite(path, images[0])
     else:

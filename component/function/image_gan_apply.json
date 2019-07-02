@@ -1,0 +1,19 @@
+{
+  "name": "image_gan_apply",
+  "display": "GAN应用",
+  "in_port": [
+    "pytorchModel"
+  ],
+  "out_port": [
+    "Image"
+  ],
+  "params": [
+    {
+      "name": "num",
+      "display": "生成图片数量",
+      "type": "int",
+      "default": "1",
+      "note": ""
+    }
+  ]
+}

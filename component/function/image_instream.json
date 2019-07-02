@@ -12,6 +12,17 @@
       "type": "file",
       "default": "",
       "note": ""
+    },
+    {
+      "name": "gray",
+      "display": "灰度图",
+      "type": "list",
+      "default": "false",
+      "note": "",
+      "list": [
+        "true",
+        "false"
+      ]
     }
   ]
 }

@@ -9,7 +9,7 @@
   ],
   "params": [
     {
-      "name": "k",
+      "name": "topic",
       "display": "主题数量",
       "type": "int",
       "default": "1",
