@@ -91,6 +91,19 @@ def sample_data(data, type_=None, num=10):
         elif type_ == 'Text':
             with open(data, 'r') as f:
                 data = f.read()
+        elif type_ == 'Graph':
+            from algorithm.graph.graphio import from_json_dicts, from_json_lists, from_mat_matrix
+            data = from_json_dicts(path)
+            if data is None:
+                data = from_json_lists(path)
+            if data is None:
+                data = from_mat_matrix(path)
+            if data is None:
+                data = 'Graph decode error'
+            else:
+                graph_json = networkx.to_dict_of_dicts(data)
+                data = json.dumps(graph_json)
+
     ret = {}
     if type_ == 'DataFrame':
         num = max(num, 0)
@@ -133,6 +146,7 @@ def sample_data(data, type_=None, num=10):
     elif type_ == 'Graph':
         ret = {
             'type':'Graph',
+            'data':data,
         }
     elif type_ == 'Video':
         ret = {

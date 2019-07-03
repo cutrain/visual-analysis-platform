@@ -40,11 +40,15 @@ def remake_path(path, suffix):
 def data_instream(**kwargs):
     import pandas as pd
     num = int(kwargs.pop('read_number'))
+    header = kwargs.pop('header')
     path = kwargs.pop('path')
     path = datapath(path)
     if num == 0:
         num = None
-    df = pd.read_csv(path, nrows=num)
+    if header == 'True':
+        df = pd.read_csv(path, nrows=num)
+    else:
+        df = pd.read_csv(path, nrows=num, header=None)
     return df
 
 def data_outstream(data, **kwargs):

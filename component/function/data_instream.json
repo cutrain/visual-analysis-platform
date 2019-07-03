@@ -19,6 +19,17 @@
       "type": "file",
       "default": "",
       "note": ""
+    },
+    {
+      "name": "header",
+      "display": "首行列名",
+      "type": "list",
+      "default": "True",
+      "note": "",
+      "list": [
+        "True",
+        "False"
+      ]
     }
   ]
 }
