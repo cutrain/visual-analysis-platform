@@ -10,17 +10,6 @@
   ],
   "params": [
     {
-      "name": "type_",
-      "display": "预测类型",
-      "type": "list",
-      "default": "label",
-      "note": "预测得出的结果，proba输出所有label的概率，label输出最高概率的label",
-      "list": [
-        "proba",
-        "label"
-      ]
-    },
-    {
       "name": "predict_label",
       "display": "预测结果列名",
       "type": "text",

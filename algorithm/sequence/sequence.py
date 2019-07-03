@@ -103,11 +103,11 @@ class SequenceClassification():
                 print(f"{epoch+1}/{epochs} loss {loss:.9f}")
 
     def predict(self, X, max_seq_len=100, batch_size=128):
-        proba = self.predict_porba(X, max_seq_len, batch_size)
+        proba = self.predict_proba(X, max_seq_len, batch_size)
         labels = np.argmax(proba, axis=1)
         return labels
 
-    def predict_porba(self, X, max_seq_len=100, batch_size=128):
+    def predict_proba(self, X, max_seq_len=100, batch_size=128):
         dataset = SeqDataset(X, max_seq_len=max_seq_len)
         dataset_loader = DataLoader(dataset, batch_size=batch_size, num_workers=0, shuffle=False, sampler=None)
 
@@ -158,7 +158,7 @@ if __name__ == "__main__":
               epochs=epochs, verbose=True)
 
     # 模型预测（分别预测概率和标签）
-    predict = model.predict_porba(x_train)
+    predict = model.predict_proba(x_train)
     print(predict)
     labels = model.predict(x_train)
     print(labels)

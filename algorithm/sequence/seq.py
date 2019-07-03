@@ -19,12 +19,8 @@ def seq_sequence(seq1, seq2, **kwargs):
 
 def seq_predict(model, seq, **kwargs):
     import pandas as pd
-    type_ = kwargs.pop('type_')
     predict_label = kwargs.pop('predict_label')
-    if type_ == 'proba':
-        predict = model.predict_proba(seq)
-    else:
-        predict = model.predict(seq)
+    predict = model.predict(seq)
     df = pd.DataFrame(predict)
     df.columns = [predict_label]
     return df

@@ -23,8 +23,7 @@ def image_gan(images, **kwargs):
     data /= 128.
     data -= 1.
     model = Gan((height, width, channel), latent_dim)
-    cuda = torch.cuda.is_available()
-    model.train(num_round, learning_rate, batch_size, data, cuda=cuda)
+    model.train(num_round, learning_rate, batch_size, data)
     return model
 
 def image_gan_apply(pytorchModel, **kwargs):
