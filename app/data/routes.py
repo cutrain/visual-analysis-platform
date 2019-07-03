@@ -117,9 +117,7 @@ def delete():
 @data.route('/download', defaults={'path':''}, methods=['GET'])
 @data.route('/download/<path:path>', methods=['GET'])
 def download(path):
-    import io
     global DATA_DIR
-    print(path)
     path = safepath(path)
     path = os.path.join(os.getcwd(), DATA_DIR, path)
     print(path)

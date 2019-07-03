@@ -1,0 +1,20 @@
+{
+  "name": "image_svm_apply",
+  "display": "SVM预测",
+  "in_port": [
+    "skModel",
+    "Image"
+  ],
+  "out_port": [
+    "DataFrame"
+  ],
+  "params": [
+    {
+      "name": "predict_label",
+      "display": "预测列名",
+      "type": "text",
+      "default": "predict",
+      "note": ""
+    }
+  ]
+}

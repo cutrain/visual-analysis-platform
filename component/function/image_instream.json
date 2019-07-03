@@ -23,6 +23,13 @@
         "true",
         "false"
       ]
+    },
+    {
+      "name": "num",
+      "display": "最大导入数量",
+      "type": "int",
+      "default": "0",
+      "note": "0代表不限制数量"
     }
   ]
 }

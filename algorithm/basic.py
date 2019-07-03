@@ -125,8 +125,12 @@ def image_instream(**kwargs):
     import cv2
     path = kwargs.pop('path')
     gray = kwargs.pop('gray')
+    num = int(kwargs.pop('num'))
     path = datapath(path)
     images = []
+    cnt = 0
+    if num <= 0:
+        num = None
     if os.path.isdir(path):
         for f in sorted(os.listdir(path)):
             p = os.path.join(path, f)
@@ -137,6 +141,9 @@ def image_instream(**kwargs):
                     image = cv2.imread(p)
                 if image is not None:
                     images.append(image)
+                    cnt += 1
+                    if num is not None and cnt >= num:
+                        break
     else:
         if gray == 'true':
             image = cv2.imread(path, cv2.IMREAD_GRAYSCALE)

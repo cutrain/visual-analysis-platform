@@ -168,8 +168,8 @@ class Node:
         ret += 'Node name : ' + str(self._name)
         ret += ' Node type : ' + str(self._detail['name'])
         ret += ' Status : ' + str(self.status)
-        ret += ' in port data : ' + str(list(map(repr, self._in_port)))
-        ret += ' out port data : ' + str(list(map(repr, self._out)))
+        ret += ' in port data : ' + str(list(map(repr, self._in_port)))[:300]
+        ret += ' out port data : ' + str(list(map(repr, self._out)))[:300]
         ret += ' Params : ' + str(self._param)
         return ret
 

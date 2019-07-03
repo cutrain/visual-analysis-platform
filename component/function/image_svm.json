@@ -1,6 +1,6 @@
 {
   "name": "image_svm",
-  "display": "svm",
+  "display": "SVM",
   "in_port": [
     "Image",
     "DataFrame"
@@ -8,5 +8,45 @@
   "out_port": [
     "skModel"
   ],
-  "params": []
+  "params": [
+    {
+      "name": "c_penalty",
+      "display": "C惩罚值",
+      "type": "float",
+      "default": "1",
+      "note": ""
+    },
+    {
+      "name": "kernel",
+      "display": "核",
+      "type": "list",
+      "default": "linear",
+      "note": "",
+      "list": [
+        "linear",
+        "poly",
+        "rbf",
+        "sigmoid",
+        "precomputed"
+      ]
+    },
+    {
+      "name": "label",
+      "display": "标签列名",
+      "type": "text",
+      "default": "label",
+      "note": "如果标签列错误，则默认使用第一列"
+    },
+    {
+      "name": "allow_not_match",
+      "display": "允许图片和标签数量不匹配",
+      "type": "list",
+      "default": "False",
+      "note": "",
+      "list": [
+        "True",
+        "False"
+      ]
+    }
+  ]
 }

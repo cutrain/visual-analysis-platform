@@ -80,6 +80,10 @@
         "image_blend": "图片混合",
         "image_brightness_contrast": "亮度/对比度"
       },
+      "机器学习": {
+        "image_svm": "SVM",
+        "image_svm_apply": "SVM预测"
+      },
       "深度学习": {
         "image_cnn": "CNN",
         "image_resnet": "ResNet",

@@ -92,17 +92,8 @@ def sample_data(data, type_=None, num=10):
             with open(data, 'r') as f:
                 data = f.read()
         elif type_ == 'Graph':
-            from algorithm.graph.graphio import from_json_dicts, from_json_lists, from_mat_matrix
-            data = from_json_dicts(path)
-            if data is None:
-                data = from_json_lists(path)
-            if data is None:
-                data = from_mat_matrix(path)
-            if data is None:
-                data = 'Graph decode error'
-            else:
-                graph_json = networkx.to_dict_of_dicts(data)
-                data = json.dumps(graph_json)
+            data = ''
+
 
     ret = {}
     if type_ == 'DataFrame':
@@ -114,6 +105,10 @@ def sample_data(data, type_=None, num=10):
         df = df.fillna('NaN')
         df = np.array(df).tolist()
         df = list(map(lambda x:list(map(lambda y:str(y) if len(str(y))< 16 else str(y)[:13]+'...',x)), df))
+        if len(index) > 20:
+            index = index[:19] + ['More...']
+            df = list(map(lambda x:x[:19]+['...'], df))
+
         ret = {
             'type':'DataFrame',
             'shape':list(data.shape),
