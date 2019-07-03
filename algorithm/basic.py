@@ -49,6 +49,7 @@ def data_instream(**kwargs):
         df = pd.read_csv(path, nrows=num)
     else:
         df = pd.read_csv(path, nrows=num, header=None)
+        df.columns = list(map(str, df.columns))
     return df
 
 def data_outstream(data, **kwargs):
