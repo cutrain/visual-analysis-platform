@@ -27,7 +27,7 @@ ipython==7.5.0
 ipython-genutils==0.2.0
 itsdangerous==1.1.0
 jedi==0.13.3
-Jinja2==2.10
+Jinja2==2.10.1
 jmespath==0.9.4
 joblib==0.13.2
 Keras-Applications==1.0.7
@@ -77,6 +77,6 @@ tensorflow-estimator==1.13.0
 termcolor==1.1.0
 torch==1.1.0
 traitlets==4.3.2
-urllib3==1.23
+urllib3==1.24.2
 wcwidth==0.1.7
 Werkzeug==0.14.1
