@@ -13,7 +13,7 @@ def images2df(images):
 
 
 def image_svm(images_in, df, **kwargs):
-    from sklearn.svm import SVC
+    from sklearn.svm import SVC, LinearSVC
     images = images_in[0]
     names = images_in[1]
     index = kwargs.pop('label')
@@ -32,7 +32,10 @@ def image_svm(images_in, df, **kwargs):
             data = data[:len(label)]
         else:
             label = label[:len(data)]
-    model = SVC(C=c_penalty, kernel=kernel)
+    if kernel == 'linear':
+        model = LinearSVC(C=c_penalty)
+    else:
+        model = SVC(C=c_penalty, kernel=kernel)
     model = model.fit(data, label)
     return model
 

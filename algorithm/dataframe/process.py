@@ -120,10 +120,13 @@ def merge_col(data1, data2, **kwargs):
     return result
 
 def split_row(data, **kwargs):
-    ratio = kwargs.pop('ratio')
-    ratio = float(ratio)
+    ratio = float(kwargs.pop('ratio'))
+    num = int(kwargs.pop('num'))
+    if num > 0:
+        size = num
+    else:
+        size = int(len(data) * (ratio / 100.))
     results = [0, 1]
-    size = int(len(data) * (ratio / 100.))
     result1 = data[0:size]
     result2 = data[size:].reset_index(drop=True)
     return result1, result2

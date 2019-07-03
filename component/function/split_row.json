@@ -14,7 +14,14 @@
       "display": "拆分比例(0-100%)",
       "type": "float",
       "default": "75",
-      "note": ""
+      "note": "若行数参数有值则无视该参数"
+    },
+    {
+      "name": "num",
+      "display": "行数",
+      "type": "text",
+      "default": "0",
+      "note": "为0时按比例拆分"
     }
   ]
 }
