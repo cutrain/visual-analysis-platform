@@ -128,6 +128,7 @@ def image_instream(**kwargs):
     num = int(kwargs.pop('num'))
     path = datapath(path)
     images = []
+    names = []
     cnt = 0
     if num <= 0:
         num = None
@@ -141,6 +142,7 @@ def image_instream(**kwargs):
                     image = cv2.imread(p)
                 if image is not None:
                     images.append(image)
+                    names.append(f)
                     cnt += 1
                     if num is not None and cnt >= num:
                         break
@@ -151,23 +153,25 @@ def image_instream(**kwargs):
             image = cv2.imread(path)
         if image is not None:
             images.append(image)
+            names.append(os.path.basename(path))
     if len(images) == 0:
         raise FileNotFoundError("There is no images")
-    return images
+    ret = [images, names]
+    return ret
 
-def image_outstream(images, **kwargs):
+def image_outstream(images_in, **kwargs):
     import cv2
     path = kwargs.pop('path')
     path = datapath(path)
+    images = images_in[0]
+    names = images_in[1]
     if len(images) == 1:
         cv2.imwrite(path, images[0])
     else:
-        cnt = 0
         if not os.path.exists(path):
             os.mkdir(path)
-        for i in images:
-            cv2.imwrite(os.path.join(path, str(cnt)+'.png'), i)
-            cnt += 1
+        for i, image in enumerate(images):
+            cv2.imwrite(os.path.join(path, names[i]), image)
 
 def video_instream(**kwargs):
     import cv2

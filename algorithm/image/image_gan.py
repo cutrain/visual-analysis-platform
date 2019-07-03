@@ -3,7 +3,7 @@ __all__ = [
     'image_gan_apply',
 ]
 
-def image_gan(images, **kwargs):
+def image_gan(images_in, **kwargs):
     from .gan import Gan
     import torch
     import numpy as np
@@ -11,6 +11,9 @@ def image_gan(images, **kwargs):
     num_round = int(kwargs.pop('num_round'))
     learning_rate = float(kwargs.pop('learning_rate'))
     batch_size = int(kwargs.pop('batch_size'))
+
+    images = images_in[0]
+    names = images_in[1]
 
     shape = images[0].shape
     if len(shape) == 2:
@@ -33,9 +36,11 @@ def image_gan_apply(pytorchModel, **kwargs):
     gen *= 128.
     gen = gen.clip(0,255)
     gen = gen.astype('uint8')
-    ret = []
+    images = []
+    names = []
     for i in range(len(gen)):
-        ret.append(gen[i])
-    return ret
+        images.append(gen[i])
+        names.append(str(i)+'.png')
+    return [images, names]
 
 

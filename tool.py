@@ -82,7 +82,7 @@ def sample_data(data, type_=None, num=10):
     if type_ == 'path':
         type_ = get_type(data)
         if type_ == 'DataFrame':
-            data = pd.read_csv(data, nrows=10)
+            data = [[pd.read_csv(data, nrows=10)], [os.path.basename(data)]]
         elif type_ == 'Image':
             data = cv2.imread(data)
         elif type_ == 'Sequence':
@@ -123,6 +123,8 @@ def sample_data(data, type_=None, num=10):
         savedir = os.path.join('app', 'static', 'cache')
         if not os.path.exists(savedir):
             os.mkdir(savedir)
+        filename = data[1][0]
+        data = data[0][0]
         shape = list(data.shape)
         shape[0], shape[1] = shape[1], shape[0]
         resize_shape = shape[:2]

@@ -39,12 +39,15 @@ def draw_boxes(img, bboxes, color=(255, 0, 0), thick=3, copy=True):
             my_rectangle(imcopy, (bbox[2], bbox[0]), (bbox[3], bbox[1]), color, thick)
     return imcopy
 
-def image_monorec(images, **kwargs):
+def image_monorec(images_in, **kwargs):
     # class_ : see yolov3/data/coco.names
     import cv2
     import numpy as np
     from .yolov3.detect import detect
     class_ = kwargs.pop('class_').split(',')
+    images = images_in[0]
+    names = images_in[1]
+
     result_images = []
     for image in images:
         if len(image.shape) == 3:
@@ -54,4 +57,4 @@ def image_monorec(images, **kwargs):
         if len(image.shape) == 3:
             image = image[:,:,::-1].copy()
         result_images.append(image)
-    return result_images
+    return [result_images, names]

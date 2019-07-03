@@ -3,4 +3,5 @@ __all__ = [
 ]
 
 def image_cnn(images, data, **kwargs):
+    import torchvision.models as models
     pass

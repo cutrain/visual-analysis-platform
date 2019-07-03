@@ -13,16 +13,20 @@ __all__ = [
     'image_noiseness',
     'image_blend',
 ]
-def image_resolution(images, **kwargs):
+def image_resolution(images_in, **kwargs):
     import cv2
     width = int(kwargs.pop('width'))
     height = int(kwargs.pop('height'))
+    images = images_in[0]
+    names = images_in[1]
     result_images = list(map(lambda x:cv2.resize(x, (width, height)), images))
-    return result_images
+    return [result_images, names]
 
-def image_channel(images, **kwargs):
+def image_channel(images_in, **kwargs):
     import cv2
     method = kwargs.pop('method')
+    images = images_in[0]
+    names = images_in[1]
     mmap = {
         'BGR2GRAY':cv2.COLOR_BGR2GRAY,
         'BGR2RGB':cv2.COLOR_BGR2RGB,
@@ -30,30 +34,38 @@ def image_channel(images, **kwargs):
         'BGR2HSV':cv2.COLOR_BGR2HSV,
     }[method]
     result_images = list(map(lambda x:cv2.cvtColor(x, mmap), images))
-    return result_images
+    return [result_images, names]
 
-def image_large(images, **kwargs):
+def image_large(images_in, **kwargs):
     import cv2
+    images = images_in[0]
+    names = images_in[1]
     result_images = list(map(lambda x:cv2.pyrUp(x), images))
-    return result_images
+    return [result_images, names]
 
-def image_small(images, **kwargs):
+def image_small(images_in, **kwargs):
     import cv2
+    images = images_in[0]
+    names = images_in[1]
     result_images = list(map(lambda x:cv2.pyrDown(x), images))
-    return result_images
+    return [result_images, names]
 
-def image_cut(images, **kwargs):
+def image_cut(images_in, **kwargs):
     import cv2
     left = int(kwargs.pop('left'))
     right = int(kwargs.pop('width')) + left
     top = int(kwargs.pop('top'))
     bottom = int(kwargs.pop('height')) + top
+    images = images_in[0]
+    names = images_in[1]
     result_images = list(map(lambda x:x[top:bottom, left:right], images))
-    return result_images
+    return [result_images, names]
 
-def image_blur(images, **kwargs):
+def image_blur(images_in, **kwargs):
     import cv2
     method = kwargs.pop('method')
+    images = images_in[0]
+    names = images_in[1]
     kernel = tuple(map(int,kwargs.pop('kernel_size').split(',')))
     func = {
         'linear':lambda x:cv2.blur(x, kernel),
@@ -61,64 +73,80 @@ def image_blur(images, **kwargs):
         'median':lambda x:cv2.medianBlur(x, kernel[0]),
     }[method]
     result_images = list(map(func, images))
-    return result_images
+    return [result_images, names]
 
-def image_dilate(images, **kwargs):
+def image_dilate(images_in, **kwargs):
     import cv2
     import numpy as np
     kernel_size = tuple(map(int, kwargs.pop('kernel_size').split(',')))
     iter_n = int(kwargs.pop('iterations'))
+    images = images_in[0]
+    names = images_in[1]
     kernel = np.ones(kernel_size, np.uint8)
     result_images = list(map(lambda x:cv2.dilate(x, kernel, iterations=iter_n), images))
-    return result_images
-[0]
-def image_erode(images, **kwargs):
+    return [result_images, names]
+
+def image_erode(images_in, **kwargs):
     import cv2
     import numpy as np
     kernel_size = tuple(map(int, kwargs.pop('kernel_size').split(',')))
     iter_n = int(kwargs.pop('iterations'))
+    images = images_in[0]
+    names = images_in[1]
     kernel = np.ones(kernel_size, np.uint8)
     result_images = list(map(lambda x:cv2.erode(x, kernel, iterations=iter_n), images))
-    return result_images
+    return [result_images, names]
 
-def image_close(images, **kwargs):
+def image_close(images_in, **kwargs):
     import cv2
     import numpy as np
     kernel_size = tuple(map(int, kwargs.pop('kernel_size').split(',')))
+    images = images_in[0]
+    names = images_in[1]
     kernel = np.ones(kernel_size, np.uint8)
     result_images = list(map(lambda x:cv2.morphologyEx(x, cv2.MORPH_CLOSE, kernel), images))
-    return result_images
+    return [result_images, names]
 
-def image_open(images, **kwargs):
+def image_open(images_in, **kwargs):
     import cv2
     import numpy as np
+    images = images_in[0]
+    names = images_in[1]
     kernel_size = tuple(map(int, kwargs.pop('kernel_size').split(',')))
     kernel = np.ones(kernel_size, np.uint8)
     result_images = list(map(lambda x:cv2.morphologyEx(x, cv2.MORPH_OPEN, kernel), images))
-    return result_images
+    return [result_images, names]
 
-def image_noiseness(images, **kwargs):
+def image_noiseness(images_in, **kwargs):
     import cv2
     import numpy as np
     mean = float(kwargs.pop('mean'))
     std = float(kwargs.pop('std'))
+    images = images_in[0]
+    names = images_in[1]
     result_images = []
     for i in images:
         noise = np.random.normal(mean, std, i.shape)
         result_images.append(np.clip(i.astype('float') + noise, 0, 255).astype('uint8'))
-    return result_images
+    return [result_images, names]
 
-def image_brightness_contrast(images, **kwargs):
+def image_brightness_contrast(images_in, **kwargs):
     import cv2
     import numpy as np
     brightness_shift = int(kwargs.pop('brightness_shift'))
     contrast_shift = float(kwargs.pop('contrast_shift'))
+    images = images_in[0]
+    names = images_in[1]
     result_images = list(map(lambda x:np.clip(x.astype('float') * contrast_shift + brightness_shift, 0, 255).astype('uint8'), images))
-    return result_images
+    return [result_images, names]
 
-def image_blend(images1, images2, **kwargs):
+def image_blend(images_in1, images_in2, **kwargs):
     import cv2
     import numpy as np
+    images1 = images_in1[0]
+    names1 = images_in1[1]
+    images2 = images_in2[0]
+    names2 = images_in2[1]
     method = kwargs.pop('method')
     gamma = int(kwargs.pop('gamma'))
     gamma = max(min(100, gamma), 0)
@@ -142,4 +170,4 @@ def image_blend(images1, images2, **kwargs):
             result_images.append((images2[i] * gamma).astype('uint8'))
     else:
         raise NotImplementedError
-    return result_images
+    return [result_images, names1[:l]]

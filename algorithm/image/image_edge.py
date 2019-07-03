@@ -2,11 +2,13 @@ __all__ = [
     'image_edge',
 ]
 
-def image_edge(images, **kwargs):
+def image_edge(images_in, **kwargs):
     import cv2
     isblur = kwargs.pop('isblur')
     thresh_min = int(kwargs.pop('thresh_min'))
     thresh_max = int(kwargs.pop('thresh_max'))
+    images = images_in[0]
+    names = images_in[1]
     result_images = []
     for image in images:
         if isblur == 'yes':
@@ -15,4 +17,4 @@ def image_edge(images, **kwargs):
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         image = cv2.Canny(image, thresh_min, thresh_max)
         result_images.append(image)
-    return result_images
+    return [result_images, names]

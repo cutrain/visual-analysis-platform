@@ -194,10 +194,7 @@ def sample():
     for i in range(len(out)):
         outtype = out[i]
         idata = data['out'][i]
-        if outtype == 'Image':
-            retdata.append(sample_data(idata[0], type_='Image'))
-        else:
-            retdata.append(sample_data(idata, type_=outtype))
+        retdata.append(sample_data(idata, type_=outtype))
 
     return ret
 
