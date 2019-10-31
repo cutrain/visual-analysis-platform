@@ -26,7 +26,6 @@ def msgwrap(func):
                 'succeed':1,
                 'message':str(e),
             }
-        print(ret, flush=True)
         return json.dumps(ret).encode('utf-8')
     return wrap
 
