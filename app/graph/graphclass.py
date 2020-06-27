@@ -10,7 +10,7 @@ from queue import Queue
 # from multiprocessing import Queue
 from collections import defaultdict
 
-from config import CACHE_DIR, REDIS_PORT, REDIS_DB, REDIS_HOST
+from config import CACHE_DIR, REDIS_PORT, REDIS_DB, REDIS_HOST, logger
 from algorithm import *
 from common import component_detail
 from functools import wraps
@@ -62,7 +62,7 @@ class Node:
         self._out = [Port(self, i) for i in self._detail['out_port'] ]
         self._param = param
         # TODO : check param avaliable
-        print('node :', self._name, 'function :', node_type, eval(node_type), flush=True)
+        logger.info('node : {} function {} {}'.format(self._name, node_type, eval(node_type)))
         self._func = func_pack(eval(node_type))
         self._thread = None
         self._saveable = True
@@ -95,23 +95,23 @@ class Node:
             with open(os.path.join(dirpath, self._name + '.pickle'), 'rb') as f:
                 data = pickle.load(f)
             if data['name'] != self._name:
-                print("ERROR: Node load, unexpect error happend")
+                logger.error('ERROR: Node load, unexpect error happed, expect name {} but {} got'.format(self._name, data['name']))
                 return
             if data['detail'] != self._detail:
-                print('load error, detail changed :', self._name, self._detail, data['detail'])
+                logger.info('load error, detail changed : {} {} {}'.format(self._name, self._detail, data['detail']))
                 return
             if data['param'] != self._param:
-                print('param changed :', self._name, self._param, data['param'])
+                logger.info('param changed : {} {} {}'.format(self._name, self._param, data['param']))
                 return
             if not all(map(lambda x:x[0]==x[1], zip(data['in_port_name'], self._in_port_name))):
-                print('in port not match :', self._name, self._in_port_name, data['in_port_name'])
+                logger.info('in port not match : {} {} {}'.format(self._name, self._in_port_name, data['in_port_name']))
                 return
             self.status = data['status']
             for i in range(len(self._out)):
                 self._out[i](data['out'][i])
             return True
         except Exception as e:
-            print('node', self._name, 'load fail', e)
+            logger.exception('node {} load fail {}'.format(self._name, e))
             return False
 
     def reset(self):
@@ -124,19 +124,17 @@ class Node:
 
     def __run(self):
         try:
-            print('node', self._name, 'start run', flush=True)
+            logger.info('node {} start running'.format(self._name))
             self.status = 2
             result = self._func(*tuple(map(lambda x:x(), self._in_port)), **self._param)
-            print('node', self._name, 'finish running', flush=True)
+            logger.info('node {} finish running'.format(self._name))
             for i in range(len(self._out)):
                 self._out[i](result[i])
             self.status = 0
-            print('node', self._name, 'get ans', flush=True)
+            logger.info('node {} get ans'.format(self._name))
         except Exception as e:
-            print('node', self._name, 'running break', flush=True)
-            print('Node Run Error :', self)
-            print(e)
             self.status = -1
+            logger.exception('node {} running break, {}\n{}'.format(self._name, self, e))
 
     def __call__(self):
         try:
@@ -159,8 +157,7 @@ class Node:
             self._thread.daemon = True
             self._thread.start()
         except Exception as e:
-            print('Node Call Error :', self)
-            print(e)
+            logger.exception('Node Call Error : {}\n{}'.format(self, e))
             self.status = -1
 
     def __repr__(self):
@@ -183,7 +180,7 @@ class Graph:
             self.nodes[node_name] = Node(node_name, node_type, param)
             return True
         except Exception as e:
-            print('add node error :', e)
+            logger.exception('add node error : {}'.format(e))
         return False
 
     def add_edge(self, node_from, port_from, node_to, port_to):
@@ -193,7 +190,7 @@ class Graph:
                 self.nodes[node_to]._in_port[port_to] = self.nodes[node_from]._out[port_from]
                 return True
         except Exception as e:
-            print('add edge error :', e)
+            logger.exception('add edge error : {}'.format(e))
         return False
 
     def load_cache(self):
@@ -213,19 +210,20 @@ class Graph:
                             if port.node.status != 0:
                                 node.reset()
                                 changed = True
+                                logger.info('parameters changed or input different : {}:{}'.format(self.pid, key))
 
-            # Delete nouse cache
+            # Delete useless cache
             for key in self.nodes:
                 node = self.nodes[key]
                 path = os.path.join(CACHE_DIR, self.pid, node._name+'.pickle')
                 if node.status != 0:
                     if os.path.exists(path):
                         os.remove(path)
-                        print('delete unused cache', path)
+                        logger.info('detele unused cache {}'.format(path))
 
             return True
         except Exception as e:
-            print('load cache error :', e)
+            logger.exception('load cache error {}'.format(e))
         return False
 
     def __call__(self, run_node=None):
@@ -279,7 +277,7 @@ class Graph:
 
         ws = wait_scheduler()
         while len(last.keys()) > 0:
-            print('graph monitor loop')
+            logger.info('graph monitor loop')
             delkey = []
             wait = True
             for key, val in last.items():
@@ -293,14 +291,14 @@ class Graph:
                 elif val.status == 2:
                     pass
                 else:
-                    print('ERROR!!! UNKNOWN RUNNING STATUS', val.status)
+                    logger.error('ERROR!!!UNKNOWN RUNNING STATUS {}'.format(val.status))
             for ikey in delkey:
-                print('stop node', ikey)
+                logger.info('stop node {}'.format(ikey))
                 last.pop(ikey)
                 wait = False
             for key,val in self.nodes.items():
                 self.r.hset(self.pid, key, val.status)
             # TODO : find better stuck method
             ws(not wait)
-        print('graph end')
+        logger.info('graph end')
 

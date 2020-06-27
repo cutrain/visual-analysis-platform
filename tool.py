@@ -9,6 +9,8 @@ import numpy as np
 import pandas as pd
 from functools import wraps
 
+from config import logger
+
 def msgwrap(func):
     @wraps(func)
     def wrap(*args, **kwargs):
@@ -21,12 +23,12 @@ def msgwrap(func):
             if type(result) is dict:
                 ret.update(result)
         except Exception as e:
-            print('error', e, flush=True)
+            logger.exception(e)
             ret = {
                 'succeed':1,
                 'message':str(e),
             }
-        print(ret, flush=True)
+        logger.debug('message : {}'.format(ret))
         return json.dumps(ret).encode('utf-8')
     return wrap
 
@@ -47,7 +49,7 @@ def get_type(filepath=None, data=None):
     try:
         if filepath is not None:
             ans = filetype.guess_mime(filepath)
-            print('filetype : ', filepath, ans)
+            logger.info('filetype guess: {} {}'.format(filepath, ans))
             if ans is None:
                 if filepath[-5:] == '.json':
                     with open(filepath, 'r') as f:
@@ -68,8 +70,7 @@ def get_type(filepath=None, data=None):
                 return 'Audio'
         raise NotImplementedError
     except Exception as e:
-        print("Guess Type Error :", e)
-        print(filepath)
+        logger.exception('Guess Type Error : {} {}'.format(filepath, e))
 
 def safepath(path):
     # TODO : change replace
@@ -82,9 +83,9 @@ def sample_data(data, type_=None, num=10):
     if type_ == 'path':
         type_ = get_type(data)
         if type_ == 'DataFrame':
-            data = [[pd.read_csv(data, nrows=10)], [os.path.basename(data)]]
+            data = pd.read_csv(data, nrows=10)
         elif type_ == 'Image':
-            data = cv2.imread(data)
+            data = [[cv2.imread(data), os.path.basename(data)]]
         elif type_ == 'Sequence':
             with open(data, 'r') as f:
                 data = json.load(f)
@@ -164,5 +165,5 @@ def sample_data(data, type_=None, num=10):
         }
     else:
         raise NotImplementedError
-    print(ret)
+    logger.debug('sample data {}'.format(ret))
     return ret

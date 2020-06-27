@@ -1,4 +1,4 @@
-from config import PROJECT_DIR, DEBUG
+from config import PROJECT_DIR, DEBUG, logger
 from . import project
 from tool import msgwrap, gen_random_string
 from flask import render_template, request
@@ -13,12 +13,14 @@ import pickle
 def view():
     global PROJECT_DIR
     ret = {}
+    logger.info('project view : view')
     for root, dirs, files in os.walk(PROJECT_DIR):
         for file in files:
             if file[-7:] == '.pickle':
                 with open(os.path.join(root,file), 'rb') as f:
                     pj = pickle.load(f)
                 ret[file[:-7]] = pj
+    logger.debug('project view return : {}',format(ret))
     return ret
 
 @project.route('/create', methods=['POST'])
@@ -27,6 +29,7 @@ def create():
     global PROJECT_DIR
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
+    logger.info('project create: {}'.format(req))
     pname = req.pop('project_name')
     new_data = {
         'project_id':gen_random_string(8),
@@ -40,6 +43,7 @@ def create():
     ret = {
         'project_id':new_data['project_id']
     }
+    logger.info('project create: succeed {}'.format(ret))
     return ret
 
 @project.route('/change', methods=['POST'])
@@ -48,6 +52,7 @@ def change():
     global PROJECT_DIR
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
+    logger.info('project change: {}'.format(req))
     pid = req.pop('project_id')
     pname = req.pop('project_name')
     with open(os.path.join(PROJECT_DIR, pid+'.pickle'), 'rb') as f:
@@ -55,12 +60,15 @@ def change():
     data['project_name'] = pname
     with open(os.path.join(PROJECT_DIR, pid+'.pickle'), 'wb') as f:
         f.write(pickle.dumps(data))
+    logger.info('project change: succeed {}'.format(pid))
 
 @project.route('/delete', methods=['POST'])
 @msgwrap
 def delete():
     req = request.get_data().decode('utf-8')
     req = js.loads(req)
+    logger.info('project delete: {}'.format(req))
     pid = req.pop('project_id')
     os.remove(os.path.join(PROJECT_DIR, pid+'.pickle'))
+    logger.info('project delete: succeed {}'.format(pid))
 

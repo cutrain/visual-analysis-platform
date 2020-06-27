@@ -1,8 +1,29 @@
+import sys
 import logging
-from logging.handlers import RotatingFileHandler
 
 DEBUG = True
 DEVELOP = True
+
+logger = logging.getLogger(__name__)
+level = logging.DEBUG if DEBUG else logging.INFO
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+logger.setLevel(level=level)
+
+# StreamHandler
+stream_handler = logging.StreamHandler(sys.stdout)
+stream_handler.setLevel(level=level)
+stream_handler.setFormatter(formatter)
+if DEVELOP:
+    logger.addHandler(stream_handler)
+
+# FileHandler
+file_handler = logging.FileHandler('output.log')
+file_handler.setLevel(level=level)
+file_handler.setFormatter(formatter)
+logger.addHandler(file_handler)
+
+
+
 
 REDIS_HOST = 'localhost'
 REDIS_PORT = 6379
@@ -28,7 +49,7 @@ class Config:
 
 class DevelopmentConfig(Config):
     global ACCOUNT, PASSWD, DATABASE
-    DEBUG = True
+    DEBUG = False
 
 
 config = {
