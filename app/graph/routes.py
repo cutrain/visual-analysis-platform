@@ -149,7 +149,7 @@ def progress():
     if pid in processing_manager and processing_manager[pid].is_alive():
         status = 1
     progress_ = r.hgetall(pid)
-    logger.info("check progress {} nodes' status : {}".format(pid, progress))
+    logger.info("check progress {} nodes' status : {}".format(pid, progress_))
 
     progress = []
     for key, value in progress_.items():

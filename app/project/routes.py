@@ -20,7 +20,7 @@ def view():
                 with open(os.path.join(root,file), 'rb') as f:
                     pj = pickle.load(f)
                 ret[file[:-7]] = pj
-    logger.debug('project view return : {}',format(ret))
+    logger.debug('project view return : {}'.format(ret))
     return ret
 
 @project.route('/create', methods=['POST'])

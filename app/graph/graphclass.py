@@ -110,6 +110,9 @@ class Node:
             for i in range(len(self._out)):
                 self._out[i](data['out'][i])
             return True
+        except FileNotFoundError:
+            logger.info('file {} not exists, ignored'.format(self._name))
+            return False
         except Exception as e:
             logger.exception('node {} load fail {}'.format(self._name, e))
             return False

@@ -66,8 +66,7 @@ def view():
     oswalk(structure, DATA_DIR)
     ret = json.dumps(structure)
     logger.info('data view: succeed')
-    return {
-        'structure':    }
+    return ret
 
 @data.route('/get', methods=['POST'])
 @msgwrap

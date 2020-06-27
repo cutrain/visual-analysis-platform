@@ -6,7 +6,7 @@ DEVELOP = True
 
 logger = logging.getLogger(__name__)
 level = logging.DEBUG if DEBUG else logging.INFO
-formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(filename)s - %(module)s - %(funcName)s - %(lineno)d - %(message)s')
 logger.setLevel(level=level)
 
 # StreamHandler

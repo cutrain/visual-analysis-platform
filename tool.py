@@ -49,7 +49,7 @@ def get_type(filepath=None, data=None):
     try:
         if filepath is not None:
             ans = filetype.guess_mime(filepath)
-            logger.info('filetype guess: {} {}'.format(filepath, ans))
+            logger.debug('filetype guess: {} {}'.format(filepath, ans))
             if ans is None:
                 if filepath[-5:] == '.json':
                     with open(filepath, 'r') as f:
