@@ -1,11 +1,19 @@
 # Visual Analysis Platform Backend
+无编程平台，可以让编程小白轻松完成一个数据挖掘流程的构建
+
+如图，从左侧的组件栏选择想要执行的任务，拖入右侧的画布。可以通过拖动组件的输出端到其他组件的输入端标记数据流向。
+
+选中画布中的组件，就可以在右侧出现的框中调整参数以及查看节点数据。
+
+在流程图完成构建之后，点击画布上方的运行全部即可开始整个流程图的计算。
+
+![](./2.png)
 
 # 前端
 [这里](https://github.com/yjwang12/front)
 
-
-## 使用指南
-见[wiki](https://github.com/cutrain/visual-analysis-platform/wiki "数据分析平台wiki")
+# 文档
+[文档](https://github.com/cutrain/visual-analysis-platform/blob/master/manual.doc?raw=true)
 
 ### 运行环境要求
 ```
