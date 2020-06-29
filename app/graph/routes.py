@@ -14,6 +14,9 @@ from tool import msgwrap, safepath, gen_random_string, sample_data
 from config import CACHE_DIR, REDIS_HOST, REDIS_DB, REDIS_PORT, PROJECT_DIR, STATIC_PATH, logger
 from common import component_detail
 
+from multiprocessing import Process,Value,Lock
+from multiprocessing.managers import BaseManager
+
 
 r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, charset='utf-8', decode_responses=True)
 
@@ -67,6 +70,18 @@ def check_param(params, comp_type):
             ret.update({param:params[param]})
     return ret
 
+# using Manager for Process communication
+class MyManager(BaseManager):
+    pass
+def Manager2():
+    m=MyManager()
+    m.start()
+    return m
+MyManager.register('Graph',Graph)
+
+def func1(g, run_node, lock):
+    with lock:
+        g.call(run_node)
 
 @graph.route('/run', methods=['POST'])
 @msgwrap
@@ -92,7 +107,10 @@ def run():
             return fail
 
     logger.debug('making Graph')
-    G = Graph(pid)
+
+    manager = Manager2()
+    G = manager.Graph(pid)
+
     all_nodes = req.pop('all_nodes')
     all_lines = req.pop('all_lines')
     for node in all_nodes:
@@ -127,14 +145,14 @@ def run():
 
     run_node = req.pop('run', None)
 
-    process = multiprocessing.Process(name=pid, target=G, args=(run_node,))
+    lock = Lock()
+    process = multiprocessing.Process(name=pid, target=func1, args=(G, run_node, lock,))
     process.daemon = True
-    logger.info('project {} ready start'.format(pid))
     process.start()
+    process.join()
     processing_manager.update({
         pid: process
     })
-
 
 
 @graph.route('/progress', methods=['POST'])
