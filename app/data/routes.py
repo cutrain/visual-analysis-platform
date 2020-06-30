@@ -64,7 +64,7 @@ def view():
                     break
     structure = {}
     oswalk(structure, DATA_DIR)
-    ret = json.dumps(structure)
+    ret = {'structure':json.dumps(structure)}
     logger.info('data view: succeed')
     return ret
 
