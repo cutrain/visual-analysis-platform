@@ -229,7 +229,7 @@ class Graph:
             logger.exception('load cache error {}'.format(e))
         return False
 
-    def __call__(self, run_node=None):
+    def call(self, run_node=None):
         global REDIS_HOST, REDIS_PORT, REDIS_DB
         self.r = redis.StrictRedis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB, charset='utf-8', decode_responses=True)
         for key, val in self.nodes.items():
