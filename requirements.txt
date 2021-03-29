@@ -54,7 +54,7 @@ protobuf==3.7.1
 psycopg2==2.7.7
 ptyprocess==0.6.0
 pyfpgrowth==1.0
-Pygments==2.4.0
+Pygments==2.7.4
 pymssql==2.1.4
 PyMySQL==0.9.3
 pyod==0.7.3
