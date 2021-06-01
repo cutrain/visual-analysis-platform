@@ -77,6 +77,6 @@ tensorflow-estimator==1.13.0
 termcolor==1.1.0
 torch==1.1.0
 traitlets==4.3.2
-urllib3==1.24.2
+urllib3==1.26.5
 wcwidth==0.1.7
 Werkzeug==0.15.3
